@@ -5,11 +5,8 @@ int main()
 {
     long long n;
     cin >> n;
-    vector<char> word(n);
-    for (int i = 0; i < n; i++)
-    {
-        cin >> word[i];
-    }
+    char word[n];
+    cin >> word;
     for (int i = 0; i < n; i++)
     {
         if (int(word[i]) < 97)

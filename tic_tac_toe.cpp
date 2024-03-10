@@ -71,7 +71,7 @@ int main()
         display_list(list1);
         cout << ":";
         cin >> pl1;
-        auto it1 = find(list1.begin(), list1.end() , pl1);
+        auto it1 = find(list1.begin(), list1.end(), pl1);
 
         // Validate input for player 1
         while (cin.fail() || it1 == list1.end() || pl1 < 1)

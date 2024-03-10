@@ -12,19 +12,19 @@ int main()
         {
             if (ii == n / 2 - i || ii == n / 2 + i)
                 cout << "*";
-
-            else
-                cout << " ";
             if (ii == n / 2 + i)
-            {
                 break;
+            ;
+            else
+            {
+                cout << " ";
             }
+            cout << "\n";
         }
-        cout << "\n";
     }
-
     for (int iii = 0; iii < n; ++iii)
+    {
         cout << "*";
-
+    }
     return 0;
 }
