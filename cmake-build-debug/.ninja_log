@@ -1,0 +1,5 @@
+# ninja log v5
+0	1433	7319783238546413	CMakeFiles/Problem_Solving.dir/White_Space.cpp.obj	96c873af7cfbae85
+3	340	7319784884557712	CMakeFiles/Problem_Solving.dir/Recursive_Digit_Sum.cpp.obj	f6b9a7972ed255d9
+1	492	7319913824514043	build.ninja	641a12ac3282d26d
+340	443	7319784885548575	Problem_Solving.exe	97ba8a34955c1da2
