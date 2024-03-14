@@ -1,5 +1,12 @@
 # ninja log v5
+3	365	7320583498516089	CMakeFiles/Problem_Solving.dir/playing_with_numbers.cpp.obj	3c9b6076f4e9e4bf
+5	480	7320554885060699	CMakeFiles/Problem_Solving.dir/Truckloads.cpp.obj	42c31a867fe0c24b
 0	1433	7319783238546413	CMakeFiles/Problem_Solving.dir/White_Space.cpp.obj	96c873af7cfbae85
-3	340	7319784884557712	CMakeFiles/Problem_Solving.dir/Recursive_Digit_Sum.cpp.obj	f6b9a7972ed255d9
-1	492	7319913824514043	build.ninja	641a12ac3282d26d
-340	443	7319784885548575	Problem_Solving.exe	97ba8a34955c1da2
+5	648	7320418154216499	CMakeFiles/Problem_Solving.dir/Recursive_Digit_Sum.cpp.obj	f6b9a7972ed255d9
+0	464	7321173290663529	build.ninja	641a12ac3282d26d
+1	346	7320312268223801	CMakeFiles/Problem_Solving.dir/Orthogonality.cpp.obj	fc74e4d2a0281dd
+402	510	7321171561703788	Problem_Solving.exe	4b4b1ded4d734d8d
+1	378	7320584791751164	CMakeFiles/Problem_Solving.dir/palindrome.cpp.obj	fd0f0b461483a13
+3	247	7320592809740274	CMakeFiles/Problem_Solving.dir/Devide_it.cpp.obj	cade8bd7bb358f8
+4	402	7321171560673321	CMakeFiles/Problem_Solving.dir/Triple.cpp.obj	6f2c3a996005500f
+4	584	7320731689004145	CMakeFiles/Problem_Solving.dir/test.cpp.obj	db93ffaf7400c8f2

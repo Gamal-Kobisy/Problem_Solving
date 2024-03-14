@@ -4,5 +4,5 @@ project(Problem_Solving)
 set(CMAKE_CXX_STANDARD 14)
 
 add_executable(Problem_Solving
-
-        "Recursive Digit Sum.cpp")
+        Triple.cpp
+        Triple.cpp)

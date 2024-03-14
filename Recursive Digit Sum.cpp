@@ -1,11 +1,11 @@
 #include <iostream>
 #include <string>
-
+#include <algorithm>
 using namespace std;
 
-long long super_digit_sum(string num) {
+string super_digit_sum(string num) {
     if (num.size() == 1) {
-        return num[0] - '0';
+        return num;
     }
 
     long long digit_sum = 0;

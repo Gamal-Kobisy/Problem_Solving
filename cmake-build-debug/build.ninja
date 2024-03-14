@@ -49,8 +49,8 @@ cmake_ninja_workdir = D$:/learning/Eng.gamal/GItHub/Problem_Solving/cmake-build-
 
 build cmake_object_order_depends_target_Problem_Solving: phony || CMakeFiles/Problem_Solving.dir
 
-build CMakeFiles/Problem_Solving.dir/Recursive_Digit_Sum.cpp.obj: CXX_COMPILER__Problem_Solving_unscanned_Debug D$:/learning/Eng.gamal/GItHub/Problem_Solving/Recursive$ Digit$ Sum.cpp || cmake_object_order_depends_target_Problem_Solving
-  DEP_FILE = CMakeFiles\Problem_Solving.dir\Recursive_Digit_Sum.cpp.obj.d
+build CMakeFiles/Problem_Solving.dir/Triple.cpp.obj: CXX_COMPILER__Problem_Solving_unscanned_Debug D$:/learning/Eng.gamal/GItHub/Problem_Solving/Triple.cpp || cmake_object_order_depends_target_Problem_Solving
+  DEP_FILE = CMakeFiles\Problem_Solving.dir\Triple.cpp.obj.d
   FLAGS = -g -std=gnu++14 -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles\Problem_Solving.dir
   OBJECT_FILE_DIR = CMakeFiles\Problem_Solving.dir
@@ -63,7 +63,7 @@ build CMakeFiles/Problem_Solving.dir/Recursive_Digit_Sum.cpp.obj: CXX_COMPILER__
 #############################################
 # Link the executable Problem_Solving.exe
 
-build Problem_Solving.exe: CXX_EXECUTABLE_LINKER__Problem_Solving_Debug CMakeFiles/Problem_Solving.dir/Recursive_Digit_Sum.cpp.obj
+build Problem_Solving.exe: CXX_EXECUTABLE_LINKER__Problem_Solving_Debug CMakeFiles/Problem_Solving.dir/Triple.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\Problem_Solving.dir
