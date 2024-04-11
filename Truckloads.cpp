@@ -5,61 +5,37 @@
 #include <cmath>
 #include <vector>
 using namespace std;
-
+int rec(int n, int m)
+{
+    if (n <= m)
+    {
+        return 1;
+    }
+    return rec(ceil(n / 2.0), m) + rec(floor(n / 2.0), m);
+}
 int main()
 {
-    long long k , n , trucks = 0;
-    vector <long long> trucks1 ;
-    vector <long long> trucks2 ;
-
-
-    while(cin >> k >> n)
+    long long int n, m;
+    while (cin >> n >> m)
     {
-        long long k1 = k ;
-        trucks1.clear();
-        trucks2.clear();
-        trucks1.push_back(k1);
-        trucks2.push_back(k1);
 
-        for (int i = 0 ; k1 > n ; i++ )
+        long long int x = pow(2, ceil(log2((n + m - 1) / m)));
+        // cout << log2((n + m) / m) << endl;
+        // cout << log2((2 * (n + m - 1)) / (m)) << endl;
+        // cout << ceil(log2((n + m - 1) / m)) << endl;
+        // cout << pow(2, ceil(log2((n + m - 1) / m))) << endl;
+        // cout << pow(2, (floor(log2((2 * (n + m - 1)) / (m))))) << endl;
+
+        long long int res = max(1ll, x / 2);
+        if (2 * n / x == m)
         {
-            k1 = k1/2;
-            for (int j = 0 ; j < i ; j++)
-            {
-                if (trucks1.back()-j > n)
-                trucks1.push_back(trucks1.back()-j);
-                if (trucks2.back()-j > n)
-                trucks2.push_back(ceil(trucks2.back()-j));
-            }
+            res += (n - m * x / 2);
         }
-//       while (true)
-//        {
-//            k1 = k1/2;
-//            if (trucks1.back() > n)
-//            trucks1.push_back(k1);
-//            if (trucks2.back() > n)
-//            trucks2.push_back(ceil(k1));
-//            if (trucks1.back() <= n && trucks2.back() <= n)
-//                break;
-//        }
-       for(long long truck : trucks1)
+        else
         {
-            if(truck <= n )
-            {
-                trucks++;
-            }
-
+            res += (x / 2);
         }
-        for(long long truck : trucks2)        {
-            if(truck <= n )
-            {
-                trucks++;
-            }
-
-        }
-        cout << trucks*2 << "\n";
-        trucks = 0 ;
+        cout << res << endl;
     }
-
     return 0;
 }
