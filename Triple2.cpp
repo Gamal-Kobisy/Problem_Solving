@@ -1,6 +1,4 @@
-//
-// Created by Gamal on 3/13/2024.
-//
+// https://vjudge.net/contest/589621#problem/S
 #include <iostream>
 #include <string>
 #include <algorithm>
@@ -25,7 +23,7 @@ int main()
         sort(num, num + n);
         for (int i = 0; i < n; i++)
         {
-            if (count(num + i, num + i + 3, num[i]) >= 3)
+            if (num[i] == num[i + 2])
             {
                 result = num[i];
                 break;
