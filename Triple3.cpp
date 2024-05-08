@@ -1,9 +1,9 @@
-//
-// Created by Gamal on 3/13/2024.
-//
+// https://vjudge.net/contest/589621#problem/S
 #include <iostream>
 #include <string>
+#include <cmath>
 #include <algorithm>
+#include <iterator> // For std::begin and std::end
 using namespace std;
 
 int main()
@@ -18,17 +18,14 @@ int main()
         long long n, result = -1;
         cin >> n;
         long long num[n];
+        long long Frequency[n + 1] = {0};
         for (int i = 0; i < n; i++)
         {
             cin >> num[i];
-        }
-        sort(num, num + n);
-        for (int i = 0; i < n; i++)
-        {
-            if (count(num + i, num + i + 3, num[i]) >= 3)
+            Frequency[num[i]]++;
+            if (Frequency[num[i]] >= 3)
             {
                 result = num[i];
-                break;
             }
         }
         cout << result << "\n";
