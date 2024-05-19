@@ -39,7 +39,9 @@ int main()
     cout.tie(nullptr);
     priority_queue<string, vector<string>, CompareStrings> mm;
     string s = " ";
-    while (cin >> s)
+    ifstream in("text.txt");
+    ofstream out("out.txt");
+    while (in >> s)
     {
         mm.push(s);
     }
@@ -50,7 +52,7 @@ int main()
         mm.pop();
         if (prev != cur)
         {
-            cout << cur << "\n";
+            out << cur << "\n";
             prev = cur;
         }
     }
