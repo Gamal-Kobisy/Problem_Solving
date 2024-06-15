@@ -1,6 +1,3 @@
-//
-// DATE : Created by Gamal on 6/7/2024.
-// LINK : https://vjudge.net/contest/586365#problem/A
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -23,38 +20,16 @@ struct un_ordered
 template <class T>
 using ordered_set = tree<T, null_type, un_ordered, rb_tree_tag, tree_order_statistics_node_update>;
 
-void solve()
+void gamal_solve()
 {
-    ll n;
-    cin >> n;
-    long long n_copy = n;
-    int i = 0;
-    while (n != 1)
-    {
-        if ((n % 2 == 0) || (n % 3 == 0) || (n % 5 == 0))
-        {
-            if (n % 2 == 0)
-                n_copy = (n / 2);
-            if (n % 3 == 0)
-                n_copy = (2 * n / 3);
-            if (n % 5 == 0)
-                n_copy = (4 * n / 5);
-            n = n_copy;
-        }
 
-        else
-            break;
-        i++;
-    }
-    (n == 1) ? cout << i << "\n" : cout << -1 << "\n";
 }
-
 void file()
 {
 #ifndef ONLINE_JUDGE
-    freopen("input.txt", "r", stdin);
-    freopen("output.txt", "w", stdout);
-    freopen("error.txt", "w", stderr);
+    freopen("Input.txt", "r", stdin);
+    freopen("Output.txt", "w", stdout);
+    freopen("Errors.txt", "w", stderr);
 #endif
 }
 void fast()
@@ -66,10 +41,10 @@ int main() {
     file();
     fast();
     ll t = 1;
-     cin >> t;
+    // cin >> t;
     while(t--)
     {
-        solve();
+        gamal_solve();
     }
 
     return 0;

@@ -1,6 +1,7 @@
 //
-// DATE : Created by Gamal on 6/7/2024.
-// LINK : https://vjudge.net/contest/586365#problem/A
+// DATE : Created by Gamal on 6/14/2024.
+// LINK : https://vjudge.net/contest/588093#problem/L
+
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -11,6 +12,8 @@
 #define f1(n) for(int i=1;i<n;i++)
 #define f0(n) for(int i=0;i<n;++i)
 #define fe(v) for(auto & it:v)
+#define pi 3.141592653589793238462643383279502884197
+#define e 2.718281828459045
 using namespace std;
 using namespace __gnu_pbds;
 struct un_ordered
@@ -23,38 +26,39 @@ struct un_ordered
 template <class T>
 using ordered_set = tree<T, null_type, un_ordered, rb_tree_tag, tree_order_statistics_node_update>;
 
-void solve()
-{
-    ll n;
-    cin >> n;
-    long long n_copy = n;
-    int i = 0;
-    while (n != 1)
-    {
-        if ((n % 2 == 0) || (n % 3 == 0) || (n % 5 == 0))
-        {
-            if (n % 2 == 0)
-                n_copy = (n / 2);
-            if (n % 3 == 0)
-                n_copy = (2 * n / 3);
-            if (n % 5 == 0)
-                n_copy = (4 * n / 5);
-            n = n_copy;
+void solve() {
+    long long n, time;
+    cin >> n >> time;
+    vector<long long> nums(n);
+
+    for (long long i = 0; i < n; ++i) {
+        cin >> nums[i];
+    }
+
+    long long current_sum = 0;
+    int start = 0;
+    int max_books = 0;
+
+    for (int end = 0; end < n; ++end) {
+        current_sum += nums[end];
+
+        while (current_sum > time) {
+            current_sum -= nums[start];
+            ++start;
         }
 
-        else
-            break;
-        i++;
+        max_books = max(max_books, end - start + 1);
     }
-    (n == 1) ? cout << i << "\n" : cout << -1 << "\n";
+
+    cout << max_books << endl;
 }
 
 void file()
 {
 #ifndef ONLINE_JUDGE
-    freopen("input.txt", "r", stdin);
-    freopen("output.txt", "w", stdout);
-    freopen("error.txt", "w", stderr);
+    freopen("Input.txt", "r", stdin);
+    freopen("Output.txt", "w", stdout);
+    freopen("Error.txt", "w", stderr);
 #endif
 }
 void fast()
@@ -66,7 +70,7 @@ int main() {
     file();
     fast();
     ll t = 1;
-     cin >> t;
+    // cin >> t;
     while(t--)
     {
         solve();

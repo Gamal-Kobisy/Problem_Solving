@@ -1,6 +1,7 @@
 //
-// DATE : Created by Gamal on 6/7/2024.
-// LINK : https://vjudge.net/contest/586365#problem/A
+// DATED : Created by Gamal on 6/7/2024.
+// LINK : https://vjudge.net/contest/586365#problem/L
+
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -25,28 +26,46 @@ using ordered_set = tree<T, null_type, un_ordered, rb_tree_tag, tree_order_stati
 
 void solve()
 {
-    ll n;
-    cin >> n;
-    long long n_copy = n;
-    int i = 0;
-    while (n != 1)
+    long long sz;
+    vector<long long> nums, neg_nums;
+    cin >> sz;
+    long long neg_counter = 0, maxx = LLONG_MIN, minn = LLONG_MAX;
+    for (long long i = 0; i < sz; i++)
     {
-        if ((n % 2 == 0) || (n % 3 == 0) || (n % 5 == 0))
+        long long x;
+        cin >> x;
+        if (x < 0)
         {
-            if (n % 2 == 0)
-                n_copy = (n / 2);
-            if (n % 3 == 0)
-                n_copy = (2 * n / 3);
-            if (n % 5 == 0)
-                n_copy = (4 * n / 5);
-            n = n_copy;
+            x = -x - 1;
         }
-
-        else
-            break;
-        i++;
+        nums.emplace_back(x);
+        maxx = max(maxx, x);
+        minn = min(minn, x);
     }
-    (n == 1) ? cout << i << "\n" : cout << -1 << "\n";
+    if (sz % 2 == 0)
+    {
+        for (long long i : nums)
+        {
+            cout << -i - 1 << ' ';
+        }
+    }
+    else
+    {
+        bool max_not_found = true;
+        for (long long i : nums)
+        {
+            if (i == maxx && max_not_found)
+            {
+                cout << i << ' ';
+                max_not_found = false;
+            }
+            else
+            {
+                cout << -i - 1 << ' ';
+            }
+        }
+    }
+    cout << endl;
 }
 
 void file()
@@ -66,7 +85,7 @@ int main() {
     file();
     fast();
     ll t = 1;
-     cin >> t;
+    // cin >> t;
     while(t--)
     {
         solve();

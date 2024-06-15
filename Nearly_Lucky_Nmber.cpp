@@ -1,6 +1,6 @@
 //
 // DATE : Created by Gamal on 6/7/2024.
-// LINK : https://vjudge.net/contest/586365#problem/A
+// LINK : https://vjudge.net/contest/586365#problem/W
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -25,36 +25,34 @@ using ordered_set = tree<T, null_type, un_ordered, rb_tree_tag, tree_order_stati
 
 void solve()
 {
-    ll n;
-    cin >> n;
-    long long n_copy = n;
-    int i = 0;
-    while (n != 1)
+    string s;
+    cin >> s;
+    int counter = 0;
+    for (char c : s)
     {
-        if ((n % 2 == 0) || (n % 3 == 0) || (n % 5 == 0))
+        if (c == '4' || c == '7')
         {
-            if (n % 2 == 0)
-                n_copy = (n / 2);
-            if (n % 3 == 0)
-                n_copy = (2 * n / 3);
-            if (n % 5 == 0)
-                n_copy = (4 * n / 5);
-            n = n_copy;
+            counter++;
         }
-
-        else
-            break;
-        i++;
     }
-    (n == 1) ? cout << i << "\n" : cout << -1 << "\n";
+    string s_counter = to_string(counter);
+    for (char c : s_counter)
+    {
+        if (c != '4' && c != '7')
+        {
+            cout << "NO\n";
+            return;
+        }
+    }
+    cout << "YES\n";
 }
 
 void file()
 {
 #ifndef ONLINE_JUDGE
-    freopen("input.txt", "r", stdin);
-    freopen("output.txt", "w", stdout);
-    freopen("error.txt", "w", stderr);
+    freopen("Input.txt", "r", stdin);
+    freopen("Output.txt", "w", stdout);
+    freopen("Error.txt", "w", stderr);
 #endif
 }
 void fast()
@@ -66,7 +64,7 @@ int main() {
     file();
     fast();
     ll t = 1;
-     cin >> t;
+    // cin >> t;
     while(t--)
     {
         solve();

@@ -1,6 +1,7 @@
 //
 // DATE : Created by Gamal on 6/7/2024.
-// LINK : https://vjudge.net/contest/586365#problem/A
+// LINK : https://vjudge.net/contest/586365#problem/G
+
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -25,28 +26,42 @@ using ordered_set = tree<T, null_type, un_ordered, rb_tree_tag, tree_order_stati
 
 void solve()
 {
-    ll n;
-    cin >> n;
-    long long n_copy = n;
-    int i = 0;
-    while (n != 1)
+    string s1, s2;
+    cin >> s1 >> s2;
+    long long s1_index = 0, s2_index = 0;
+    bool not_valid = false;
+    while (s1_index != s1.size() && s2_index != s2.size())
     {
-        if ((n % 2 == 0) || (n % 3 == 0) || (n % 5 == 0))
+        if (s1[s1_index] == s2[s2_index])
         {
-            if (n % 2 == 0)
-                n_copy = (n / 2);
-            if (n % 3 == 0)
-                n_copy = (2 * n / 3);
-            if (n % 5 == 0)
-                n_copy = (4 * n / 5);
-            n = n_copy;
+            s1_index++;
+            s2_index++;
         }
-
+        else if (s1[s1_index - 1] == s2[s2_index])
+        {
+            s2_index++;
+        }
         else
+        {
+            not_valid = true;
             break;
-        i++;
+        }
     }
-    (n == 1) ? cout << i << "\n" : cout << -1 << "\n";
+    while (s2_index != s2.size())
+    {
+        s2_index++;
+        if (s2[s2_index - 1] != s1[s1_index - 1])
+        {
+            not_valid = true;
+            break;
+        }
+    }
+    if (not_valid)
+    {
+        cout << "NO\n";
+        return;
+    }
+    cout << (s1_index == s1.size() ? "YES\n" : "NO\n");
 }
 
 void file()
@@ -66,7 +81,7 @@ int main() {
     file();
     fast();
     ll t = 1;
-     cin >> t;
+    cin >> t;
     while(t--)
     {
         solve();
