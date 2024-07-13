@@ -26,7 +26,7 @@ struct un_ordered
 template <class T>
 using ordered_set = tree<T, null_type, un_ordered, rb_tree_tag, tree_order_statistics_node_update>;
 
-void solve() {
+void Two_Pointer_solve() {
     long long n, time;
     cin >> n >> time;
     vector<long long> nums(n);
@@ -53,6 +53,42 @@ void solve() {
     cout << max_books << endl;
 }
 
+void Binary_Search_solve()
+{
+    ll n , time;
+    cin >> n >> time;
+    vector<ll>nums(n) , pre(n+2);
+    for (ll i = 0; i < n; ++i) {
+        cin >> nums[i];
+        pre[i+1] = pre[i] + nums[i];
+    }
+    ll l = 0 , r = n, mid , ans = 0;
+    while (l <= r)
+    {
+        mid = ((l + r) / 2);
+        ll len = mid;
+        bool ok = false;
+        ll sum = pre[mid];
+        for (ll i = len; i <= n; ++i) {
+            sum = pre[i] - pre[i - len];
+            if(sum <= time)
+            {
+                ok = true;
+                break;
+            }
+        }
+        if(ok)
+        {
+            ans = max(ans , mid);
+            l = mid + 1;
+        }
+        else
+        {
+            r = mid - 1;
+        }
+    }
+    cout << ans << nl;
+}
 void file()
 {
 #ifndef ONLINE_JUDGE
@@ -73,7 +109,7 @@ int main() {
     // cin >> t;
     while(t--)
     {
-        solve();
+        Binary_Search_solve();
     }
 
     return 0;

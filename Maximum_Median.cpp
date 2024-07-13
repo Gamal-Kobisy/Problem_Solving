@@ -1,3 +1,7 @@
+//
+// DATE : Created by Gamal on 7/8/2024.
+// LINK : https://vjudge.net/contest/589623#problem/W
+
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -33,32 +37,55 @@ long long lcm(long long a, long long b) {
 }
 
 template <class T>
-using ordered_set = tree<T, null_type, un_ordered, rb_tree_tag, tree_order_statistics_node_update>;
+using ordered_set = tree<T, null_type, less_equal<>, rb_tree_tag, tree_order_statistics_node_update>;
 
 void solve()
 {
     ll n , k;
     cin >> n >> k;
-    vector<ll>div;
-    for (ll i = 1; i * i<= n; ++i) {
-        if(n % i == 0)
+    multiset<ll>ms;
+    ll maxx = LLONG_MIN;
+    for (ll i = 0; i < n; ++i) {
+        ll x;
+        cin >> x;
+        maxx = max(maxx , x);
+        ms.insert(x);
+    }
+    for (int i = 0; i < n / 2; ++i) {
+        ms.erase(ms.begin());
+    }
+    ll l = *ms.begin() , r = maxx + k , ans ;
+    while (l <= r)
+    {
+        ll mid = (r + l) / 2 , k_copy = k;
+        bool ok = true;
+        for(ll i : ms)
         {
-            div.push_back(i);
-            if(i != n / i)
+            if(i >= mid)
             {
-                div.push_back(n/i);
+                continue;
+            }
+            if(i + k_copy >= mid)
+            {
+                k_copy -= (mid - i);
+            }
+            else
+            {
+                ok = false;
+                break;
             }
         }
+        if(ok)
+        {
+            l = mid + 1;
+            ans = mid;
+        }
+        else
+        {
+            r = mid - 1;
+        }
     }
-    sort(all(div));
-    if(k > div.size())
-    {
-        cout << -1 << nl;
-    }
-    else
-    {
-        cout << div[k-1] << nl;
-    }
+    cout << ans << nl;
 }
 
 void file()

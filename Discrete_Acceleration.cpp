@@ -1,3 +1,7 @@
+//
+// DATE : Created by Gamal on 7/10/2024.
+// LINK : https://vjudge.net/contest/589623#problem/O
+
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -35,30 +39,57 @@ long long lcm(long long a, long long b) {
 template <class T>
 using ordered_set = tree<T, null_type, un_ordered, rb_tree_tag, tree_order_statistics_node_update>;
 
+struct car
+{
+    ll pos;
+    ll speed = 1;
+};
 void solve()
 {
-    ll n , k;
-    cin >> n >> k;
-    vector<ll>div;
-    for (ll i = 1; i * i<= n; ++i) {
-        if(n % i == 0)
+    ll n , length;
+    cin >> n >> length;
+    vector<ll>flags(n) , pre(n +1) , suf(n + 2);
+    suf[n+1]=1;
+    pre[0]=1;
+    for (ll i = 0; i < n; ++i) {
+        cin >> flags[i];
+        pre[i]++;
+        suf[i]++;
+    }
+    for (ll i = 1; i < n; ++i) {
+        pre[i] += pre[i - 1];
+    }
+    for (ll i = n ; i >= 0 ; i--) {
+        suf[i] += suf[i + 1];
+    }
+    double sec = 0;
+    car first , second;
+    first.pos = 0;
+    second.pos = length;
+    ll l = 0 , r = n - 1;
+    while (l <= r)
+    {
+        double time_1 = (flags[l] - first.pos) / (double) first.speed;
+        double time_2 = (second.pos - flags[r]) / (double) second.speed;
+        if(time_1 <= time_2)
         {
-            div.push_back(i);
-            if(i != n / i)
-            {
-                div.push_back(n/i);
-            }
+            first.pos = flags[l];
+            first.speed = pre[l];
+            l++;
+            second.pos -= second.speed * time_1;
+            sec += time_1;
+        }
+        else
+        {
+            second.pos = flags[r];
+            second.speed = suf[r];
+            r--;
+            first.pos += first.speed * time_2;
+            sec += time_2;
         }
     }
-    sort(all(div));
-    if(k > div.size())
-    {
-        cout << -1 << nl;
-    }
-    else
-    {
-        cout << div[k-1] << nl;
-    }
+    sec += (second.pos - first.pos) / double(first.speed + second.speed);
+    cout << fixed << setprecision(15) << sec << nl;
 }
 
 void file()
@@ -78,7 +109,7 @@ int main() {
     file();
     fast();
     ll t = 1;
-    // cin >> t;
+     cin >> t;
     while(t--)
     {
         solve();

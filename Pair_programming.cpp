@@ -1,3 +1,7 @@
+//
+// DATE : Created by Gamal on 7/1/2024.
+// LINK : https://vjudge.net/contest/589623#problem/L
+
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -37,28 +41,54 @@ using ordered_set = tree<T, null_type, un_ordered, rb_tree_tag, tree_order_stati
 
 void solve()
 {
-    ll n , k;
-    cin >> n >> k;
-    vector<ll>div;
-    for (ll i = 1; i * i<= n; ++i) {
-        if(n % i == 0)
+    ll k , n , m;
+    cin >> k >> n >> m;
+    list<ll>poly , mono;
+    ll x;
+    for (ll i = 0; i < n; ++i) {
+        cin >> x;
+        poly.push_back(x);
+    }
+    for (ll i = 0; i < m; ++i) {
+        cin >> x;
+        mono.push_back(x);
+    }
+    poly.push_back(10e10);
+    mono.push_back(10e10);
+    vector<ll>ans;
+    for (ll i = 0; i < n + m; ++i) {
+        if(poly.front() > k)
         {
-            div.push_back(i);
-            if(i != n / i)
+            if(mono.front() > k)
             {
-                div.push_back(n/i);
+                cout << -1 << nl;
+                return;
+            }
+            else
+            {
+                if(mono.front() == 0)
+                {
+                    k++;
+                }
+                ans.push_back(mono.front());
+                mono.erase(mono.begin());
             }
         }
+        else
+        {
+            if(poly.front() == 0)
+            {
+                k++;
+            }
+            ans.push_back(poly.front());
+            poly.erase(poly.begin());
+        }
     }
-    sort(all(div));
-    if(k > div.size())
+    for(ll i : ans)
     {
-        cout << -1 << nl;
+        cout << i << ' ';
     }
-    else
-    {
-        cout << div[k-1] << nl;
-    }
+    cout << nl;
 }
 
 void file()
@@ -78,11 +108,10 @@ int main() {
     file();
     fast();
     ll t = 1;
-    // cin >> t;
+    cin >> t;
     while(t--)
     {
         solve();
     }
-
     return 0;
 }

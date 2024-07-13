@@ -1,3 +1,7 @@
+//
+// DATE :  Created by Gamal on 7/1/2024.
+// LINK : https://vjudge.net/contest/589623#problem/M
+
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -37,28 +41,44 @@ using ordered_set = tree<T, null_type, un_ordered, rb_tree_tag, tree_order_stati
 
 void solve()
 {
-    ll n , k;
-    cin >> n >> k;
-    vector<ll>div;
-    for (ll i = 1; i * i<= n; ++i) {
-        if(n % i == 0)
+    ll n , h;
+    cin >> n >> h;
+    vector<ll>attacks(n + 1);
+    for (ll i = 0; i < n; ++i) {
+        cin >> attacks[i];
+    }
+    ll l = 1 , r = LLONG_MAX - 1 , ans = LLONG_MAX;
+    while (l <= r)
+    {
+        ll mid = (r + l) / 2;
+        ll damage = 0;
+        for(ll i = 0 ; i < n ; i++)
         {
-            div.push_back(i);
-            if(i != n / i)
+            if(attacks[i+1] == 0)
             {
-                div.push_back(n/i);
+                damage += mid;
+                continue;
+            }
+            if(attacks[i + 1] - attacks[i] >= mid)
+            {
+                damage += mid;
+            }
+            else
+            {
+                damage += attacks[i + 1] - attacks[i];
             }
         }
+        if(damage >= h)
+        {
+            ans = mid;
+            r = mid - 1;
+        }
+        else
+        {
+            l = mid + 1;
+        }
     }
-    sort(all(div));
-    if(k > div.size())
-    {
-        cout << -1 << nl;
-    }
-    else
-    {
-        cout << div[k-1] << nl;
-    }
+    cout << ans << nl;
 }
 
 void file()
@@ -78,7 +98,7 @@ int main() {
     file();
     fast();
     ll t = 1;
-    // cin >> t;
+    cin >> t;
     while(t--)
     {
         solve();

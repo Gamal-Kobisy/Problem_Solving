@@ -1,6 +1,12 @@
+//
+// DATE : Created by Gamal on 6/27/2024.
+// LINK : https://vjudge.net/contest/589623#problem/AH
+
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
+#include <variant>
+
 #define ll long long
 #define nl '\n'
 #define all(a) a.begin(),a.end()
@@ -35,29 +41,47 @@ long long lcm(long long a, long long b) {
 template <class T>
 using ordered_set = tree<T, null_type, un_ordered, rb_tree_tag, tree_order_statistics_node_update>;
 
-void solve()
-{
-    ll n , k;
-    cin >> n >> k;
-    vector<ll>div;
-    for (ll i = 1; i * i<= n; ++i) {
-        if(n % i == 0)
+void solve() {
+    ll n, q;
+    cin >> n >> q;
+    multiset<ll>s;
+    vector<ll> candies(n) , pre(n+1);
+    for (ll i = 0; i < n; ++i) {
+        cin >> candies[i];
+        s.insert(candies[i]);
+    }
+    auto it = s.end();
+    it--;
+    for (ll i = 0; i < n; ++i) {
+        pre[i+1] = pre[i] + *it;
+        it--;
+    }
+    while (q--)
+    {
+        ll x;
+        cin >> x;
+        ll l = 0 , r = n , ans = LLONG_MAX;
+        if(pre[n] < x)
         {
-            div.push_back(i);
-            if(i != n / i)
+            cout << -1 << nl;
+            continue;
+        }
+
+        while (l <= r)
+        {
+            ll mid = (l + r) / 2;
+            ll sugar = pre[mid];
+            if(sugar >= x)
             {
-                div.push_back(n/i);
+                ans = min(ans , mid);
+                r = mid - 1;
+            }
+            else
+            {
+                l = mid + 1;
             }
         }
-    }
-    sort(all(div));
-    if(k > div.size())
-    {
-        cout << -1 << nl;
-    }
-    else
-    {
-        cout << div[k-1] << nl;
+        cout << ans  << nl;
     }
 }
 
@@ -78,7 +102,7 @@ int main() {
     file();
     fast();
     ll t = 1;
-    // cin >> t;
+    cin >> t;
     while(t--)
     {
         solve();

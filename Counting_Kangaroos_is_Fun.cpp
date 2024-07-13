@@ -1,6 +1,6 @@
 //
-// DATE : Created by Gamal on 6/11/2024.
-// LINK : https://vjudge.net/contest/588093#problem/B
+// DATE : Created by Gamal on 7/8/2024.
+// LINK : https://vjudge.net/contest/589623#problem/V
 
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
@@ -12,6 +12,8 @@
 #define f1(n) for(int i=1;i<n;i++)
 #define f0(n) for(int i=0;i<n;++i)
 #define fe(v) for(auto & it:v)
+#define pi 3.141592653589793238462643383279502884197
+#define e 2.718281828459045
 using namespace std;
 using namespace __gnu_pbds;
 struct un_ordered
@@ -21,53 +23,47 @@ struct un_ordered
         return true;
     }
 };
+long long gcd(long long a, long long b) {
+    while (b != 0) {
+        long long temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+
+long long lcm(long long a, long long b) {
+    return a / gcd(a, b) * b;  // Use the GCD to calculate the LCM
+}
+
 template <class T>
 using ordered_set = tree<T, null_type, un_ordered, rb_tree_tag, tree_order_statistics_node_update>;
 
 void solve()
 {
-    ll n , k;
-    cin >> n >> k;
-    set<ll>s;
-    map<ll,ll>freq;
+    ll n;
+    cin >> n;
+    vector<ll>v(n);
     for (ll i = 0; i < n; ++i) {
-        ll x;
-        cin >> x;
-        s.insert(x);
-        freq[x]++;
+        cin >> v[i];
     }
-    ll l = 1, r = 0;
-    bool found = false;
-    for (auto i = s.begin(); i != s.end(); ++i) {
-        if(freq[*i] >= k)
+    sort(all(v));
+    ll counter = 0;
+    ll l = n / 2 - 1, r = n - 1;
+    while (r > n / 2 , l >= 0)
+    {
+        if(v[l] * 2 <= v[r])
         {
-            found = true;
-            ll cur_l , cur_r , last = *i;
-            cur_l = *i;
-            while (freq[*i] >= k && i != s.end())
-            {
-                i++;
-                if(*i - last != 1)
-                {
-                    break;
-                }
-                last = *i;
-            }
-            i--;
-            cur_r = *i;
-            if(cur_r - cur_l >= r - l)
-            {
-                l = cur_l;
-                r = cur_r;
-            }
+            l--;
+            r--;
+            counter++;
+        }
+        else
+        {
+            l--;
         }
     }
-    if(!found)
-    {
-        cout << -1 << nl;
-        return;
-    }
-    cout << l << ' ' << r << nl;
+    cout << n - counter << nl;
 }
 
 void file()
@@ -87,7 +83,7 @@ int main() {
     file();
     fast();
     ll t = 1;
-    cin >> t;
+    // cin >> t;
     while(t--)
     {
         solve();

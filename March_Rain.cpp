@@ -1,3 +1,7 @@
+//
+// DATE : Created by Gamal on 7/9/2024.
+// LINK : https://vjudge.net/contest/589623#problem/AC
+
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -39,26 +43,49 @@ void solve()
 {
     ll n , k;
     cin >> n >> k;
-    vector<ll>div;
-    for (ll i = 1; i * i<= n; ++i) {
-        if(n % i == 0)
+    vector<ll>holes(n);
+    for (ll i = 0; i < n; ++i) {
+        cin >> holes[i];
+    }
+    ll left = 1 , right = 1e9 , ans;
+    while (left <= right)
+    {
+        ll mid = (right + left) / 2;
+        ll l = 0 , r = 0;
+        ll k_copy = k;
+        while (k_copy)
         {
-            div.push_back(i);
-            if(i != n / i)
+            if(r == n)
             {
-                div.push_back(n/i);
+                break;
+            }
+            if(holes[r] - holes[l] + 1 < mid)
+            {
+                r++;
+            }
+            else if(holes[r] - holes[l] + 1 > mid)
+            {
+                k_copy--;
+                l = r;
+            }
+            else
+            {
+                r++;
+                l = r;
+                k_copy--;
             }
         }
+        if(r == n)
+        {
+            ans = mid;
+            right = mid - 1;
+        }
+        else
+        {
+            left = mid + 1;
+        }
     }
-    sort(all(div));
-    if(k > div.size())
-    {
-        cout << -1 << nl;
-    }
-    else
-    {
-        cout << div[k-1] << nl;
-    }
+    cout << ans << nl;
 }
 
 void file()
@@ -78,7 +105,7 @@ int main() {
     file();
     fast();
     ll t = 1;
-    // cin >> t;
+     cin >> t;
     while(t--)
     {
         solve();

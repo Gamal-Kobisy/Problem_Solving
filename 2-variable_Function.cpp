@@ -1,6 +1,6 @@
 //
-// DATE : Created by Gamal on 6/11/2024.
-// LINK : https://vjudge.net/contest/588093#problem/B
+// DATE : Created by Gamal on 6/29/2024.
+// LINK : https://vjudge.net/contest/589623#problem/K
 
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
@@ -12,6 +12,8 @@
 #define f1(n) for(int i=1;i<n;i++)
 #define f0(n) for(int i=0;i<n;++i)
 #define fe(v) for(auto & it:v)
+#define pi 3.141592653589793238462643383279502884197
+#define e 2.718281828459045
 using namespace std;
 using namespace __gnu_pbds;
 struct un_ordered
@@ -21,55 +23,49 @@ struct un_ordered
         return true;
     }
 };
+long long gcd(long long a, long long b) {
+    while (b != 0) {
+        long long temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+
+long long lcm(long long a, long long b) {
+    return a / gcd(a, b) * b;  // Use the GCD to calculate the LCM
+}
+
 template <class T>
 using ordered_set = tree<T, null_type, un_ordered, rb_tree_tag, tree_order_statistics_node_update>;
 
-void solve()
-{
-    ll n , k;
-    cin >> n >> k;
-    set<ll>s;
-    map<ll,ll>freq;
-    for (ll i = 0; i < n; ++i) {
-        ll x;
-        cin >> x;
-        s.insert(x);
-        freq[x]++;
-    }
-    ll l = 1, r = 0;
-    bool found = false;
-    for (auto i = s.begin(); i != s.end(); ++i) {
-        if(freq[*i] >= k)
+int64_t calculate_x(int64_t i, int64_t j) {
+    return (i + j) * (i * i + j * j);
+}
+
+void solve() {
+    int64_t n;
+    cin >> n;
+    int64_t ans = INT64_MAX;
+    for (int64_t a = 0; a <= 1300000; ++a) {
+        int64_t l = 0 , r = 1300000;
+        while (l <= r)
         {
-            found = true;
-            ll cur_l , cur_r , last = *i;
-            cur_l = *i;
-            while (freq[*i] >= k && i != s.end())
+            int64_t b = (r + l) / 2;
+            int64_t X = calculate_x(a , b);
+            if(X >= n)
             {
-                i++;
-                if(*i - last != 1)
-                {
-                    break;
-                }
-                last = *i;
+                ans = min(ans , X);
+                r = b - 1;
             }
-            i--;
-            cur_r = *i;
-            if(cur_r - cur_l >= r - l)
+            else
             {
-                l = cur_l;
-                r = cur_r;
+                l = b + 1;
             }
         }
     }
-    if(!found)
-    {
-        cout << -1 << nl;
-        return;
-    }
-    cout << l << ' ' << r << nl;
+    cout << ans << nl;
 }
-
 void file()
 {
 #ifndef ONLINE_JUDGE
@@ -87,7 +83,7 @@ int main() {
     file();
     fast();
     ll t = 1;
-    cin >> t;
+    // cin >> t;
     while(t--)
     {
         solve();

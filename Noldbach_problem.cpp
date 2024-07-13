@@ -1,3 +1,7 @@
+//
+// DATE : Created by Gamal on 7/11/2024.
+// LINK : https://vjudge.net/contest/592750#problem/F
+
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -35,29 +39,49 @@ long long lcm(long long a, long long b) {
 template <class T>
 using ordered_set = tree<T, null_type, un_ordered, rb_tree_tag, tree_order_statistics_node_update>;
 
+bool isPrime(ll num) {
+    if (num <= 1) return false;
+    if (num <= 3) return true;
+    if (num % 2 == 0 || num % 3 == 0) return false;
+    for (ll i = 5; i * i <= num; i += 6) {
+        if (num % i == 0 || num % (i + 2) == 0) return false;
+    }
+    return true;
+}
+
 void solve()
 {
     ll n , k;
     cin >> n >> k;
-    vector<ll>div;
-    for (ll i = 1; i * i<= n; ++i) {
-        if(n % i == 0)
+    vector<bool>Sieve(n + 1 , true);
+    vector<ll>primes;
+    for (ll i = 2; i <= n / 2 + 2; ++i) {
+        if(Sieve[i])
         {
-            div.push_back(i);
-            if(i != n / i)
-            {
-                div.push_back(n/i);
+            primes.push_back(i);
+            for (ll j = i * i; j <= n; j += i) {
+                Sieve[j] = false;
             }
         }
     }
-    sort(all(div));
-    if(k > div.size())
+    ll counter = 0;
+    for (ll i = 0; i < primes.size() - 1; ++i) {
+        if(isPrime(primes[i] + primes[i+1] + 1) && primes[i] + primes[i+1] + 1 <= n)
+        {
+            if(counter == k)
+            {
+                break;
+            }
+            counter++;
+        }
+    }
+    if(counter == k)
     {
-        cout << -1 << nl;
+        cout << "YES\n";
     }
     else
     {
-        cout << div[k-1] << nl;
+        cout << "NO\n";
     }
 }
 

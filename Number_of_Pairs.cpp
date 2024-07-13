@@ -1,3 +1,7 @@
+//
+// DATE : Created by Gamal on 7/8/2024.
+// LINK : https://vjudge.net/contest/589623#problem/S
+
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -37,30 +41,44 @@ using ordered_set = tree<T, null_type, un_ordered, rb_tree_tag, tree_order_stati
 
 void solve()
 {
-    ll n , k;
-    cin >> n >> k;
-    vector<ll>div;
-    for (ll i = 1; i * i<= n; ++i) {
-        if(n % i == 0)
-        {
-            div.push_back(i);
-            if(i != n / i)
-            {
-                div.push_back(n/i);
-            }
-        }
+    ll  n , l , r;
+    cin >> n >> l >> r;
+    vector<ll>nums(n);
+    for (ll i = 0; i < n; ++i) {
+        cin >> nums[i];
     }
-    sort(all(div));
-    if(k > div.size())
-    {
-        cout << -1 << nl;
+    sort(all(nums));
+    ll ans = 0;
+    for (int i = 0; i < n - 1; ++i) {
+        ans +=  upper_bound(nums.begin() + i + 1 , nums.end() , abs(r - nums[i])) - lower_bound(nums.begin() + i + 1 , nums.end() , abs(l - nums[i])) ;
     }
-    else
-    {
-        cout << div[k-1] << nl;
-    }
+
+    cout << ans << nl;
 }
 
+void done() {
+    int t;
+    cin >> t;
+    while (t--) {
+        ll n, l, r;
+        cin >> n >> l >> r;
+        vector<ll> v(n);
+        for (ll i = 0; i < n; i++)
+            cin >> v[i];
+        ll cntr = 0;
+        ordered_set<ll> st;
+        for (int i = 1; i < n; ++i) {
+            st.insert(v[i - 1]);
+            ll num1 = st.order_of_key(r - v[i]);
+            ll num2 = st.size() - st.order_of_key(l - v[i]);
+            if ((*(st.find_by_order(st.size() - 1)) >= (l - v[i])) &&*(st.find_by_order(st.size() - 1)) <= (r - v[i])) {
+                cntr += (abs(num2 - num1) + 1);
+            }
+
+        }
+        cout << cntr << '\n';
+    }
+}
 void file()
 {
 #ifndef ONLINE_JUDGE
@@ -78,7 +96,7 @@ int main() {
     file();
     fast();
     ll t = 1;
-    // cin >> t;
+    cin >> t;
     while(t--)
     {
         solve();

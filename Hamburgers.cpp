@@ -1,3 +1,7 @@
+//
+// DATE : Created by Gamal on 7/9/2024.
+// LINK : https://vjudge.net/contest/589623#problem/U
+
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -37,28 +41,58 @@ using ordered_set = tree<T, null_type, un_ordered, rb_tree_tag, tree_order_stati
 
 void solve()
 {
-    ll n , k;
-    cin >> n >> k;
-    vector<ll>div;
-    for (ll i = 1; i * i<= n; ++i) {
-        if(n % i == 0)
+    string s;
+    cin >> s;
+    vector<ll>needed(3);
+    for (int i = 0; i < s.size(); ++i) {
+        if(s[i] == 'B')
         {
-            div.push_back(i);
-            if(i != n / i)
-            {
-                div.push_back(n/i);
-            }
+            needed[0]++;
+        }
+        else if(s[i] == 'S')
+        {
+            needed[1]++;
+        }
+        else if(s[i] == 'C')
+        {
+            needed[2]++;
         }
     }
-    sort(all(div));
-    if(k > div.size())
+    vector<ll>have(3);
+    cin >> have[0] >> have[1] >> have[2];
+    vector<ll>price(3);
+    cin >> price[0] >> price[1] >> price[2];
+    ll rubles;
+    cin >> rubles;
+    ll l = 0 , r = 1000000000100, ans ;
+    while (l <= r)
     {
-        cout << -1 << nl;
+        ll mid = (r + l) / 2;
+        ll needed_rubles = 0;
+        vector<ll>total_need(3);
+        for (int i = 0; i < 3; ++i) {
+            total_need[i] = mid * needed[i];
+            if(total_need[i] >= have[i])
+            {
+                total_need[i] -= have[i];
+            }
+            else
+            {
+                total_need[i] = 0;
+            }
+            needed_rubles += total_need[i] * price[i];
+        }
+        if (rubles >= needed_rubles)
+        {
+            l = mid + 1;
+            ans = mid;
+        }
+        else
+        {
+            r = mid - 1;
+        }
     }
-    else
-    {
-        cout << div[k-1] << nl;
-    }
+    cout << ans << nl;
 }
 
 void file()

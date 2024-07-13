@@ -28,25 +28,22 @@ using ordered_set = tree<T, null_type, un_ordered, rb_tree_tag, tree_order_stati
 
 void solve()
 {
-    string s ;
+    string s;
     cin >> s;
-    int res = 0;
-    int current_min = 0;
-    int cur = 0;
-
-    for (int i = 0; i < s.length(); ++i) {
+    ll res = 0 , cur = 0 , min_sum = 0;
+    for (ll i = 0; i < s.size(); ++i) {
         if (s[i] == '+') {
-            cur += 1;
+            cur++;
         } else {
-            cur -= 1;
+            cur--;
         }
-
-        if (cur < current_min) {
-            current_min = cur;
+        if (cur < min_sum) {
             res += (i + 1);
+            min_sum = cur;
         }
     }
-    cout << res + s.length() << nl;
+    res += s.size();
+    cout << res << '\n';
 }
 
 void file()
