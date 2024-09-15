@@ -1,10 +1,11 @@
+// LINK : https://codeforces.com/problemset/problem/510/C
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
 #define all(a) a.begin(),a.end()
 #define allr(a) a.rbegin(),a.rend()
-#define no cout<<"NO\n";
-#define yes cout<<"YES\n";
+#define no cout<<"NO\n"
+#define yes cout<<"YES\n"
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 
@@ -16,37 +17,86 @@ using namespace std;
  ███████╗██║ ╚████║╚██████╔╝     ╚██████╔╝██║  ██║██║ ╚═╝ ██║██║  ██║███████╗
  ╚══════╝╚═╝  ╚═══╝ ╚═════╝       ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝
 */
-template <typename T>
-void get_vec(vector<T>& v) {
-    for (ll i = 0; i < v.size(); ++i) {
-        cin >> v[i];
+// ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+int n;
+vector<string>words(100);
+vector<vector<int>>adj(26);
+vector<bool>vis(26 , false) , ancs(26 , false);
+vector<char> last;
+bool imp = false;
+void dfs(int v)
+{
+    ancs[v] = true;
+    for(int u : adj[v])
+    {
+        if(ancs[u])
+        {
+            imp = true;
+            return;
+        }
+        if(vis[u])
+        {
+            continue;
+        }
+        if(!vis[u])
+        {
+            dfs(u);
+        }
     }
+    vis[v] = true;
+    ancs[v] = false;
+    last.push_back(v + 'a');
 }
-template <typename T>
-void out_vec(vector<T>& v) {
-    for (ll i = 0; i < v.size(); ++i) {
-        cout << v[i] << ' ';
+
+void solve() {
+    cin >> n;
+    for (ll i = 0; i < n; ++i) {
+        cin >> words[i];
+    }
+    vector<int>v;
+    for (ll i = 0; i < n - 1; ++i) {
+        ll mini = min(words[i].size() , words[i + 1].size());
+        bool valid = false;
+        for (ll j = 0; j < mini; ++j) {
+            if(words[i][j] != words[i + 1][j])
+            {
+                v.push_back(words[i][j] - 'a');
+                adj[words[i][j] - 'a'].push_back(words[i + 1][j] - 'a');
+                valid = true;
+                break;
+            }
+        }
+        if(!valid && (words[i].size() > words[i + 1].size()))
+        {
+            cout << "Impossible" << nl;
+            return;
+        }
+    }
+    for (int i = 0 ; i < 26 ; i++) {
+        if(!vis[i] && adj[i].size())
+        {
+            dfs(i);
+        }
+    }
+    if(imp)
+    {
+        cout << "Impossible" << nl;
+    }
+    else
+    {
+        reverse(all(last));
+        for(char c : last)
+        {
+            cout << c;
+        }
+        for (ll i = 0; i < 26; ++i) {
+            if(!vis[i])
+            {
+                cout << char(i + 'a');
+            }
+        }
     }
     cout << nl;
-}
-// ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-ll digitSum(ll n) {
-    ll sum = 0;
-    n = abs(n); // Handle negative numbers
-    while (n > 0) {
-        sum += n % 10; // Extract the last digit and add it to the sum
-        n /= 10;       // Remove the last digit
-    }
-    return sum;
-}
-void solve() {
-    ll n;
-    cin >> n;
-    set<ll>s;
-    for (ll i = n; i < 1e8; i += n) {
-        s.insert(digitSum(i));
-    }
-    cout << *s.begin() << nl;
 }
 void file()
 {

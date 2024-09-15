@@ -1,3 +1,4 @@
+// LINK : https://codeforces.com/problemset/problem/96/B
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -25,30 +26,37 @@ void get_vec(vector<T>& v) {
 template <typename T>
 void out_vec(vector<T>& v) {
     for (ll i = 0; i < v.size(); ++i) {
-        cout << v[i] << ' ';
+        cout << v[i];
     }
-    cout << nl;
 }
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void solve() {
-    ll n , m;
-    cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
+    string s;
+    cin >> s;
+    if(s.size() & 1 || (stoll(s) > stoll(string(s.size() / 2 , '7') + string(s.size() / 2 , '4'))))
     {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
-    }
-    if(r < l)
-    {
-        no
+        for (ll i = 0; i < s.size() / 2 + 1; ++i) {
+            cout << 4;
+        }
+        for (ll i = 0; i < s.size() / 2 + 1; ++i) {
+            cout << 7;
+        }
     }
     else
     {
-        yes
+       string ans;
+        for (ll i = 0; i < s.size() / 2; ++i) {
+            ans += '4';
+        }
+        for (ll i = s.size() / 2; i < s.size(); ++i) {
+            ans +=  '7';
+        }
+        while(stoll(ans) < stoll(s))
+        {
+            next_permutation(ans.begin() , ans.end());
+        }
+        cout << ans << nl;
     }
 }
 void file()

@@ -1,6 +1,6 @@
 //
-// DATE : Created by Gamal on 7/11/2024.
-// LINK : https://vjudge.net/contest/592750#problem/H
+// Created by Gamal on 7/22/2024.
+//
 
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
@@ -13,7 +13,6 @@
 #define f0(n) for(int i=0;i<n;++i)
 #define fe(v) for(auto & it:v)
 #define pi 3.141592653589793238462643383279502884197
-#define e 2.718281828459045
 using namespace std;
 using namespace __gnu_pbds;
 struct un_ordered
@@ -38,48 +37,43 @@ long long lcm(long long a, long long b) {
 
 template <class T>
 using ordered_set = tree<T, null_type, un_ordered, rb_tree_tag, tree_order_statistics_node_update>;
-bool is_prime(int n) {
-    if (n < 2) return false;
-    for (int i = 2; i <= sqrt(n); ++i) {
-        if (n % i == 0) return false;
-    }
-    return true;
-}
 
-// Function to find the next prime greater than or equal to n
-ll next_prime(ll n) {
-    while (!is_prime(n)) {
-        ++n;
-    }
-    return n;
-}
 void solve()
 {
-    ll n ;
+    ll n;
     cin >> n;
-    vector<ll>v(n);
-    ll maxx = LLONG_MIN;
-    for (ll i = 0; i < n; ++i) {
-        cin >> v[i];
-        maxx = max(maxx , v[i]);
-    }
-    map<ll , bool>d;
-
-    for (ll i = 2; i * i <= maxx; i = next_prime(i + 1)) {
-        d[i * i] = true;
-    }
-
-    for(ll i : v)
+    ll cur = 2 , nodes = 1;
+    ll l = 1 , r = log(n) / log(2);
+    while (l <= r)
     {
-        if(d[i])
+        ll mid = (l + r) / 2;
+        for (ll i = 1; i < log(n) / log(2.0) && nodes < n; ++i) {
+            if(mid == i)
+            {
+                cur++;
+            }
+            nodes += cur;
+            cur += cur;
+        }
+        if(nodes > n)
         {
-            cout << "YES\n";
+            r = mid - 1;
+            cur = 2;
+            nodes = 1;
+        }
+        else if(nodes < n)
+        {
+            l = mid + 1;
+            cur = 2;
+            nodes = 1;
         }
         else
         {
-            cout << "NO\n";
+            cout << mid << nl;
+            return;
         }
     }
+    cout << -1 << nl;
 }
 
 void file()
@@ -99,7 +93,7 @@ int main() {
     file();
     fast();
     ll t = 1;
-    // cin >> t;
+     cin >> t;
     while(t--)
     {
         solve();

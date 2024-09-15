@@ -1,12 +1,18 @@
+// LINK : https://codeforces.com/problemset/problem/1337/C
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
 #define all(a) a.begin(),a.end()
 #define allr(a) a.rbegin(),a.rend()
-#define no cout<<"NO\n";
-#define yes cout<<"YES\n";
+#define no cout<<"NO\n"
+#define yes cout<<"YES\n"
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
+template <class T>
+using ordered_set = tree<T, null_type, greater_equal<>, rb_tree_tag, tree_order_statistics_node_update>;
 
 /*
  ███████╗███╗   ██╗ ██████╗       ██████╗  █████╗ ███╗   ███╗ █████╗ ██╗
@@ -16,40 +22,54 @@ using namespace std;
  ███████╗██║ ╚████║╚██████╔╝     ╚██████╔╝██║  ██║██║ ╚═╝ ██║██║  ██║███████╗
  ╚══════╝╚═╝  ╚═══╝ ╚═════╝       ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝
 */
-template <typename T>
-void get_vec(vector<T>& v) {
-    for (ll i = 0; i < v.size(); ++i) {
-        cin >> v[i];
-    }
-}
-template <typename T>
-void out_vec(vector<T>& v) {
-    for (ll i = 0; i < v.size(); ++i) {
-        cout << v[i] << ' ';
-    }
-    cout << nl;
-}
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+const ll N = 2e5 + 1;
+ll n , k;
+vector<vector<ll>>adj(N);
+vector<bool>vis(N) , industry(N);
+
+ordered_set<ll>happinesses;
+
+void dfs(ll v , ll happ)
+{
+    if(industry[v])
+    {
+        happinesses.insert(happ);
+    }
+    vis[v] = true;
+    for(ll u : adj[v])
+    {
+        if(!vis[u])
+        {
+            dfs(u , (industry[u] ? happ : happ + 1));
+        }
+    }
+}
 
 void solve() {
-    ll n , m;
-    cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
-    {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
+    cin >> n >> k;
+    for (ll i = 0; i < n - 1; ++i) {
+        ll a , b;
+        cin >> a >> b;
+        adj[a].push_back(b);
+        adj[b].push_back(a);
     }
-    if(r < l)
-    {
-        no
+    ll leafs = 0;
+    for (ll i = 2; i <= n; ++i) {
+        if(adj[i].size() == 1)
+        {
+            industry[i] = true;
+            leafs++;
+        }
     }
-    else
-    {
-        yes
+    dfs(1 , 1);
+    ll ans = 0;
+    auto it = happinesses.begin();
+    for (ll i = 0; i < k; ++i) {
+        ans += *it;
+        it++;
     }
+    cout << (leafs < k ? ans + k - leafs : ans) << nl;
 }
 void file()
 {

@@ -29,27 +29,46 @@ void out_vec(vector<T>& v) {
     }
     cout << nl;
 }
+
+ll gcd(ll a, ll b) {
+    while (b != 0) {
+        ll temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+
+ll lcm(ll a, ll b) {
+    return std::abs(a * b) / gcd(a, b);
+}
+
+ll lcm_Vector(const std::vector<ll>& nums) {
+    ll result = nums[0];
+    for (size_t i = 1; i < nums.size(); ++i) {
+        result = lcm(result, nums[i]);
+    }
+    return result;
+}
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void solve() {
-    ll n , m;
-    cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
-    {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
+    ll n;
+    cin >> n;
+    vector<ll>divs;
+    pair<ll,ll> ans = {1 , n};
+    for (ll i = 2; i * i <= n; ++i) {
+        if(n % i == 0)
+        {
+            ll div1 = i;
+            ll div2 = n / i;
+            if(div1 + div2 < ans.first + ans.second && lcm(div1 , div2) == n)
+            {
+                ans = {div1 , div2};
+            }
+        }
     }
-    if(r < l)
-    {
-        no
-    }
-    else
-    {
-        yes
-    }
+    cout << ans.first << ' ' << ans.second << nl;
 }
 void file()
 {

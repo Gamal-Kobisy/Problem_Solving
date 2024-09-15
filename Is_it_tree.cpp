@@ -1,3 +1,4 @@
+// LINK : https://www.spoj.com/problems/PT07Y/
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -30,26 +31,56 @@ void out_vec(vector<T>& v) {
     cout << nl;
 }
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+const ll N = 1e5 + 1;
+
+vector<vector<ll>>adj(N);
+vector<bool>vis(N , false);
+bool cycle;
+void dfs(ll v , ll parent)
+{
+    vis[v] = true;
+    for (ll u: adj[v]) {
+        if(parent == u)
+        {
+            continue;
+        }
+        if(vis[u])
+        {
+            cycle = true;
+            return;
+        }
+        else
+        {
+            dfs(u , v);
+        }
+    }
+}
 
 void solve() {
+    cycle = false;
     ll n , m;
     cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
-    {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
-    }
-    if(r < l)
+    if(m != n - 1)
     {
         no
+        return;
     }
-    else
+    for (ll i = 0; i < m; ++i) {
+        ll a , b;
+        cin >> a >> b;
+        adj[a].push_back(b);
+        adj[b].push_back(a);
+    }
+    for (ll i = 1; i <= n; ++i) {
+        if(!vis[i])
+        dfs(i ,-1);
+    }
+    if(cycle)
     {
-        yes
+        no
+        return;
     }
+    yes
 }
 void file()
 {

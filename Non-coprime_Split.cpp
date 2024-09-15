@@ -29,27 +29,39 @@ void out_vec(vector<T>& v) {
     }
     cout << nl;
 }
+
+const ll N = 1e7;
+vector<ll> spf(N + 1);  // Initialize a vector to store SPF for each number
+void SPF(ll n = N) {
+    for (ll i = 1; i <= n; ++i) {
+        spf[i] = i;  // Initialize SPF as the number itself
+    }
+
+    for (ll i = 2; i * i <= n; ++i) {
+        if (spf[i] == i) {  // i is a prime number
+            for (ll j = i * i; j <= n; j += i) {
+                if (spf[j] == j) {
+                    spf[j] = i;  // Update SPF[j] to the smallest prime factor
+                }
+            }
+        }
+    }
+}
+
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void solve() {
-    ll n , m;
-    cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
-    {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
+    ll  a , b;
+    cin >> a >> b;
+    bool ok = false;
+    for (ll i = a; i <= b ; ++i) {
+        if(spf[i] != i)
+        {
+            cout << i - spf[i] << ' ' << spf[i] << nl;
+            return;
+        }
     }
-    if(r < l)
-    {
-        no
-    }
-    else
-    {
-        yes
-    }
+    cout << -1 << nl;
 }
 void file()
 {
@@ -63,13 +75,13 @@ int main() {
     file();
     ENG_GAMAL
 // test-independent code ——————————————————————
+    SPF();
 // ————————————————————————————————————————————
     ll t = 1;
-//    cin >> t;
+    cin >> t;
     while(t--)
     {
         solve();
     }
-
     return 0;
 }

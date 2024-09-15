@@ -1,10 +1,11 @@
+// LINK : https://codeforces.com/problemset/problem/500/A
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
 #define all(a) a.begin(),a.end()
 #define allr(a) a.rbegin(),a.rend()
-#define no cout<<"NO\n";
-#define yes cout<<"YES\n";
+#define no cout<<"NO\n"
+#define yes cout<<"YES\n"
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 
@@ -16,39 +17,39 @@ using namespace std;
  ███████╗██║ ╚████║╚██████╔╝     ╚██████╔╝██║  ██║██║ ╚═╝ ██║██║  ██║███████╗
  ╚══════╝╚═╝  ╚═══╝ ╚═════╝       ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝
 */
-template <typename T>
-void get_vec(vector<T>& v) {
-    for (ll i = 0; i < v.size(); ++i) {
-        cin >> v[i];
-    }
-}
-template <typename T>
-void out_vec(vector<T>& v) {
-    for (ll i = 0; i < v.size(); ++i) {
-        cout << v[i] << ' ';
-    }
-    cout << nl;
-}
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+const ll N = 1e5 + 1;
+int n , t;
+vector<int>adj[N];
+vector<bool>vis(N , false);
 
-void solve() {
-    ll n , m;
-    cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
+bool dfs(int v)
+{
+    vis[v] = true;
+    if(v == t)
     {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
+        return true;
     }
-    if(r < l)
+    bool c = false;
+    for (int u : adj[v]) {
+        c += dfs(u);
+    }
+    return c;
+}
+void solve() {
+    cin >> n >> t;
+    for (ll i = 1; i < n; ++i) {
+        int a ;
+        cin >> a;
+        adj[i].push_back(i + a);
+    }
+    if(dfs(1))
     {
-        no
+        yes;
     }
     else
     {
-        yes
+        no;
     }
 }
 void file()

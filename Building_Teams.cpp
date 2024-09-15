@@ -1,10 +1,11 @@
+// LINK : https://cses.fi/problemset/task/1668/
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
 #define all(a) a.begin(),a.end()
 #define allr(a) a.rbegin(),a.rend()
-#define no cout<<"NO\n";
-#define yes cout<<"YES\n";
+#define no cout<<"NO\n"
+#define yes cout<<"YES\n"
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 
@@ -16,39 +17,45 @@ using namespace std;
  ███████╗██║ ╚████║╚██████╔╝     ╚██████╔╝██║  ██║██║ ╚═╝ ██║██║  ██║███████╗
  ╚══════╝╚═╝  ╚═══╝ ╚═════╝       ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝
 */
-template <typename T>
-void get_vec(vector<T>& v) {
-    for (ll i = 0; i < v.size(); ++i) {
-        cin >> v[i];
-    }
-}
-template <typename T>
-void out_vec(vector<T>& v) {
-    for (ll i = 0; i < v.size(); ++i) {
-        cout << v[i] << ' ';
-    }
-    cout << nl;
-}
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
+vector<vector<int>>adj(1e5 + 1);
+vector<short>color(1e5 + 1);
+int n , m;
+bool IMPOSSIBLE = false;
+void dfs(int v , short team)
+{
+    color[v] = team;
+    short adj_color =  team == 2? 1 : 2;
+    for (int u: adj[v]) {
+        if(color[u] && color[u] != adj_color)
+        {
+            IMPOSSIBLE = true;
+            return;
+        }
+        if(!color[u])
+        {
+            dfs(u , adj_color);
+        }
+    }
+}
 void solve() {
-    ll n , m;
     cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
-    {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
+    for (ll i = 0; i < m; ++i) {
+        int a , b;
+        cin >> a >> b;
+        adj[a].push_back(b);
+        adj[b].push_back(a);
     }
-    if(r < l)
-    {
-        no
+    for (ll i = 1; i <= n ; ++i) {
+        dfs(i , (color[i] == 1)? 1 : 2);
     }
-    else
+    if(IMPOSSIBLE)
     {
-        yes
+        cout << "IMPOSSIBLE" << nl;
+        return;
+    }
+    for (ll i = 1; i <= n ; ++i) {
+        cout << color[i] << ' ';
     }
 }
 void file()

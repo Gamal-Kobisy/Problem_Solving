@@ -32,24 +32,22 @@ void out_vec(vector<T>& v) {
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void solve() {
-    ll n , m;
-    cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
-    {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
+    int n;
+    cin >> n;
+    vector<ll>v(n);
+    get_vec(v);
+    ll ans = 0;
+    for (ll i = 0; i < (1 << n); ++i) {
+        ll t_ans = 0;
+        for (ll j = 0; j < n; ++j) {
+            if((1 << j) & i)
+            {
+                t_ans |= v[j];
+            }
+        }
+        ans += t_ans;
     }
-    if(r < l)
-    {
-        no
-    }
-    else
-    {
-        yes
-    }
+    cout << ans << nl;
 }
 void file()
 {

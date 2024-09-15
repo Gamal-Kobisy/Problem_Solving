@@ -31,25 +31,66 @@ void out_vec(vector<T>& v) {
 }
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+ll gcd(ll a, ll b) {
+    while (b != 0) {
+        ll temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+
+ll lcm(ll a, ll b) {
+    return std::abs(a * b) / gcd(a, b);
+}
+
+ll lcm_Vector(const std::vector<ll>& nums) {
+    ll result = nums[0];
+    for (size_t i = 1; i < nums.size(); ++i) {
+        result = lcm(result, nums[i]);
+    }
+    return result;
+}
+
+string pattern(string &s) {
+    int n = s.size();
+    for (int len = 1; len <= n; ++len) {
+        if (n % len == 0) {
+            string pattern = s.substr(0, len);
+            std::string repeated = "";
+            for (int i = 0; i < n / len; ++i) {
+                repeated += pattern;
+            }
+            if (repeated == s) {
+                return pattern;
+            }
+        }
+    }
+    return s;
+}
+
 void solve() {
-    ll n , m;
-    cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
+    string s ,t;
+    cin >> s >> t;
+    if(t.size() > s.size())
     {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
+        swap(s , t);
     }
-    if(r < l)
-    {
-        no
+    string patt = pattern(t);
+    string ans = "";
+    for (ll i = 0; i < lcm(s.size() , t.size()) / patt.size(); ++i) {
+        ans += patt;
     }
-    else
-    {
-        yes
+    for (ll i = 0; i < ans.size(); i += s.size()) {
+        for (ll j = 0; j < s.size(); ++j) {
+            if(ans[i + j] != s[j])
+            {
+                cout << -1 << nl;
+                return;
+            }
+        }
     }
+    cout << ans << nl;
 }
 void file()
 {
@@ -65,7 +106,7 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll t = 1;
-//    cin >> t;
+    cin >> t;
     while(t--)
     {
         solve();

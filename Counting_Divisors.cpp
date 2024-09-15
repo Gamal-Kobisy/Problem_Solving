@@ -32,24 +32,7 @@ void out_vec(vector<T>& v) {
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void solve() {
-    ll n , m;
-    cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
-    {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
-    }
-    if(r < l)
-    {
-        no
-    }
-    else
-    {
-        yes
-    }
+
 }
 void file()
 {
@@ -63,12 +46,20 @@ int main() {
     file();
     ENG_GAMAL
 // test-independent code ——————————————————————
+vector<ll>ans(1e6 + 1);
+    for (ll i = 1; i <= 1e6; ++i) {
+        for (ll j = i; j <= 1e6; j += i) {
+            ans[j]++;
+        }
+    }
 // ————————————————————————————————————————————
     ll t = 1;
-//    cin >> t;
+    cin >> t;
     while(t--)
     {
-        solve();
+        ll n;
+        cin >> n ;
+        cout << ans[n] << nl;
     }
 
     return 0;

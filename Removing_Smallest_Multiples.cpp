@@ -31,25 +31,37 @@ void out_vec(vector<T>& v) {
 }
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void solve() {
-    ll n , m;
-    cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
-    {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
+void solve()
+{
+    ll n;
+    cin >> n;
+    string s;
+    cin >> s;
+    vector<bool>T(n + 1);
+    vector<ll>ans(n + 1 , LLONG_MAX);
+    for (ll i = 1; i <= n; ++i) {
+        if(s[i -1] == '1')
+        {
+            ans[i] = 0;
+            T[i] = 1;
+        }
     }
-    if(r < l)
-    {
-        no
+    ll cost = 0 , i;
+    for (i = 1; i <= n && !T[i] ; i++) {
+        ans[i] = min(ans[i] , 1ll);
     }
-    else
-    {
-        yes
+    for (i = 2; i <= n; ++i) {
+        ll j = i;
+        while (!T[j] && j <= n)
+        {
+            ans[j] = min(ans[j] , i);
+            j += i;
+        }
     }
+    for (ll j = 1; j <= n ; ++j) {
+        cost += ans[j];
+    }
+    cout << cost << nl;
 }
 void file()
 {
@@ -65,7 +77,7 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll t = 1;
-//    cin >> t;
+    cin >> t;
     while(t--)
     {
         solve();

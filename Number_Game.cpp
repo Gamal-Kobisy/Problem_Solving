@@ -31,24 +31,72 @@ void out_vec(vector<T>& v) {
 }
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void solve() {
-    ll n , m;
-    cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
-    {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
+long long spf(long long n) {
+    if (n % 2 == 0) return 2;
+    for (long long i = 3; i * i <= n; i += 2) {
+        if (n % i == 0) return i;
     }
-    if(r < l)
+    return n;
+}
+
+void solve()
+{
+    ll n;
+    cin >> n;
+    if(n == 1)
     {
-        no
+        cout << "FastestFinger" << nl;
+        return;
+    }
+    if(n == 2)
+    {
+        cout << "Ashishgup" << nl;
+        return;
+    }
+    if(n % 2)
+    {
+        cout << "Ashishgup" << nl;
     }
     else
     {
-        yes
+        ll n_copy = n , even_divs = 0 , odd_divs = 0;
+        while (n % 2 == 0)
+        {
+            n /= 2;
+            even_divs++;
+        }
+        while (n != 1 )
+        {
+            ll odd_div = spf(n);
+            while (n % odd_div == 0)
+            {
+                n /= odd_div;
+                odd_divs++;
+            }
+            if (odd_divs > 1)
+            {
+                break;
+            }
+        }
+        if(odd_divs == 0)
+        {
+            cout << "FastestFinger" << nl;
+        }
+        else if(even_divs > 1)
+        {
+            cout << "Ashishgup" << nl;
+        }
+        else if(even_divs == 1)
+        {
+            if(odd_divs > 1)
+            {
+                cout << "Ashishgup" << nl;
+            }
+            else
+            {
+                cout << "FastestFinger" << nl;
+            }
+        }
     }
 }
 void file()
@@ -65,7 +113,7 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll t = 1;
-//    cin >> t;
+    cin >> t;
     while(t--)
     {
         solve();

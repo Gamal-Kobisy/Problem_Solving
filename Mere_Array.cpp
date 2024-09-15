@@ -31,25 +31,41 @@ void out_vec(vector<T>& v) {
 }
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+ll gcd(ll a, ll b) {
+    while (b != 0) {
+        ll temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+ll gcd_Vector(const std::vector<ll>& nums) {
+    ll result = nums[0];
+    for (size_t i = 1; i < nums.size(); ++i) {
+        result = gcd(result, nums[i]);
+        if (result == 1) {
+            return 1; // GCD is 1, no need to continue
+        }
+    }
+    return result;
+}
+
 void solve() {
-    ll n , m;
-    cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
-    {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
+    ll n;
+    cin >> n;
+    vector<ll>v(n) , sorted;
+    get_vec(v);
+    ll mini = *min_element(all(v));
+    sorted = v;
+    sort(all(sorted));
+    for (ll i = 0; i < n; ++i) {
+        if(gcd(mini , sorted[i]) != mini && v[i] != sorted[i])
+        {
+            no
+            return;
+        }
     }
-    if(r < l)
-    {
-        no
-    }
-    else
-    {
-        yes
-    }
+    yes
 }
 void file()
 {
@@ -65,7 +81,7 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll t = 1;
-//    cin >> t;
+    cin >> t;
     while(t--)
     {
         solve();

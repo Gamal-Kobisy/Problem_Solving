@@ -32,23 +32,33 @@ void out_vec(vector<T>& v) {
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void solve() {
-    ll n , m;
-    cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
+    ll l , r , k;
+    cin >> l  >> r >> k;
+    if(r == 1)
     {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
+        no;
+        return;
     }
-    if(r < l)
+    if(l == r)
     {
-        no
+        yes;
+        return;
     }
-    else
+    if(l % 2 == 0)
+    {
+        l++;
+    }
+    if(r % 2 == 0)
+    {
+        r--;
+    }
+    ll moves = (r - l) / 2 + 1;
+    if(moves <= k)
     {
         yes
+    } else
+    {
+        no
     }
 }
 void file()
@@ -65,7 +75,7 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll t = 1;
-//    cin >> t;
+    cin >> t;
     while(t--)
     {
         solve();

@@ -32,24 +32,9 @@ void out_vec(vector<T>& v) {
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void solve() {
-    ll n , m;
-    cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
-    {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
-    }
-    if(r < l)
-    {
-        no
-    }
-    else
-    {
-        yes
-    }
+    ll n;
+    cin >> n;
+    cout << 1 << ' ' << n - 1 << nl;
 }
 void file()
 {
@@ -65,7 +50,7 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll t = 1;
-//    cin >> t;
+    cin >> t;
     while(t--)
     {
         solve();

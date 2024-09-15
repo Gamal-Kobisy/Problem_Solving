@@ -1,6 +1,6 @@
 //
-// DATE : Created by Gamal on 7/11/2024.
-// LINK : https://vjudge.net/contest/592750#problem/H
+// DATE : Created by Gamal on 7/19/2024.
+// LINK : https://vjudge.net/contest/592750#problem/J
 
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
@@ -38,50 +38,63 @@ long long lcm(long long a, long long b) {
 
 template <class T>
 using ordered_set = tree<T, null_type, un_ordered, rb_tree_tag, tree_order_statistics_node_update>;
-bool is_prime(int n) {
-    if (n < 2) return false;
-    for (int i = 2; i <= sqrt(n); ++i) {
-        if (n % i == 0) return false;
-    }
-    return true;
-}
 
-// Function to find the next prime greater than or equal to n
-ll next_prime(ll n) {
-    while (!is_prime(n)) {
-        ++n;
-    }
-    return n;
-}
-void solve()
+vector<bool>sieve(30000 + 1 , true);
+vector<ll>Primes;
+void Sieve()
 {
-    ll n ;
+    for (ll i = 2; i <= 30000 ; ++i) {
+        if(sieve[i])
+        {
+            Primes.push_back(i);
+            for (ll j = i * i; j <= 30000 ; j += i) {
+                sieve[j] = false;
+            }
+        }
+    }
+}
+void solve() {
+
+    ll n;
     cin >> n;
-    vector<ll>v(n);
-    ll maxx = LLONG_MIN;
+    vector<ll> v(n);
+    bool ok = false;
+    map<ll,ll>freq;
     for (ll i = 0; i < n; ++i) {
         cin >> v[i];
-        maxx = max(maxx , v[i]);
+        for(ll j : Primes)
+        {
+            if(v[i] % j == 0)
+            {
+                freq[j]++;
+                while (v[i] % j == 0)
+                {
+                    v[i] /= j;
+                }
+            }
+            if(freq[j] >= 2)
+            {
+                ok = true;
+            }
+        }
+        if(v[i] > 1)
+        {
+            freq[v[i]]++;
+            if(freq[v[i]] >= 2)
+            {
+                ok = true;
+            }
+        }
     }
-    map<ll , bool>d;
-
-    for (ll i = 2; i * i <= maxx; i = next_prime(i + 1)) {
-        d[i * i] = true;
-    }
-
-    for(ll i : v)
+    if(ok)
     {
-        if(d[i])
-        {
-            cout << "YES\n";
-        }
-        else
-        {
-            cout << "NO\n";
-        }
+        cout << "YES" << nl;
+    }
+    else
+    {
+        cout << "NO" << nl;
     }
 }
-
 void file()
 {
 #ifndef ONLINE_JUDGE
@@ -98,8 +111,9 @@ void fast()
 int main() {
     file();
     fast();
+    Sieve();
     ll t = 1;
-    // cin >> t;
+    cin >> t;
     while(t--)
     {
         solve();

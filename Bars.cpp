@@ -32,24 +32,25 @@ void out_vec(vector<T>& v) {
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void solve() {
-    ll n , m;
-    cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
-    {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
+    ll n , p;
+    cin >> n >> p;
+    vector<ll>v(p);
+    get_vec(v);
+    for (ll i = 0; i < (1 << p); ++i) {
+        ll sum = 0;
+        for (ll j = 0; j < p; ++j) {
+            if((1 << j) & i)
+            {
+                sum += v[j];
+            }
+        }
+        if(sum == n)
+        {
+            yes
+            return;
+        }
     }
-    if(r < l)
-    {
-        no
-    }
-    else
-    {
-        yes
-    }
+    no
 }
 void file()
 {
@@ -65,7 +66,7 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll t = 1;
-//    cin >> t;
+    cin >> t;
     while(t--)
     {
         solve();

@@ -29,27 +29,75 @@ void out_vec(vector<T>& v) {
     }
     cout << nl;
 }
+
+ll gcd(ll a, ll b) {
+    while (b != 0) {
+        ll temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+ll gcd_Vector(const vector<ll>& nums) {
+    ll result = nums[0];
+    for (size_t i = 1; i < nums.size(); ++i) {
+        result = gcd(result, nums[i]);
+        if (result == 1) {
+            return 1; // GCD is 1, no need to continue
+        }
+    }
+    return result;
+}
+
+const ll N = 1.5e7;
+vector<ll> spf(N + 1);  // Initialize a vector to store SPF for each number
+void SPF(ll n = N) {
+    for (ll i = 1; i <= n; ++i) {
+        spf[i] = i;  // Initialize SPF as the number itself
+    }
+
+    for (ll i = 2; i * i <= n; ++i) {
+        if (spf[i] == i) {  // i is a prime number
+            for (ll j = i * i; j <= n; j += i) {
+                if (spf[j] == j) {
+                    spf[j] = i;  // Update SPF[j] to the smallest prime factor
+                }
+            }
+        }
+    }
+}
+
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void solve() {
-    ll n , m;
-    cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
-    {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
+    ll n;
+    cin >> n ;
+    vector<ll>v(n);
+    get_vec(v);
+    ll Gcd = gcd_Vector(v) ;
+    map<ll,ll>primes_frequency;
+        for (ll i = 0; i < n; ++i) {
+            v[i] /= Gcd;
+            while (v[i] != 1)
+            {
+                ll SPf = spf[v[i]];
+                primes_frequency[spf[v[i]]]++;
+                while (v[i] % SPf == 0)
+                {
+                    v[i] /= SPf;
+                }
+            }
+        }
+        ll ans = LLONG_MIN;
+    for (auto &i: primes_frequency) {
+        ans = max(ans , i.second);
     }
-    if(r < l)
+    if(ans == LLONG_MIN)
     {
-        no
+        cout << -1 << nl;
+        return;
     }
-    else
-    {
-        yes
-    }
+    cout << n - ans << nl;
 }
 void file()
 {
@@ -63,6 +111,7 @@ int main() {
     file();
     ENG_GAMAL
 // test-independent code ——————————————————————
+    SPF();
 // ————————————————————————————————————————————
     ll t = 1;
 //    cin >> t;

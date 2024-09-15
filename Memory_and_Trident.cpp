@@ -32,24 +32,19 @@ void out_vec(vector<T>& v) {
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void solve() {
-    ll n , m;
-    cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
+    string s;
+    cin >> s;
+    if(s.size() % 2)
     {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
+        cout << -1 << nl;
+        return;
     }
-    if(r < l)
-    {
-        no
+    map<char , ll>freq;
+    for (const auto &item: s) {
+        freq[item]++;
     }
-    else
-    {
-        yes
-    }
+    ll ans = abs(freq['R'] - freq['L']) / 2.0 + abs(freq['U'] - freq['D']) / 2.0;
+    cout << ans << nl;
 }
 void file()
 {

@@ -32,23 +32,20 @@ void out_vec(vector<T>& v) {
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void solve() {
-    ll n , m;
-    cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
+    string s;
+    cin >> s;
+    if(s.size() == 1)
     {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
+        s = '0' + s;
     }
-    if(r < l)
+    string last_digits = s.substr(s.size() - 2 , 2);
+    if(stoi(last_digits) % 4)
     {
-        no
+        cout << 0 << nl;
     }
     else
     {
-        yes
+        cout << 4 << nl;
     }
 }
 void file()

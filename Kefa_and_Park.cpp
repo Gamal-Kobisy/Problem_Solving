@@ -1,10 +1,11 @@
+// LINK : https://codeforces.com/problemset/problem/580/C
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
 #define all(a) a.begin(),a.end()
 #define allr(a) a.rbegin(),a.rend()
-#define no cout<<"NO\n";
-#define yes cout<<"YES\n";
+#define no cout<<"NO\n"
+#define yes cout<<"YES\n"
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 
@@ -16,40 +17,54 @@ using namespace std;
  ███████╗██║ ╚████║╚██████╔╝     ╚██████╔╝██║  ██║██║ ╚═╝ ██║██║  ██║███████╗
  ╚══════╝╚═╝  ╚═══╝ ╚═════╝       ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝
 */
-template <typename T>
-void get_vec(vector<T>& v) {
-    for (ll i = 0; i < v.size(); ++i) {
-        cin >> v[i];
-    }
-}
-template <typename T>
-void out_vec(vector<T>& v) {
-    for (ll i = 0; i < v.size(); ++i) {
-        cout << v[i] << ' ';
-    }
-    cout << nl;
-}
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void solve() {
-    ll n , m;
-    cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
+const ll N = 1e5 + 1;
+int n , m;
+vector<ll> adj[N];
+vector<bool>vis(N , false) , cats(N , false);
+int ans = 0;
+void dfs(int v , int c)
+{
+    if(cats[v])
     {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
-    }
-    if(r < l)
-    {
-        no
+        c++;
     }
     else
     {
-        yes
+        c = 0;
     }
+    if(c > m)
+    {
+        return;
+    }
+    vis[v] = true;
+    if(adj[v].size() == 1 && v != 1)
+    {
+        ans++;
+        return;
+    }
+    for (int u: adj[v]) {
+        if(!vis[u])
+        {
+            dfs(u , c);
+        }
+    }
+}
+void solve() {
+    cin >> n >> m;
+    for (ll i = 1; i <= n; ++i) {
+       short c;
+       cin >> c;
+       cats[i] = c;
+    }
+    for (ll i = 0; i < n - 1; ++i) {
+        int a , b;
+        cin >> a >> b;
+        adj[a].push_back(b);
+        adj[b].push_back(a);
+    }
+    dfs(1 , 0);
+    cout << ans << nl;
 }
 void file()
 {

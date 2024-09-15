@@ -1,3 +1,4 @@
+// LINK :
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -32,24 +33,28 @@ void out_vec(vector<T>& v) {
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void solve() {
-    ll n , m;
-    cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
-    {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
+    string s;
+    cin >> s;
+    ll n = s.size() , ans = 0;
+    for (ll i = 0; i < (1 << (n - 1)); ++i) {
+        string current = s;
+        vector<string> nums;
+        ll last = 0;
+        for (ll j = 0; j < (n - 1); ++j) {
+            if ((1 << j) & i) {
+                nums.push_back(s.substr(last, j - last + 1));
+                last = j + 1;
+            }
+        }
+        nums.push_back(s.substr(last));
+        ll sum = 0;
+        for (const string& num : nums) {
+            sum += stoll(num);
+        }
+        ans += sum;
     }
-    if(r < l)
-    {
-        no
-    }
-    else
-    {
-        yes
-    }
+
+    cout << ans << nl;
 }
 void file()
 {

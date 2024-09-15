@@ -31,25 +31,52 @@ void out_vec(vector<T>& v) {
 }
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+const ll N = 1e6;
+vector<bool> isPrime(N + 1, true);  // Initialize a boolean vector
+vector<ll> primes;
+void Sieve(ll n = N) {
+    isPrime[0] = isPrime[1] = false;  // 0 and 1 are not primes
+
+    for (ll i = 2; i * i <= n; ++i) {
+        if (isPrime[i]) {
+            for (ll j = i * i; j <= n; j += i) {
+                isPrime[j] = false;  // Mark multiples of i as non-prime
+            }
+        }
+    }
+    for (ll i = 2; i <= n; ++i) {
+        if (isPrime[i]) {
+            primes.push_back(i);  // Collect all prime numbers
+        }
+    }
+}
+
 void solve() {
-    ll n , m;
+    int n , m;
     cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
-    {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
+    vector<vector<ll>>mat(n , vector<ll>(m)) , next_prime(n , vector<ll>(m));
+    for (ll i = 0; i < n; ++i) {
+        for (ll j = 0; j < m; ++j) {
+            cin >> mat[i][j];
+            next_prime[i][j] = *lower_bound(all(primes) , mat[i][j]) - mat[i][j];
+        }
     }
-    if(r < l)
-    {
-        no
+    ll ans = LLONG_MAX;
+    for (ll i = 0; i < n; ++i) {
+        ll temp_ans = 0;
+        for (ll j = 0; j < m; ++j) {
+            temp_ans += next_prime[i][j];
+        }
+        ans = min(ans , temp_ans);
     }
-    else
-    {
-        yes
+    for (ll i = 0; i < m; ++i) {
+        ll temp_ans = 0;
+        for (ll j = 0; j < n; ++j) {
+            temp_ans += next_prime[j][i];
+        }
+        ans = min(ans , temp_ans);
     }
+    cout << ans << nl;
 }
 void file()
 {
@@ -63,6 +90,7 @@ int main() {
     file();
     ENG_GAMAL
 // test-independent code ——————————————————————
+    Sieve();
 // ————————————————————————————————————————————
     ll t = 1;
 //    cin >> t;

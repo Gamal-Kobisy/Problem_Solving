@@ -1,3 +1,4 @@
+// LINK : https://codeforces.com/problemset/problem/1553/C
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -32,24 +33,52 @@ void out_vec(vector<T>& v) {
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void solve() {
-    ll n , m;
-    cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
-    {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
+    string s;
+    cin >> s;
+    ll n = count(all(s) , '?');
+    ll ans = 10;
+    for (ll i = 0; i < (1 << n); ++i) {
+        string could;
+        for (ll j = 0; j < n; ++j) {
+            if((1 << j) & i)
+            {
+                could += '1';
+            }
+            else
+            {
+                could += '0';
+            }
+        }
+        ll idx = 0;
+        ll t1 = 0 , t2 = 0;
+        for (ll j = 1; j <= 10; ++j) {
+            char kick = s[j - 1];
+            if(kick == '?')
+            {
+                kick = could[idx];
+                idx++;
+            }
+            if(j & 1)
+            {
+                t1 += kick - '0';
+            }
+            else
+            {
+                t2 += kick - '0';
+            }
+            if(t1 > t2 + ceil((10 - j) / 2.0))
+            {
+                ans = min(ans , j);
+                break;
+            }
+            if(t2 > t1 + (((10 - j) / 2.0)))
+            {
+                ans = min(ans , j);
+                break;
+            }
+        }
     }
-    if(r < l)
-    {
-        no
-    }
-    else
-    {
-        yes
-    }
+    cout << ans << nl;
 }
 void file()
 {
@@ -65,7 +94,7 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll t = 1;
-//    cin >> t;
+    cin >> t;
     while(t--)
     {
         solve();

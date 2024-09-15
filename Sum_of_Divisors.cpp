@@ -30,25 +30,38 @@ void out_vec(vector<T>& v) {
     cout << nl;
 }
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+const ll MOD = 1e9 + 7;
 
+ll add(ll a , ll b)
+{
+    return (a % MOD + b % MOD) % MOD;
+}
+
+ll multi(ll a , ll b)
+{
+    return ((a % MOD) * (b % MOD)) % MOD;
+}
+ll sum_up_to(ll n) {
+    if (n <= 0) return 0;
+    ll sum = (n * (n + 1));
+    sum = (sum / 2);
+    return sum;
+}
+
+ll range_sum(ll l, ll r) {
+    ll R = sum_up_to(r);
+    ll L = sum_up_to(l - 1);
+    return (R - L);
+}
 void solve() {
-    ll n , m;
-    cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
-    {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
-    }
-    if(r < l)
-    {
-        no
-    }
-    else
-    {
-        yes
+    for (ll i = 1; i < 11; ++i) {
+        ll ans = 0;
+        for (ll k = 2; k < i; ++k) {
+            ll divs = i / k;
+            divs *= k;
+            ans = add(divs , ans);
+        }
+        cout << ans << nl;
     }
 }
 void file()

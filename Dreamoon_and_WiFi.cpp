@@ -1,3 +1,4 @@
+// LINK :  https://codeforces.com/problemset/problem/476/B
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -32,24 +33,42 @@ void out_vec(vector<T>& v) {
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void solve() {
-    ll n , m;
-    cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
-    {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
+    string s1 , s2;
+    cin >> s1 >> s2;
+    ll Drazil_pos = 0;
+    for (ll i = 0; i < s1.size(); ++i) {
+        Drazil_pos += (s1[i] == '+' ? 1 : -1);
     }
-    if(r < l)
-    {
-        no
+    ll Dreamoon_pos = 0;
+    for (ll i = 0; i < s2.size(); ++i) {
+        if(s2[i] == '+')
+        {
+            Dreamoon_pos++;
+        }
+        if(s2[i] == '-')
+        {
+            Dreamoon_pos--;
+        }
     }
-    else
-    {
-        yes
+    ll n = count(all(s2) , '?') , ans = 0;
+    for (ll i = 0; i < (1 << n); ++i) {
+        ll cnt = 0;
+        for (ll j = 0; j < n; ++j) {
+            if((1 << j) & i)
+            {
+                cnt++;
+            }
+            else
+            {
+                cnt--;
+            }
+        }
+        if(Dreamoon_pos + cnt == Drazil_pos)
+        {
+            ans++;
+        }
     }
+    cout << fixed << setprecision(12) << (double)ans / (1 << n) << nl;
 }
 void file()
 {

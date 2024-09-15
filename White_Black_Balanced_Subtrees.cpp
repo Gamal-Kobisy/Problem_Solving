@@ -1,10 +1,11 @@
+// LINK : https://codeforces.com/problemset/problem/1676/G
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
 #define all(a) a.begin(),a.end()
 #define allr(a) a.rbegin(),a.rend()
-#define no cout<<"NO\n";
-#define yes cout<<"YES\n";
+#define no cout<<"NO\n"
+#define yes cout<<"YES\n"
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 
@@ -16,40 +17,64 @@ using namespace std;
  ███████╗██║ ╚████║╚██████╔╝     ╚██████╔╝██║  ██║██║ ╚═╝ ██║██║  ██║███████╗
  ╚══════╝╚═╝  ╚═══╝ ╚═════╝       ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝
 */
-template <typename T>
-void get_vec(vector<T>& v) {
-    for (ll i = 0; i < v.size(); ++i) {
-        cin >> v[i];
-    }
-}
-template <typename T>
-void out_vec(vector<T>& v) {
-    for (ll i = 0; i < v.size(); ++i) {
-        cout << v[i] << ' ';
-    }
-    cout << nl;
-}
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+int n ;
+string s;
+vector<vector<int>>adj;
+vector<bool>vis;
+vector<pair<ll , ll>>BWcnt;
+
+ll dfsB(ll v)
+{
+    vis[v] = true;
+    ll cnt = 0;
+    if(s[v - 1] == 'B'){cnt++;}
+    for(ll u : adj[v])
+    {
+        if(!vis[u])
+        cnt += dfsB(u);
+    }
+    BWcnt[v].first = cnt;
+    return cnt;
+}
+
+ll dfsW(ll v)
+{
+    vis[v] = true;
+    ll cnt = 0;
+    if(s[v - 1] == 'W'){cnt++;}
+    for(ll u : adj[v])
+    {
+        if(!vis[u])
+            cnt += dfsW(u);
+    }
+    BWcnt[v].second = cnt;
+    return cnt;
+}
 
 void solve() {
-    ll n , m;
-    cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
-    {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
+    cin >> n;
+    adj   = vector<vector<int>>(n + 1);
+    vis   = vector<bool>(n + 1 , false);
+    BWcnt = vector<pair<ll,ll>>(n + 1 , {0 , 0});
+    for (ll i = 2; i <= n; ++i) {
+        ll a;
+        cin >> a;
+        adj[i].push_back(a);
+        adj[a].push_back(i);
     }
-    if(r < l)
-    {
-        no
+    cin >> s;
+    dfsB(1);
+    vis   = vector<bool>(n + 1 , false);
+    dfsW(1);
+    ll ans = 0;
+    for (ll i = 1; i <= n; ++i) {
+        if(BWcnt[i].first == BWcnt[i].second)
+        {
+            ans++;
+        }
     }
-    else
-    {
-        yes
-    }
+    cout << ans << nl;
 }
 void file()
 {
@@ -65,7 +90,7 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll t = 1;
-//    cin >> t;
+    cin >> t;
     while(t--)
     {
         solve();

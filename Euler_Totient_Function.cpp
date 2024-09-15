@@ -15,6 +15,9 @@ using namespace std;
  ██╔══╝  ██║╚██╗██║██║   ██║     ██║   ██║██╔══██║██║╚██╔╝██║██╔══██║██║
  ███████╗██║ ╚████║╚██████╔╝     ╚██████╔╝██║  ██║██║ ╚═╝ ██║██║  ██║███████╗
  ╚══════╝╚═╝  ╚═══╝ ╚═════╝       ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝
+ https://vjudge.net/contest/583343#problem/U
+ https://vjudge.net/problem/CodeForces-1526C2
+ https://vjudge.net/contest/598172#problem/I
 */
 template <typename T>
 void get_vec(vector<T>& v) {
@@ -29,27 +32,68 @@ void out_vec(vector<T>& v) {
     }
     cout << nl;
 }
+
+const ll N = 1e6;
+vector<ll> spf(N + 1);  // Initialize a vector to store SPF for each number
+void SPF(ll n = N) {
+    for (ll i = 1; i <= n; ++i) {
+        spf[i] = i;  // Initialize SPF as the number itself
+    }
+
+    for (ll i = 2; i * i <= n; ++i) {
+        if (spf[i] == i) {  // i is a prime number
+            for (ll j = i * i; j <= n; j += i) {
+                if (spf[j] == j) {
+                    spf[j] = i;  // Update SPF[j] to the smallest prime factor
+                }
+            }
+        }
+    }
+}
+ll gcd(ll a, ll b) {
+    while (b != 0) {
+        ll temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+ll gcd_Vector(const std::vector<ll>& nums) {
+    ll result = nums[0];
+    for (size_t i = 1; i < nums.size(); ++i) {
+        result = gcd(result, nums[i]);
+        if (result == 1) {
+            return 1; // GCD is 1, no need to continue
+        }
+    }
+    return result;
+}
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+ll cnt_nums_divisible(ll a , ll r)
+{
+    return r / a;
+}
+
 void solve() {
-    ll n , m;
-    cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
+    ll n;
+    cin >> n;
+    ll n_cpoy = n;
+    ll ans = n;
+    set<ll>primes;
+    while (n != 1)
     {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
+        primes.insert(spf[n]);
+        ll Spf = spf[n];
+        while (n % Spf == 0)
+        {
+            n /= Spf;
+        }
     }
-    if(r < l)
-    {
-        no
+    for (auto &i: primes) {
+        ans -= ans / i;
     }
-    else
-    {
-        yes
-    }
+    cout << ans << nl;
 }
 void file()
 {
@@ -63,9 +107,10 @@ int main() {
     file();
     ENG_GAMAL
 // test-independent code ——————————————————————
+    SPF();
 // ————————————————————————————————————————————
     ll t = 1;
-//    cin >> t;
+    cin >> t;
     while(t--)
     {
         solve();

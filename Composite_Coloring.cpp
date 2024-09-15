@@ -31,25 +31,32 @@ void out_vec(vector<T>& v) {
 }
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+const ll N = 1e3;
+vector<bool> isPrime(N + 1, true);  // Initialize a boolean vector
+vector<ll> primes;
+void Sieve(ll n = N) {
+    isPrime[0] = isPrime[1] = false;  // 0 and 1 are not primes
+
+    for (ll i = 2; i * i <= n; ++i) {
+        if (isPrime[i]) {
+            for (ll j = i * i; j <= n; j += i) {
+                isPrime[j] = false;  // Mark multiples of i as non-prime
+            }
+        }
+    }
+    for (ll i = 2; i <= n; ++i) {
+        if (isPrime[i]) {
+            primes.push_back(i);  // Collect all prime numbers
+        }
+    }
+}
+
 void solve() {
-    ll n , m;
-    cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
-    {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
-    }
-    if(r < l)
-    {
-        no
-    }
-    else
-    {
-        yes
-    }
+    ll n;
+    cin >> n;
+    vector<ll>v(n);
+    get_vec(v);
+    
 }
 void file()
 {
@@ -63,9 +70,10 @@ int main() {
     file();
     ENG_GAMAL
 // test-independent code ——————————————————————
+    Sieve();
 // ————————————————————————————————————————————
     ll t = 1;
-//    cin >> t;
+    cin >> t;
     while(t--)
     {
         solve();

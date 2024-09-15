@@ -1,10 +1,11 @@
+// LINK : https://www.spoj.com/problems/KATHTHI/en/
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
 #define all(a) a.begin(),a.end()
 #define allr(a) a.rbegin(),a.rend()
-#define no cout<<"NO\n";
-#define yes cout<<"YES\n";
+#define no cout<<"NO\n"
+#define yes cout<<"YES\n"
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 
@@ -16,39 +17,59 @@ using namespace std;
  ███████╗██║ ╚████║╚██████╔╝     ╚██████╔╝██║  ██║██║ ╚═╝ ██║██║  ██║███████╗
  ╚══════╝╚═╝  ╚═══╝ ╚═════╝       ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝
 */
-template <typename T>
-void get_vec(vector<T>& v) {
-    for (ll i = 0; i < v.size(); ++i) {
-        cin >> v[i];
-    }
-}
-template <typename T>
-void out_vec(vector<T>& v) {
-    for (ll i = 0; i < v.size(); ++i) {
-        cout << v[i] << ' ';
-    }
-    cout << nl;
-}
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+int dx[] = {-1, 0, 1, 0, -1, 1, 1, -1};
+int dy[] = {0, 1, 0, -1, 1, 1, -1, -1};
+char di[] = {'U', 'R', 'D', 'L'};
+int knightx[] = {-2, -1, 1, 2, 2, 1, -1, -2};
+int knighty[] = {1, 2, 2, 1, -1, -2, -2, -1};
+const ll N = 1e4 + 1;
+ll n , m;
+vector<ll>adj[N];
+vector<ll>inDeg(N) , ans;
 
+void bfs()
+{
+    priority_queue<ll , vector<ll> , greater<>>q;
+    for (ll i = 1; i <= n; ++i) {
+        if(inDeg[i] == 0)
+        {
+            q.push(i);
+        }
+    }
+
+    while (!q.empty())
+    {
+        ll cur = q.top();
+        ans.push_back(cur);
+        q.pop();
+        for(ll u : adj[cur])
+        {
+            inDeg[u]--;
+            if(inDeg[u] == 0)
+            {
+                q.push(u);
+            }
+        }
+    }
+}
 void solve() {
-    ll n , m;
     cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
-    {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
+    for (ll i = 0; i < m; ++i) {
+        ll a , b;
+        cin >> a >> b;
+        adj[a].push_back(b);
+        inDeg[b]++;
     }
-    if(r < l)
+
+    bfs();
+    if(ans.size() != n)
     {
-        no
+        cout << "Sandro fails." << nl;
+        return;
     }
-    else
-    {
-        yes
+    for (ll i: ans) {
+        cout << i << ' ';
     }
 }
 void file()

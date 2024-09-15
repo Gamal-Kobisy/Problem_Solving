@@ -1,10 +1,11 @@
+// LINK : https://codeforces.com/problemset/problem/1675/D
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
 #define all(a) a.begin(),a.end()
 #define allr(a) a.rbegin(),a.rend()
-#define no cout<<"NO\n";
-#define yes cout<<"YES\n";
+#define no cout<<"NO\n"
+#define yes cout<<"YES\n"
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 
@@ -16,40 +17,58 @@ using namespace std;
  ███████╗██║ ╚████║╚██████╔╝     ╚██████╔╝██║  ██║██║ ╚═╝ ██║██║  ██║███████╗
  ╚══════╝╚═╝  ╚═══╝ ╚═════╝       ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝
 */
-template <typename T>
-void get_vec(vector<T>& v) {
-    for (ll i = 0; i < v.size(); ++i) {
-        cin >> v[i];
-    }
-}
-template <typename T>
-void out_vec(vector<T>& v) {
-    for (ll i = 0; i < v.size(); ++i) {
-        cout << v[i] << ' ';
-    }
-    cout << nl;
-}
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+ll n;
+vector<vector<ll>>adj , ans;
+vector<bool>vis , leaf;
+vector<ll>path;
+void dfs(ll v)
+{
+    vis[v] = true;
+    path.push_back(v);
+    for(ll u : adj[v])
+    {
+        if(!vis[u])
+        {
+            dfs(u);
+        }
+    }
+}
 
 void solve() {
-    ll n , m;
-    cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
-    {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
+    cin >> n;
+    adj = vector<vector<ll>>(n + 1);
+    vis = vector<bool>(n + 1 , false);
+    leaf = vector<bool>(n + 1 , true);
+    for (ll i = 1; i <= n; ++i) {
+        ll a;
+        cin >> a;
+        if(a == i)
+        {
+            continue;
+        }
+        leaf[a] = false;
+        adj[i].push_back(a);
     }
-    if(r < l)
-    {
-        no
+    for (ll i = 1; i <= n; ++i) {
+        if(!vis[i] && leaf[i])
+        {
+            dfs(i);
+            reverse(all(path));
+            ans.push_back(path);
+            path.clear();
+        }
     }
-    else
-    {
-        yes
+    cout << ans.size() << nl;
+    for (ll i = 0; i < ans.size(); ++i) {
+        cout << ans[i].size() << nl;
+        for (ll j = 0; j < ans[i].size(); ++j) {
+            cout << ans[i][j] << ' ';
+        }
+        cout << nl;
     }
+    cout << nl;
+    ans.clear();
 }
 void file()
 {
@@ -65,7 +84,7 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll t = 1;
-//    cin >> t;
+    cin >> t;
     while(t--)
     {
         solve();

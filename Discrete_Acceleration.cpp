@@ -77,6 +77,11 @@ void solve()
             first.speed = pre[l];
             l++;
             second.pos -= second.speed * time_1;
+            while(second.pos <= flags[r])
+            {
+                second.speed = suf[r];
+                r--;
+            }
             sec += time_1;
         }
         else
@@ -85,10 +90,16 @@ void solve()
             second.speed = suf[r];
             r--;
             first.pos += first.speed * time_2;
+            while(first.pos >= flags[l])
+            {
+                first.speed = pre[l];
+                l++;
+            }
             sec += time_2;
         }
     }
-    sec += (second.pos - first.pos) / double(first.speed + second.speed);
+    double extra = double(second.pos - first.pos) / double(first.speed + second.speed);
+    sec += extra;
     cout << fixed << setprecision(15) << sec << nl;
 }
 

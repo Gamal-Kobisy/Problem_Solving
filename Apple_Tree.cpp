@@ -1,10 +1,11 @@
+// LINK : https://codeforces.com/problemset/problem/1843/D
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
 #define all(a) a.begin(),a.end()
 #define allr(a) a.rbegin(),a.rend()
-#define no cout<<"NO\n";
-#define yes cout<<"YES\n";
+#define no cout<<"NO\n"
+#define yes cout<<"YES\n"
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 
@@ -16,40 +17,56 @@ using namespace std;
  ███████╗██║ ╚████║╚██████╔╝     ╚██████╔╝██║  ██║██║ ╚═╝ ██║██║  ██║███████╗
  ╚══════╝╚═╝  ╚═══╝ ╚═════╝       ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝
 */
-template <typename T>
-void get_vec(vector<T>& v) {
-    for (ll i = 0; i < v.size(); ++i) {
-        cin >> v[i];
-    }
-}
-template <typename T>
-void out_vec(vector<T>& v) {
-    for (ll i = 0; i < v.size(); ++i) {
-        cout << v[i] << ' ';
-    }
-    cout << nl;
-}
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void solve() {
-    ll n , m;
-    cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
+const ll N = 2e5 + 1;
+ll n , q;
+vector<vector<ll>>adj;
+vector<bool>vis;
+vector<ll>leafs;
+int dfs(ll v)
+{
+    vis[v] = true;
+    ll cnt = 0;
+    bool leaf = true;
+    for(ll u : adj[v])
     {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
+        if(!vis[u])
+        {
+            leaf = false;
+            cnt += dfs(u);
+        }
     }
-    if(r < l)
+    if(leaf)
     {
-        no
+        leafs[v] = 1;
+        return 1;
     }
     else
     {
-        yes
+        leafs[v] = cnt;
+        return cnt;
     }
+}
+
+void solve() {
+    cin >> n;
+    adj = vector<vector<ll>>(n + 1);
+    vis = vector<bool>(n + 1, false);
+    leafs = vector<ll>(n + 1);
+    for (ll i = 0; i < n - 1; ++i) {
+        ll a , b;
+        cin >> a >> b;
+        adj[a].push_back(b);
+        adj[b].push_back(a);
+    }
+    dfs(1);
+    cin >> q;
+    for (ll i = 0; i < q; ++i) {
+        ll x , y;
+        cin >> x >> y;
+       cout << leafs[x] * leafs[y] << nl;
+    }
+
 }
 void file()
 {
@@ -65,7 +82,7 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll t = 1;
-//    cin >> t;
+    cin >> t;
     while(t--)
     {
         solve();

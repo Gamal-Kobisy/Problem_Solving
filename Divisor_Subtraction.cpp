@@ -1,6 +1,6 @@
 //
-// DATE : Created by Gamal on 7/11/2024.
-// LINK : https://vjudge.net/contest/592750#problem/H
+// DATE : Created by Gamal on 7/16/2024.
+// LINK : https://vjudge.net/contest/592750#problem/K
 
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
@@ -38,48 +38,41 @@ long long lcm(long long a, long long b) {
 
 template <class T>
 using ordered_set = tree<T, null_type, un_ordered, rb_tree_tag, tree_order_statistics_node_update>;
-bool is_prime(int n) {
-    if (n < 2) return false;
-    for (int i = 2; i <= sqrt(n); ++i) {
-        if (n % i == 0) return false;
+
+bool isPrime(ll n)
+{
+    if(n <= 1)return false;
+    if(n <= 3)return true;
+    if (n % 2 == 0 || n % 3 == 0) return false;
+    for (ll i = 5; i * i <= n; i += 6) {
+        if (n % i == 0 || n % (i + 2) == 0) return false;
     }
     return true;
 }
 
-// Function to find the next prime greater than or equal to n
-ll next_prime(ll n) {
-    while (!is_prime(n)) {
-        ++n;
+ll smallest_prime_div(ll n)
+{
+    for (long long i = 3; i * i <= n; i += 2) {
+        if (n % i == 0) return i;
     }
-    return n;
+    return n; // n is prime
 }
 void solve()
 {
-    ll n ;
+    ll n;
     cin >> n;
-    vector<ll>v(n);
-    ll maxx = LLONG_MIN;
-    for (ll i = 0; i < n; ++i) {
-        cin >> v[i];
-        maxx = max(maxx , v[i]);
-    }
-    map<ll , bool>d;
-
-    for (ll i = 2; i * i <= maxx; i = next_prime(i + 1)) {
-        d[i * i] = true;
-    }
-
-    for(ll i : v)
+    ll smallest = smallest_prime_div(n);
+    ll ans = 0;
+    if(n % 2 == 0)
     {
-        if(d[i])
-        {
-            cout << "YES\n";
-        }
-        else
-        {
-            cout << "NO\n";
-        }
+        ans = n / 2;
     }
+    else
+    {
+        n -= smallest;
+        ans = n / 2 + 1;
+    }
+    cout << ans << nl;
 }
 
 void file()
@@ -99,7 +92,7 @@ int main() {
     file();
     fast();
     ll t = 1;
-    // cin >> t;
+//     cin >> t;
     while(t--)
     {
         solve();

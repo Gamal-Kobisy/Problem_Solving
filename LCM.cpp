@@ -1,3 +1,4 @@
+// https://codeforces.com/problemset/problem/1068/B
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -29,27 +30,45 @@ void out_vec(vector<T>& v) {
     }
     cout << nl;
 }
+
+ll gcd(ll a, ll b) {
+    while (b != 0) {
+        ll temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+
+ll lcm(ll a, ll b) {
+    return std::abs(a * b) / gcd(a, b);
+}
+
+ll lcm_Vector(const std::vector<ll>& nums) {
+    ll result = nums[0];
+    for (size_t i = 1; i < nums.size(); ++i) {
+        result = lcm(result, nums[i]);
+    }
+    return result;
+}
+
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void solve() {
-    ll n , m;
-    cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
-    {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
+    ll b;
+    cin >> b;
+    ll ans = 0;
+    for (ll i = 1; i * i <= b ; ++i) {
+        if(b % i == 0)
+        {
+            ans++;
+            if(b / i != i)
+            {
+                ans++;
+            }
+        }
     }
-    if(r < l)
-    {
-        no
-    }
-    else
-    {
-        yes
-    }
+    cout << ans << nl;
 }
 void file()
 {

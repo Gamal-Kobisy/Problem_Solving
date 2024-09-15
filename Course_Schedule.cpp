@@ -1,10 +1,11 @@
+// LINK : https://cses.fi/problemset/task/1679
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
 #define all(a) a.begin(),a.end()
 #define allr(a) a.rbegin(),a.rend()
-#define no cout<<"NO\n";
-#define yes cout<<"YES\n";
+#define no cout<<"NO\n"
+#define yes cout<<"YES\n"
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 
@@ -16,40 +17,55 @@ using namespace std;
  ███████╗██║ ╚████║╚██████╔╝     ╚██████╔╝██║  ██║██║ ╚═╝ ██║██║  ██║███████╗
  ╚══════╝╚═╝  ╚═══╝ ╚═════╝       ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝
 */
-template <typename T>
-void get_vec(vector<T>& v) {
-    for (ll i = 0; i < v.size(); ++i) {
-        cin >> v[i];
+// ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+const ll N = 1e5 + 1;
+ll n , m;
+vector<ll> adj[N];
+vector<bool>vis(N , false) , acs(N , false);
+vector<ll>ans;
+bool cycle;
+void dfs(ll v)
+{
+    vis[v] = true;
+    acs[v] = true;
+    for(ll u : adj[v])
+    {
+        if(acs[u])
+        {
+            cycle = true;
+            return;
+        }
+        if(!vis[u])
+        {
+            dfs(u);
+        }
     }
+    acs[v] = false;
+    ans.push_back(v);
 }
-template <typename T>
-void out_vec(vector<T>& v) {
-    for (ll i = 0; i < v.size(); ++i) {
-        cout << v[i] << ' ';
+void solve() {
+    cycle = false;
+    cin >> n >> m;
+    for (ll i = 0; i < m; ++i) {
+        ll  a, b;
+        cin >> a >> b;
+        adj[b].push_back(a);
+    }
+    for (ll i = 1; i <= n; ++i) {
+        if(!vis[i])
+        {
+            dfs(i);
+        }
+        if(cycle)
+        {
+            cout << "IMPOSSIBLE" << nl;
+            return;
+        }
+    }
+    for (ll i = 0; i < n; ++i) {
+        cout << ans[i] << ' ';
     }
     cout << nl;
-}
-// ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void solve() {
-    ll n , m;
-    cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
-    {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
-    }
-    if(r < l)
-    {
-        no
-    }
-    else
-    {
-        yes
-    }
 }
 void file()
 {

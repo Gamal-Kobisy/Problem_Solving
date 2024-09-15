@@ -1,3 +1,4 @@
+// LINK : https://codeforces.com/problemset/problem/550/B
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -32,24 +33,36 @@ void out_vec(vector<T>& v) {
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void solve() {
-    ll n , m;
-    cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
-    {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
+    ll n , l , r , x;
+    cin >> n >> l >> r >> x;
+    vector<ll>c(n);
+    get_vec(c);
+    ll ans = 0;
+    for (ll i = 0; i < (1 << n); ++i) {
+        ll sum = 0;
+        vector<ll>problems;
+        for (ll j = 0; j < n; ++j) {
+            if((1 << j) & i)
+            {
+                problems.push_back(c[j]);
+                sum += c[j];
+            }
+        }
+        if(problems.size() <= 1)
+        {
+            continue;
+        }
+        ll ok = true;
+        ok &= sum >= l;
+        ok &= sum <= r;
+        sort(all(problems));
+        ok &= (problems.back() - problems.front()) >= x;
+        if(ok)
+        {
+            ans++;
+        }
     }
-    if(r < l)
-    {
-        no
-    }
-    else
-    {
-        yes
-    }
+    cout << ans << nl;
 }
 void file()
 {

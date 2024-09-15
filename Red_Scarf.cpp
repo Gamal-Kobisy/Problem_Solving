@@ -1,3 +1,4 @@
+// LINK : https://vjudge.net/contest/599361#problem/Q
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -32,24 +33,18 @@ void out_vec(vector<T>& v) {
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void solve() {
-    ll n , m;
-    cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
-    {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
+    ll n;
+    cin >> n;
+    vector<ll>v(n);
+    ll XNOR = 0;
+    for (ll i = 0; i < n; ++i) {
+        cin >> v[i];
+        XNOR = ~(XNOR ^ v[i]);
     }
-    if(r < l)
-    {
-        no
+    for (ll i = 0; i < n; ++i) {
+        cout << (XNOR ^ v[i]) << ' ';
     }
-    else
-    {
-        yes
-    }
+    cout << nl;
 }
 void file()
 {

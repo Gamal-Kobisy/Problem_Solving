@@ -1,3 +1,4 @@
+// LINK : https://codeforces.com/problemset/status?my=on;
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -32,24 +33,26 @@ void out_vec(vector<T>& v) {
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void solve() {
-    ll n , m;
-    cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
+    ll n;
+    cin >> n;
+    if(n % (1 << 15) == 0)
     {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
+        cout << 0 << nl;
+        return;
     }
-    if(r < l)
-    {
-        no
+    ll n_c;
+    ll ans = 15;
+    for (ll j = 0; j <= 15; ++j) {
+        n_c = n + j;
+        for (ll i = 0; i <= 15; ++i) {
+            if((1 << i) & n_c)
+            {
+                ans = min(ans , 15 - i + j);
+                break;
+            }
+        }
     }
-    else
-    {
-        yes
-    }
+    cout << ans << nl;
 }
 void file()
 {
@@ -65,7 +68,7 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll t = 1;
-//    cin >> t;
+    cin >> t;
     while(t--)
     {
         solve();

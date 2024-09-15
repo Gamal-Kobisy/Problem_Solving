@@ -29,27 +29,46 @@ void out_vec(vector<T>& v) {
     }
     cout << nl;
 }
+
+ll gcd(ll a, ll b) {
+    while (b != 0) {
+        ll temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+ll gcd_Vector(const std::vector<ll>& nums) {
+    ll result = nums[0];
+    for (size_t i = 1; i < nums.size(); ++i) {
+        result = gcd(result, nums[i]);
+        if (result == 1) {
+            return 1; // GCD is 1, no need to continue
+        }
+    }
+    return result;
+}
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void solve() {
-    ll n , m;
+    ll n ,m;
     cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
+    vector<ll>a(n) , b(m);
+    get_vec(a);
+    get_vec(b);
+    ll Gcd = gcd_Vector(a);
+    for (ll i = 0; i < m; ++i)
     {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
+        ll ans = a[0] + b[i];
+        for (ll j = 0; j < n && a[0] % 2 == a[j] % 2; ++j) {
+            if(a[0] % 2 != a[j] % 2)
+            {
+                ans = gcd(ans, a[j] + b[i]);
+            }
+        }
+        cout << ans << ' ';
     }
-    if(r < l)
-    {
-        no
-    }
-    else
-    {
-        yes
-    }
+    cout << nl;
 }
 void file()
 {

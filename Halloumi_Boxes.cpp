@@ -1,6 +1,6 @@
 //
-// DATE : Created by Gamal on 7/11/2024.
-// LINK : https://vjudge.net/contest/592750#problem/H
+// DATE : Created by Gamal on 7/22/2024.
+// LINK : https://codeforces.com/problemset/problem/1903/A
 
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
@@ -38,47 +38,30 @@ long long lcm(long long a, long long b) {
 
 template <class T>
 using ordered_set = tree<T, null_type, un_ordered, rb_tree_tag, tree_order_statistics_node_update>;
-bool is_prime(int n) {
-    if (n < 2) return false;
-    for (int i = 2; i <= sqrt(n); ++i) {
-        if (n % i == 0) return false;
-    }
-    return true;
-}
 
-// Function to find the next prime greater than or equal to n
-ll next_prime(ll n) {
-    while (!is_prime(n)) {
-        ++n;
-    }
-    return n;
-}
 void solve()
 {
-    ll n ;
-    cin >> n;
+    int n , k;
+    cin >> n >> k;
+    bool sorted = true;
     vector<ll>v(n);
-    ll maxx = LLONG_MIN;
-    for (ll i = 0; i < n; ++i) {
+    for (int i = 0; i < n; ++i) {
         cin >> v[i];
-        maxx = max(maxx , v[i]);
     }
-    map<ll , bool>d;
-
-    for (ll i = 2; i * i <= maxx; i = next_prime(i + 1)) {
-        d[i * i] = true;
+    for (int i = 1; i < n; ++i) {
+        if(v[i] < v[i-1])
+        {
+            sorted = false;
+            break;
+        }
     }
-
-    for(ll i : v)
+    if(!sorted && k == 1)
     {
-        if(d[i])
-        {
-            cout << "YES\n";
-        }
-        else
-        {
-            cout << "NO\n";
-        }
+        cout << "NO" << nl;
+    }
+    else
+    {
+        cout << "Yes" << nl;
     }
 }
 
@@ -99,7 +82,7 @@ int main() {
     file();
     fast();
     ll t = 1;
-    // cin >> t;
+     cin >> t;
     while(t--)
     {
         solve();

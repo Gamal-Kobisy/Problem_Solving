@@ -32,24 +32,22 @@ void out_vec(vector<T>& v) {
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void solve() {
-    ll n , m;
-    cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
-    {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
+    string s;
+    cin >> s;
+    vector<int>vowles(26);
+    vowles['a' - 'a']++;
+    vowles['o' - 'a']++;
+    vowles['y' - 'a']++;
+    vowles['e' - 'a']++;
+    vowles['u' - 'a']++;
+    vowles['i' - 'a']++;
+    for (char &c: s) {
+        if(!vowles[tolower(c) - 'a'])
+        {
+            cout << '.' <<(char) tolower(c);
+        }
     }
-    if(r < l)
-    {
-        no
-    }
-    else
-    {
-        yes
-    }
+    cout << nl;
 }
 void file()
 {

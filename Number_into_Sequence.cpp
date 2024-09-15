@@ -29,27 +29,82 @@ void out_vec(vector<T>& v) {
     }
     cout << nl;
 }
+
+const ll N = 1e7;
+vector<bool> isPrime(N + 1, true);  // Initialize a boolean vector
+vector<ll> primes;
+void Sieve(ll n = N) {
+    isPrime[0] = isPrime[1] = false;  // 0 and 1 are not primes
+
+    for (ll i = 2; i * i <= n; ++i) {
+        if (isPrime[i]) {
+            for (ll j = i * i; j <= n; j += i) {
+                isPrime[j] = false;  // Mark multiples of i as non-prime
+            }
+        }
+    }
+    for (ll i = 2; i <= n; ++i) {
+        if (isPrime[i]) {
+            primes.push_back(i);  // Collect all prime numbers
+        }
+    }
+}
+
+bool isprime(ll n) {
+    if (n <= 3) return true;         // 2 and 3 are prime numbers
+    if (n % 2 == 0 || n % 3 == 0) return false; // Multiple of 2 or 3 are not prime
+    // Check factors from 5 to sqrt(n)
+    for (ll i = 5; i * i <= n; i += 6) {
+        if (n % i == 0 || n % (i + 2) == 0) return false;
+    }
+    return true;
+}
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void solve() {
-    ll n , m;
-    cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
+    ll n;
+    cin >> n;
+    if(isprime(n))
     {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
+        cout << 1 << nl << n << nl;
+        return;
     }
-    if(r < l)
+    map<ll , ll>divs;
+    ll n_copy = n;
+    while (n_copy != 1)
     {
-        no
+        if(isprime(n_copy))
+        {
+            divs[n_copy]++;
+            n_copy = 1;
+            break;
+        }
+        for(ll i : primes)
+        {
+            while (n_copy % i == 0)
+            {
+                divs[i]++;
+                n_copy /= i;
+            }
+            if(i > n_copy)
+            {
+                break;
+            }
+        }
     }
-    else
-    {
-        yes
+    pair<ll , ll> most_freq_div = {0 , 0};
+    for (auto &i: divs) {
+        if(i.second > most_freq_div.second)
+        {
+            most_freq_div = i;
+        }
     }
+    cout << most_freq_div.second << nl;
+    for (ll i = 1; i < most_freq_div.second; ++i) {
+        cout << most_freq_div.first << ' ';
+        n /= most_freq_div.first;
+    }
+    cout << n << nl;
 }
 void file()
 {
@@ -63,9 +118,10 @@ int main() {
     file();
     ENG_GAMAL
 // test-independent code ——————————————————————
+    Sieve();
 // ————————————————————————————————————————————
     ll t = 1;
-//    cin >> t;
+    cin >> t;
     while(t--)
     {
         solve();

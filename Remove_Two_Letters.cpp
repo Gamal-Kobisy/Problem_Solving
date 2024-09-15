@@ -31,25 +31,32 @@ void out_vec(vector<T>& v) {
 }
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+string pattern(string &s) {
+    int n = s.size();
+    for (int len = 1; len <= n; ++len) {
+        if (n % len == 0) {
+            string pattern = s.substr(0, len);
+            std::string repeated = "";
+            for (int i = 0; i < n / len; ++i) {
+                repeated += pattern;
+            }
+            if (repeated == s) {
+                return pattern;
+            }
+        }
+    }
+    return s;
+}
+
 void solve() {
-    ll n , m;
-    cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
-    {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
+    ll n;
+    string s;
+    cin >> n >> s;
+    set<string>ans;
+    for (ll i = 1; i < n; i++) {
+        ans.insert(s.substr(0 , i - 1) + s.substr(i + 1));
     }
-    if(r < l)
-    {
-        no
-    }
-    else
-    {
-        yes
-    }
+    cout << ans.size() << nl;
 }
 void file()
 {
@@ -65,7 +72,7 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll t = 1;
-//    cin >> t;
+    cin >> t;
     while(t--)
     {
         solve();

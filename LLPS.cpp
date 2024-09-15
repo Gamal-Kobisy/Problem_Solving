@@ -31,25 +31,50 @@ void out_vec(vector<T>& v) {
 }
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
+string largest(string a , string b)
+{
+    for (ll i = 0; i < min(a.size() , b.size()); ++i) {
+        if(a[i] > b[i])
+        {
+            return a;
+        }
+        if(b[i] > a[i])
+        {
+            return b;
+        }
+    }
+    if (a.size() > b.size()) {
+        return a;
+    } else {
+        return b;
+    }
+}
 void solve() {
-    ll n , m;
-    cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
-    {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
+    string s , ans = "Z";
+    cin >> s;
+    ll n = s.size();
+    for (ll i = 0; i < (1 << n); ++i) {
+        string temp;
+        for (ll j = 0; j < n; ++j) {
+            if((1 << j) & i)
+            {
+                temp += s[j];
+            }
+        }
+        bool ok = true;
+        for (ll j = 0; j < temp.size() / 2; ++j) {
+           if(temp[j] != temp[temp.size() - 1 - j])
+           {
+               ok = false;
+               break;
+           }
+        }
+        if(ok)
+        {
+            ans = largest(ans , temp);
+        }
     }
-    if(r < l)
-    {
-        no
-    }
-    else
-    {
-        yes
-    }
+    cout << ans << nl;
 }
 void file()
 {

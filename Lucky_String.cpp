@@ -25,31 +25,24 @@ void get_vec(vector<T>& v) {
 template <typename T>
 void out_vec(vector<T>& v) {
     for (ll i = 0; i < v.size(); ++i) {
-        cout << v[i] << ' ';
+        cout << v[i];
     }
     cout << nl;
 }
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void solve() {
-    ll n , m;
-    cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
-    {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
+    ll n;
+    cin >> n;
+    vector<char>ans(n);
+    char c = 'a';
+    for (ll i = 0; i < 4; ++i) {
+        for (ll j = i; j < n; j += 4) {
+            ans[j] = c;
+        }
+        c++;
     }
-    if(r < l)
-    {
-        no
-    }
-    else
-    {
-        yes
-    }
+    out_vec(ans);
 }
 void file()
 {

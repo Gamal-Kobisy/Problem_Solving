@@ -1,3 +1,4 @@
+// LINK : https://codeforces.com/problemset/problem/1097/B
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -32,24 +33,32 @@ void out_vec(vector<T>& v) {
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void solve() {
-    ll n , m;
-    cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
-    {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
+    ll n;
+    cin >> n;
+    vector<ll>v(n);
+    for (ll i = 0; i < n; ++i) {
+        cin >> v[i];
     }
-    if(r < l)
-    {
-        no
+    for (ll i = 0; i < (1 << n); ++i) {
+        vector<ll>temp = v;
+        ll sum = 0;
+        for (ll j = 0; j < n; ++j) {
+            if((1 << j) & i)
+            {
+                temp[j] *= -1;
+            }
+        }
+        for (ll j = 0; j < n; ++j) {
+            sum += temp[j];
+        }
+        sum %= 360;
+        if(sum == 0)
+        {
+            yes
+            return;
+        }
     }
-    else
-    {
-        yes
-    }
+    no
 }
 void file()
 {

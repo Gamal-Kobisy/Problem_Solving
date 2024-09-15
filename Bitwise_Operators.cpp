@@ -1,3 +1,4 @@
+// LINK : https://vjudge.net/contest/599361#problem/O
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -32,23 +33,15 @@ void out_vec(vector<T>& v) {
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void solve() {
-    ll n , m;
-    cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
-    {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
-    }
-    if(r < l)
-    {
-        no
-    }
-    else
-    {
-        yes
+    ll n;
+    cin >> n;
+    ll bits = floor(log2(n)) + 1;
+    for (ll i = 0; i < bits; ++i) {
+        if((1 << i) & n)
+        {
+            cout << (1 << i) << ' ' << ((n ^ (1 << i)) == 0 ? (1 << i) : (n ^ (1 << i))) << nl;
+            break;
+        }
     }
 }
 void file()
@@ -65,7 +58,7 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll t = 1;
-//    cin >> t;
+    cin >> t;
     while(t--)
     {
         solve();

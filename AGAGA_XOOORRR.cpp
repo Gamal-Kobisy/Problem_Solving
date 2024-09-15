@@ -1,10 +1,11 @@
+// LINK :
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
 #define all(a) a.begin(),a.end()
 #define allr(a) a.rbegin(),a.rend()
-#define no cout<<"NO\n";
-#define yes cout<<"YES\n";
+#define no cout<<"NO\n"
+#define yes cout<<"YES\n"
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 
@@ -32,24 +33,21 @@ void out_vec(vector<T>& v) {
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void solve() {
-    ll n , m;
-    cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
+    ll n;
+    cin >> n;
+    vector<ll>v(n);
+    get_vec(v);
+    sort(all(v));
+    if(v[0] == v[n - 1])
     {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
+        yes;
+        return;
     }
-    if(r < l)
-    {
-        no
+    ll Xor = 0;
+    for (ll i = 0; i < n; ++i) {
+        Xor ^= v[i];
     }
-    else
-    {
-        yes
-    }
+    (Xor == 0 ? yes : no);
 }
 void file()
 {
@@ -65,7 +63,7 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll t = 1;
-//    cin >> t;
+    cin >> t;
     while(t--)
     {
         solve();

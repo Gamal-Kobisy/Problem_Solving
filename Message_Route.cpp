@@ -1,10 +1,11 @@
+// LINK : https://cses.fi/problemset/task/1667/
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
 #define all(a) a.begin(),a.end()
 #define allr(a) a.rbegin(),a.rend()
-#define no cout<<"NO\n";
-#define yes cout<<"YES\n";
+#define no cout<<"NO\n"
+#define yes cout<<"YES\n"
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 
@@ -16,39 +17,73 @@ using namespace std;
  ███████╗██║ ╚████║╚██████╔╝     ╚██████╔╝██║  ██║██║ ╚═╝ ██║██║  ██║███████╗
  ╚══════╝╚═╝  ╚═══╝ ╚═════╝       ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝
 */
-template <typename T>
-void get_vec(vector<T>& v) {
-    for (ll i = 0; i < v.size(); ++i) {
-        cin >> v[i];
-    }
-}
-template <typename T>
-void out_vec(vector<T>& v) {
-    for (ll i = 0; i < v.size(); ++i) {
-        cout << v[i] << ' ';
-    }
-    cout << nl;
-}
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+const ll N = 2e5 + 1;
+ll n , m;
+vector<vector<ll>>adj(N);
+vector<ll>dist(N) , parent(N);
 
-void solve() {
-    ll n , m;
-    cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
+void bfs()
+{
+    queue<ll>q;
+    q.emplace(1);
+    ll level = 1;
+    while (!q.empty())
     {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
+        ll sz = q.size();
+        while (sz--)
+        {
+            ll curr = q.front();
+            q.pop();
+            dist[curr] = level;
+            for(ll u : adj[curr])
+            {
+                if(dist[u] == 1e9)
+                {
+                    q.emplace(u);
+                    dist[u] = level + 1;
+                    parent[u] = curr;
+                }
+            }
+        }
+        level++;
     }
-    if(r < l)
+}
+void solve() {
+    cin >> n >> m;
+
+    for (ll i = 0; i < m; ++i) {
+        ll a , b;
+        cin >> a >> b;
+        adj[a].push_back(b);
+        adj[b].push_back(a);
+    }
+
+    for (ll i = 0; i < n; ++i) {
+        dist[i + 1] = 1e9;
+        parent[i + 1] = -1;
+    }
+
+    bfs();
+
+    if(dist[n] == 1e9)
     {
-        no
+        cout << "IMPOSSIBLE" << nl;
     }
     else
     {
-        yes
+        cout << dist[n] << nl;
+        vector<ll>ans{n};
+        ll cur = parent[n];
+        while (cur != -1)
+        {
+            ans.push_back(cur);
+            cur = parent[cur];
+        }
+        reverse(all(ans));
+        for (ll i: ans) {
+            cout << i << ' ';
+        }
     }
 }
 void file()

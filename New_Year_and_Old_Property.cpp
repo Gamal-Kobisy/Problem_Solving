@@ -1,3 +1,4 @@
+// LINK : https://codeforces.com/problemset/problem/611/B
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -32,24 +33,20 @@ void out_vec(vector<T>& v) {
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void solve() {
-    ll n , m;
-    cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
-    {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
+    ll a , b;
+    cin >> a >> b;
+    ll a_bits = floor(log2(a)) + 1 , b_bits = floor(log2(b)) + 1;
+    ll ans = 0;
+    for (ll bits = a_bits; bits <= b_bits ; ++bits) {
+        for (ll i = 0; i < bits - 1; ++i) {
+            ll year = ((1ll << bits) - 1) - (1ll << i);
+            if(year >= a && year <= b)
+            {
+                ans++;
+            }
+        }
     }
-    if(r < l)
-    {
-        no
-    }
-    else
-    {
-        yes
-    }
+    cout << ans << nl;
 }
 void file()
 {

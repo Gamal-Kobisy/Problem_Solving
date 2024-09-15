@@ -1,6 +1,6 @@
 //
-// DATE : Created by Gamal on 7/11/2024.
-// LINK : https://vjudge.net/contest/592750#problem/H
+// DATE : Created by Gamal on 7/16/2024.
+// LINK : https://vjudge.net/contest/592750#problem/E
 
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
@@ -38,6 +38,7 @@ long long lcm(long long a, long long b) {
 
 template <class T>
 using ordered_set = tree<T, null_type, un_ordered, rb_tree_tag, tree_order_statistics_node_update>;
+
 bool is_prime(int n) {
     if (n < 2) return false;
     for (int i = 2; i <= sqrt(n); ++i) {
@@ -53,33 +54,13 @@ ll next_prime(ll n) {
     }
     return n;
 }
-void solve()
-{
-    ll n ;
+
+void solve() {
+    ll n;
     cin >> n;
-    vector<ll>v(n);
-    ll maxx = LLONG_MIN;
-    for (ll i = 0; i < n; ++i) {
-        cin >> v[i];
-        maxx = max(maxx , v[i]);
-    }
-    map<ll , bool>d;
-
-    for (ll i = 2; i * i <= maxx; i = next_prime(i + 1)) {
-        d[i * i] = true;
-    }
-
-    for(ll i : v)
-    {
-        if(d[i])
-        {
-            cout << "YES\n";
-        }
-        else
-        {
-            cout << "NO\n";
-        }
-    }
+    ll div2 = next_prime(1 + n);
+    ll div3 = next_prime(div2 + n);
+    cout << div2 * div3 << nl;
 }
 
 void file()
@@ -99,7 +80,7 @@ int main() {
     file();
     fast();
     ll t = 1;
-    // cin >> t;
+     cin >> t;
     while(t--)
     {
         solve();

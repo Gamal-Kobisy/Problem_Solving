@@ -1,3 +1,4 @@
+// LINK : https://codeforces.com/problemset/problem/1395/C
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -30,25 +31,28 @@ void out_vec(vector<T>& v) {
     cout << nl;
 }
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-void solve() {
-    ll n , m;
-    cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
+ll less_ones(ll a , ll b)
+{
+    if(__builtin_popcount(a) >= __builtin_popcount(b))
     {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
-    }
-    if(r < l)
-    {
-        no
+        return a;
     }
     else
     {
-        yes
+        return b;
+    }
+}
+void solve() {
+    ll n , m;
+    cin >> n >> m;
+    vector<ll>a(n) , b(m);
+    get_vec(a);
+    get_vec(b);
+    ll ans = b[0];
+    for (ll i = 0; i < m; ++i) {
+        for (ll j = 0; j < n; ++j) {
+            
+        }
     }
 }
 void file()

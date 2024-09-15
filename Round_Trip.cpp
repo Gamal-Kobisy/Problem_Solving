@@ -1,10 +1,11 @@
+// LINK : https://cses.fi/problemset/task/1669
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
 #define all(a) a.begin(),a.end()
 #define allr(a) a.rbegin(),a.rend()
-#define no cout<<"NO\n";
-#define yes cout<<"YES\n";
+#define no cout<<"NO\n"
+#define yes cout<<"YES\n"
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 
@@ -16,41 +17,89 @@ using namespace std;
  ███████╗██║ ╚████║╚██████╔╝     ╚██████╔╝██║  ██║██║ ╚═╝ ██║██║  ██║███████╗
  ╚══════╝╚═╝  ╚═══╝ ╚═════╝       ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝
 */
-template <typename T>
-void get_vec(vector<T>& v) {
-    for (ll i = 0; i < v.size(); ++i) {
-        cin >> v[i];
-    }
-}
-template <typename T>
-void out_vec(vector<T>& v) {
-    for (ll i = 0; i < v.size(); ++i) {
-        cout << v[i] << ' ';
-    }
-    cout << nl;
-}
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+const ll N = 1e5 + 1 ;
+ll n , m;
+vector<ll> adj[N];
+vector<bool> vis(N , false);
+vector<ll>ans;
+bool found = false;
+vector<ll> last;
+void dfs(ll v , ll parent )
+{
+    if(found)
+    {
+        return;
+    }
+    vis[v] = true;
+    last.push_back(v);
+    for(ll u : adj[v])
+    {
+        if(u == parent)
+        {
+            continue;
+        }
+        if(!found&&vis[u]){
+            bool f=0;
+            int g =0;
+            for (ll i = 0; i < last.size(); ++i) {
+                if(last[i]==u){
+                    g =i;
+                    f =1;
+                    break;
+                }
+            }
+            if(f) {
+                found = 1;
+                for(int i = g;i<last.size();i++)
+                    ans.push_back(last[i]);
+                last.clear();
+                break;
+            }
+        }
+
+        else if(!vis[u])
+        {
+
+            dfs(u , v );
+            // last.pop_back();
+        }
+    }
+
+}
+
 
 void solve() {
-    ll n , m;
+
     cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
-    {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
+    for (ll i = 0; i < m; ++i) {
+        ll a , b;
+        cin >> a >> b;
+        adj[a].push_back(b);
+        adj[b].push_back(a);
     }
-    if(r < l)
+    for (ll i = 1; i <= n; ++i) {
+
+        if(!vis[i]&&!found)
+            dfs(i , i );
+        last.clear();
+        if(found)break;
+    }
+    if(!found)
     {
-        no
+        cout << "IMPOSSIBLE" << '\n';
     }
     else
     {
-        yes
+        cout << ans.size() + 1 << '\n';
+        for(ll i : ans)
+        {
+            cout << i << ' ';
+        }
+        cout << ans[0] << '\n';
     }
 }
+
 void file()
 {
 #ifndef ONLINE_JUDGE

@@ -1,6 +1,6 @@
 //
-// DATE : Created by Gamal on 7/11/2024.
-// LINK : https://vjudge.net/contest/592750#problem/H
+// Created by Gamal on 8/4/2024.
+//
 
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
@@ -38,47 +38,21 @@ long long lcm(long long a, long long b) {
 
 template <class T>
 using ordered_set = tree<T, null_type, un_ordered, rb_tree_tag, tree_order_statistics_node_update>;
-bool is_prime(int n) {
-    if (n < 2) return false;
-    for (int i = 2; i <= sqrt(n); ++i) {
-        if (n % i == 0) return false;
-    }
-    return true;
-}
 
-// Function to find the next prime greater than or equal to n
-ll next_prime(ll n) {
-    while (!is_prime(n)) {
-        ++n;
-    }
-    return n;
-}
 void solve()
 {
-    ll n ;
-    cin >> n;
-    vector<ll>v(n);
-    ll maxx = LLONG_MIN;
-    for (ll i = 0; i < n; ++i) {
-        cin >> v[i];
-        maxx = max(maxx , v[i]);
+    srand(time(0));
+    string name[] = {"O(Zay ma teegy teegy)" , "Ehna el talata test cases" , "DP wel 2alb shariyeh" , "Makhowafaty code hayaty"};
+    map<string , ll>names;
+    names["O(Zay ma teegy teegy)"];
+    names["Ehna el talata test cases"];
+    names["DP wel 2alb shariyeh"];
+    names["Makhowafaty code hayaty"];
+    for (ll i = 0; i < 1000; ++i) {
+        names[name[rand() % 4]]++;
     }
-    map<ll , bool>d;
-
-    for (ll i = 2; i * i <= maxx; i = next_prime(i + 1)) {
-        d[i * i] = true;
-    }
-
-    for(ll i : v)
-    {
-        if(d[i])
-        {
-            cout << "YES\n";
-        }
-        else
-        {
-            cout << "NO\n";
-        }
+    for (auto i: names) {
+        cout << i.first << " : " << i.second << nl;
     }
 }
 

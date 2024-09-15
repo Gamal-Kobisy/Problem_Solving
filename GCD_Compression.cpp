@@ -29,26 +29,67 @@ void out_vec(vector<T>& v) {
     }
     cout << nl;
 }
+
+ll gcd(ll a, ll b) {
+    while (b != 0) {
+        ll temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+
+ll lcm(ll a, ll b) {
+    return abs(a * b) / gcd(a, b);
+}
+
+ll lcm_Vector(const std::vector<ll>& nums) {
+    ll result = nums[0];
+    for (size_t i = 1; i < nums.size(); ++i) {
+        result = lcm(result, nums[i]);
+    }
+    return result;
+}
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 void solve() {
-    ll n , m;
-    cin >> n >> m;
-    ll l = LLONG_MIN , r = LLONG_MAX;
-    while (m--)
-    {
-        ll x , y;
-        cin >> x >> y;
-        l = max(l , x);
-        r = min(r , y);
+    ll n;
+    cin >> n;
+    vector<pair<ll,ll>>ans;
+    bool odd = 0 , even = 0;
+    ll last_odd , last_even = 0;
+    for (ll i = 1; i <= 2 * n; ++i) {
+        ll x;
+        cin >> x;
+        if(x % 2)
+        {
+            if(odd)
+            {
+                ans.push_back({i , last_odd});
+                odd = 0;
+            }
+            else
+            {
+                last_odd = i;
+                odd = 1;
+            }
+        }
+        else
+        {
+            if (even)
+            {
+                ans.push_back({i , last_even});
+                even = 0;
+            }
+            else
+            {
+                last_even = i;
+                even = 1;
+            }
+        }
     }
-    if(r < l)
-    {
-        no
-    }
-    else
-    {
-        yes
+    for (ll i = 0 ; i < n - 1  ; i++) {
+        cout << ans[i].first << ' ' << ans[i].second << nl;
     }
 }
 void file()
@@ -65,7 +106,7 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll t = 1;
-//    cin >> t;
+    cin >> t;
     while(t--)
     {
         solve();
