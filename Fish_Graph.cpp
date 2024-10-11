@@ -1,11 +1,11 @@
-// LINK : https://codeforces.com/problemset/problem/96/B
+// LINK : https://codeforces.com/contest/1817/problem/B
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
 #define all(a) a.begin(),a.end()
 #define allr(a) a.rbegin(),a.rend()
-#define no cout<<"NO\n";
-#define yes cout<<"YES\n";
+#define no cout<<"NO\n"
+#define yes cout<<"YES\n"
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 
@@ -17,44 +17,92 @@ using namespace std;
  ███████╗██║ ╚████║╚██████╔╝     ╚██████╔╝██║  ██║██║ ╚═╝ ██║██║  ██║███████╗
  ╚══════╝╚═╝  ╚═══╝ ╚═════╝       ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝
 */
-template <typename T>
-void get_vec(vector<T>& v) {
-    for (ll i = 0; i < v.size(); ++i) {
-        cin >> v[i];
-    }
-}
-template <typename T>
-void out_vec(vector<T>& v) {
-    for (ll i = 0; i < v.size(); ++i) {
-        cout << v[i];
-    }
-}
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+ll n , m;
+vector<vector<int>>adj , cycles;
+vector<int>color ;
+vector<int>parent;
 
-void solve() {
-    string s;
-    cin >> s;
-    ll sz = s.size();
-    if(sz & 1)
+void dfs(int v , int par)
+{
+    if(color[v] == 2)
     {
-        sz++;
+        return;
     }
-    if(stoll(s) > stoll(string(sz / 2 , '7') + string(sz / 2 , '4')))
+    if(color[v] == 1)
     {
-        sz+=2;
+        vector<int>temp;
+        int cur = par;
+        temp.push_back(v);
+        while (true) {
+            if (cur == v)
+                break;
+            temp.push_back(cur);
+            cur = parent[cur];
+        }
+        cycles.push_back(temp);
+        return;
     }
-    string ans;
-    for (ll i = 0; i < sz / 2; ++i) {
-        ans += '4';
-    }
-    for (ll i = sz / 2; i < sz; ++i) {
-        ans +=  '7';
-    }
-    while(stoll(ans) < stoll(s))
+    color[v] = 1;
+    parent[v] = par;
+    for(ll u : adj[v])
     {
-        next_permutation(ans.begin() , ans.end());
+        if(u != par)
+        {
+            dfs(u , v);
+        }
+
     }
-    cout << ans << nl;
+    color[v] = 2;
+}
+
+void solve(ll t) {
+    cin >> n >> m;
+    adj    = vector<vector<int>>(n + 1);
+    color  = vector<int>(n + 1);
+    parent = vector<int>(n + 1);
+    cycles.clear();
+    for (ll i = 0; i < m; ++i) {
+        ll a , b;
+        cin >> a >> b;
+        adj[a].push_back(b);
+        adj[b].push_back(a);
+    }
+
+    for (ll i = 1; i <= n; ++i) {
+        dfs(i , 0);
+    }
+    for(auto cycle : cycles)
+    {
+        vector<bool>vis(n + 1);
+        for(ll node : cycle)
+        {
+            vis[node] = 1;
+        }
+        for(ll node : cycle)
+        {
+            vector<int>tail;
+            for(ll u : adj[node])
+            {
+                if(!vis[u]){
+                    tail.push_back(u);
+                }
+            }
+            if(tail.size() >= 2)
+            {
+                yes;
+                cout << cycle.size() + 2 << nl;
+                for (ll i = 0; i < 2; ++i) {
+                    cout << node << ' ' << tail[i] << nl;
+                }
+                for (ll i = 0; i < cycle.size(); ++i) {
+                    cout << cycle[i] << ' ' << cycle[(i + 1) % cycle.size()] << nl;
+                }
+                return;
+            }
+        }
+    }
+    no;
 }
 void file()
 {
@@ -70,10 +118,10 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll t = 1;
-//    cin >> t;
+    cin >> t;
     while(t--)
     {
-        solve();
+        solve(t + 1);
     }
 
     return 0;

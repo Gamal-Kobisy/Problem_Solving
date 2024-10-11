@@ -1,11 +1,11 @@
-// LINK : https://codeforces.com/problemset/problem/96/B
+// LINK :
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
 #define all(a) a.begin(),a.end()
 #define allr(a) a.rbegin(),a.rend()
-#define no cout<<"NO\n";
-#define yes cout<<"YES\n";
+#define no cout<<"NO\n"
+#define yes cout<<"YES\n"
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 
@@ -17,44 +17,45 @@ using namespace std;
  ███████╗██║ ╚████║╚██████╔╝     ╚██████╔╝██║  ██║██║ ╚═╝ ██║██║  ██║███████╗
  ╚══════╝╚═╝  ╚═══╝ ╚═════╝       ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝
 */
-template <typename T>
-void get_vec(vector<T>& v) {
-    for (ll i = 0; i < v.size(); ++i) {
-        cin >> v[i];
-    }
-}
-template <typename T>
-void out_vec(vector<T>& v) {
-    for (ll i = 0; i < v.size(); ++i) {
-        cout << v[i];
-    }
-}
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
 void solve() {
-    string s;
-    cin >> s;
-    ll sz = s.size();
-    if(sz & 1)
+    ll n , k , x;
+    cin >> n >> k >> x;
+    if(x != 1)
     {
-        sz++;
+        yes;
+        cout << n << nl;
+        for (ll i = 0; i < n; ++i) {
+            cout << "1 ";
+        }
+        cout << nl;
+        return;
     }
-    if(stoll(s) > stoll(string(sz / 2 , '7') + string(sz / 2 , '4')))
+    else
     {
-        sz+=2;
+        if(n % 2 == 0 && k >= 2)
+        {
+            yes;
+            cout << n / 2<< nl;
+            for (ll i = 0; i < n / 2; ++i) {
+                cout << "2 ";
+            }
+            cout << nl;
+            return;
+        }
+        else if(n & 1 && k >= 3)
+        {
+            yes;
+            cout << n / 2<< nl;
+            cout << 3 << ' ';
+            for (ll i = 0; i < n / 2 - 1; ++i) {
+                cout << "2 ";
+            }
+            cout << nl;
+            return;
+        }
     }
-    string ans;
-    for (ll i = 0; i < sz / 2; ++i) {
-        ans += '4';
-    }
-    for (ll i = sz / 2; i < sz; ++i) {
-        ans +=  '7';
-    }
-    while(stoll(ans) < stoll(s))
-    {
-        next_permutation(ans.begin() , ans.end());
-    }
-    cout << ans << nl;
+    no;
 }
 void file()
 {
@@ -70,7 +71,7 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll t = 1;
-//    cin >> t;
+    cin >> t;
     while(t--)
     {
         solve();

@@ -1,11 +1,11 @@
-// LINK : https://codeforces.com/problemset/problem/96/B
+// LINK : https://cses.fi/problemset/result/10790447/
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
 #define all(a) a.begin(),a.end()
 #define allr(a) a.rbegin(),a.rend()
-#define no cout<<"NO\n";
-#define yes cout<<"YES\n";
+#define no cout<<"NO\n"
+#define yes cout<<"YES\n"
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 
@@ -17,44 +17,49 @@ using namespace std;
  ███████╗██║ ╚████║╚██████╔╝     ╚██████╔╝██║  ██║██║ ╚═╝ ██║██║  ██║███████╗
  ╚══════╝╚═╝  ╚═══╝ ╚═════╝       ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝
 */
-template <typename T>
-void get_vec(vector<T>& v) {
-    for (ll i = 0; i < v.size(); ++i) {
-        cin >> v[i];
-    }
-}
-template <typename T>
-void out_vec(vector<T>& v) {
-    for (ll i = 0; i < v.size(); ++i) {
-        cout << v[i];
-    }
-}
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+const int N = 1e5;
+int n , m;
+ll infLL = 0x3f3f3f3f3f3f3f3f;
+vector<pair<int , int>>adj[N];
+vector<ll>dist(N , infLL);
 
+void dijkstra(int start)
+{
+    priority_queue<pair<ll , int> , vector<pair<ll , int>> , greater<>>pq;
+    pq.emplace(start , 0);
+    dist[start] = 0;
+
+    while (!pq.empty())
+    {
+        auto [curDis , curNode] = pq.top();
+        pq.pop();
+        if(curDis != dist[curNode])
+        {
+            continue;
+        }
+        for(auto [v , w] : adj[curNode])
+        {
+            if(dist[v] > curDis + w)
+            {
+                dist[v] = curDis + w;
+                pq.emplace(dist[v] , v);
+            }
+        }
+    }
+}
 void solve() {
-    string s;
-    cin >> s;
-    ll sz = s.size();
-    if(sz & 1)
-    {
-        sz++;
+    cin >> n >> m;
+    for (ll i = 0; i < m; ++i) {
+        int a, b , w;
+        cin >> a >> b >> w;
+        a-- , b--;
+        adj[a].emplace_back(b , w);
     }
-    if(stoll(s) > stoll(string(sz / 2 , '7') + string(sz / 2 , '4')))
-    {
-        sz+=2;
+    dijkstra(0);
+    for (ll i = 0; i < n; ++i) {
+        cout << dist[i] << ' ';
     }
-    string ans;
-    for (ll i = 0; i < sz / 2; ++i) {
-        ans += '4';
-    }
-    for (ll i = sz / 2; i < sz; ++i) {
-        ans +=  '7';
-    }
-    while(stoll(ans) < stoll(s))
-    {
-        next_permutation(ans.begin() , ans.end());
-    }
-    cout << ans << nl;
 }
 void file()
 {

@@ -4,8 +4,8 @@
 #define nl '\n'
 #define all(a) a.begin(),a.end()
 #define allr(a) a.rbegin(),a.rend()
-#define no cout<<"NO\n";
-#define yes cout<<"YES\n";
+#define no cout<<"NO\n"
+#define yes cout<<"YES\n"
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 
@@ -62,7 +62,7 @@ void solve() {
     cin >> n >> m;
     if(m != n - 1)
     {
-        no
+        no;
         return;
     }
     for (ll i = 0; i < m; ++i) {
@@ -75,12 +75,7 @@ void solve() {
         if(!vis[i])
         dfs(i ,-1);
     }
-    if(cycle)
-    {
-        no
-        return;
-    }
-    yes
+    (cycle)? no : yes;
 }
 void file()
 {

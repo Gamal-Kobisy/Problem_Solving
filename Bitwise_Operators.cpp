@@ -43,6 +43,7 @@ void solve() {
             break;
         }
     }
+    cout << (2 ^ 2) << nl;
 }
 void file()
 {

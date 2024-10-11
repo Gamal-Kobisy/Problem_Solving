@@ -27,26 +27,20 @@ void bfs()
 {
     queue<ll>q;
     q.emplace(1);
-    ll level = 1;
+    dist[1] = 1;
     while (!q.empty())
     {
-        ll sz = q.size();
-        while (sz--)
+        ll curr = q.front();
+        q.pop();
+        for(ll u : adj[curr])
         {
-            ll curr = q.front();
-            q.pop();
-            dist[curr] = level;
-            for(ll u : adj[curr])
+            if(dist[u] == 1e9)
             {
-                if(dist[u] == 1e9)
-                {
-                    q.emplace(u);
-                    dist[u] = level + 1;
-                    parent[u] = curr;
-                }
+                q.emplace(u);
+                dist[u] = dist[curr] + 1;
+                parent[u] = curr;
             }
         }
-        level++;
     }
 }
 void solve() {
@@ -69,21 +63,19 @@ void solve() {
     if(dist[n] == 1e9)
     {
         cout << "IMPOSSIBLE" << nl;
+        return;
     }
-    else
+    cout << dist[n] << nl;
+    vector<ll>ans{n};
+    ll cur = parent[n];
+    while (cur != -1)
     {
-        cout << dist[n] << nl;
-        vector<ll>ans{n};
-        ll cur = parent[n];
-        while (cur != -1)
-        {
-            ans.push_back(cur);
-            cur = parent[cur];
-        }
-        reverse(all(ans));
-        for (ll i: ans) {
-            cout << i << ' ';
-        }
+        ans.push_back(cur);
+        cur = parent[cur];
+    }
+    reverse(all(ans));
+    for (ll i: ans) {
+        cout << i << ' ';
     }
 }
 void file()
@@ -107,4 +99,4 @@ int main() {
     }
 
     return 0;
-}
+}z

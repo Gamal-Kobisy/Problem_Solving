@@ -24,28 +24,42 @@ using ordered_set = tree<T, null_type, greater_equal<>, rb_tree_tag, tree_order_
 */
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 const ll N = 2e5 + 1;
-ll n , k;
+ll n , k , ans = 0;
 vector<vector<ll>>adj(N);
-vector<bool>vis(N) , industry(N);
-
-ordered_set<ll>happinesses;
-
-void dfs(ll v , ll happ)
+vector<bool>vis(N) , ind(N);
+vector<ll>road(N) , depth(N);
+int dfs(ll v , ll d)
 {
-    if(industry[v])
-    {
-        happinesses.insert(happ);
-    }
     vis[v] = true;
+    ll c = 0;
     for(ll u : adj[v])
     {
         if(!vis[u])
         {
-            dfs(u , (industry[u] ? happ : happ + 1));
+            c += dfs(u , d + 1);
+            c++;
+        }
+    }
+    depth[v] = d;
+    road[v] += c;
+    return c;
+}
+
+void dfs_happ(ll v , ll happ)
+{
+    vis[v] = true;
+    if(ind[v])
+    {
+        ans += happ;
+    }
+    for(ll u : adj[v])
+    {
+        if(!vis[u])
+        {
+            dfs_happ(u , (ind[v]? happ : happ + 1));
         }
     }
 }
-
 void solve() {
     cin >> n >> k;
     for (ll i = 0; i < n - 1; ++i) {
@@ -54,22 +68,18 @@ void solve() {
         adj[a].push_back(b);
         adj[b].push_back(a);
     }
-    ll leafs = 0;
-    for (ll i = 2; i <= n; ++i) {
-        if(adj[i].size() == 1)
-        {
-            industry[i] = true;
-            leafs++;
-        }
-    }
     dfs(1 , 1);
-    ll ans = 0;
-    auto it = happinesses.begin();
-    for (ll i = 0; i < k; ++i) {
-        ans += *it;
-        it++;
+    vector<pair<pair<ll , ll>, ll>>cities(n);
+    for (ll i = 1; i <= n; ++i) {
+        cities[i - 1] = {{road[i] , -depth[i]}, i};
     }
-    cout << (leafs < k ? ans + k - leafs : ans) << nl;
+    sort(all(cities) , [](pair<pair<ll,ll> , ll>a , pair<pair<ll , >>));
+    for (ll i = 0; i < k; ++i) {
+        ind[cities[i].second] = true;
+    }
+    vis = vector<bool>(N , false);
+    dfs_happ(1 , 0);
+    cout << ans << nl;
 }
 void file()
 {

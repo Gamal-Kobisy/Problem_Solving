@@ -20,6 +20,7 @@ using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 int dx[] = {-1, 0, 1, 0, -1, 1, 1, -1};
 int dy[] = {0, 1, 0, -1, 1, 1, -1, -1};
+char di[] = {'U', 'R', 'D', 'L'};
 int knightx[] = {-2, -1, 1, 2, 2, 1, -1, -2};
 int knighty[] = {1, 2, 2, 1, -1, -2, -2, -1};
 int n , m;
@@ -28,11 +29,11 @@ vector<vector<bool>>vis;
 
 void dfs(int i , int j)
 {
+    vis[i][j] = true;
     for (ll k = 0; k < 4; ++k) {
         ll nx = i + dx[k] , ny = j + dy[k];
         if(nx >= 0 && nx < n && ny >= 0 && ny < m && grid[nx][ny] == '.' && !vis[nx][ny])
         {
-            vis[nx][ny] = true;
             dfs(nx , ny);
         }
     }
@@ -51,7 +52,6 @@ void solve() {
         for (ll j = 0; j < m; ++j) {
             if(grid[i][j] == '.' && !vis[i][j])
             {
-                vis[i][j] = true;
                 dfs(i , j);
                 ans++;
             }

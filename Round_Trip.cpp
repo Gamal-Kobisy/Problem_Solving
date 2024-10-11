@@ -1,4 +1,4 @@
-// LINK : https://cses.fi/problemset/task/1669
+// LINK : https://cses.fi/problemset/task/1669/
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -20,86 +20,69 @@ using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 const ll N = 1e5 + 1 ;
 ll n , m;
-vector<ll> adj[N];
+vector<vector<ll>> adj(N);
 vector<bool> vis(N , false);
-vector<ll>ans;
-bool found = false;
-vector<ll> last;
-void dfs(ll v , ll parent )
+ll start = - 1 , last;
+vector<ll> parent(N);
+
+bool dfs(ll v , ll par)
 {
-    if(found)
-    {
-        return;
-    }
     vis[v] = true;
-    last.push_back(v);
+    parent[v] = par;
     for(ll u : adj[v])
     {
-        if(u == parent)
+        if(u == par)
         {
             continue;
         }
-        if(!found&&vis[u]){
-            bool f=0;
-            int g =0;
-            for (ll i = 0; i < last.size(); ++i) {
-                if(last[i]==u){
-                    g =i;
-                    f =1;
-                    break;
-                }
-            }
-            if(f) {
-                found = 1;
-                for(int i = g;i<last.size();i++)
-                    ans.push_back(last[i]);
-                last.clear();
-                break;
-            }
-        }
-
-        else if(!vis[u])
+        if(vis[u])
         {
-
-            dfs(u , v );
-            // last.pop_back();
+            start = u;
+            last = v;
+            return true;
+        }
+        parent[u] = v;
+        if(dfs(u , v))
+        {
+            return true;
         }
     }
-
+    return false;
 }
-
-
 void solve() {
 
     cin >> n >> m;
     for (ll i = 0; i < m; ++i) {
-        ll a , b;
+        ll a, b;
         cin >> a >> b;
         adj[a].push_back(b);
         adj[b].push_back(a);
     }
     for (ll i = 1; i <= n; ++i) {
-
-        if(!vis[i]&&!found)
-            dfs(i , i );
-        last.clear();
-        if(found)break;
+        if(!vis[i] && dfs(i , -1))
+        {
+            break;
+        }
     }
-    if(!found)
+    if(start == -1)
     {
-        cout << "IMPOSSIBLE" << '\n';
+        cout << "IMPOSSIBLE" << nl;
     }
     else
     {
-        cout << ans.size() + 1 << '\n';
-        for(ll i : ans)
-        {
+        vector<ll>ans;
+        ans.push_back(start);
+        for (ll i = last; i != start ; i = parent[i]) {
+            ans.push_back(i);
+        }
+        ans.push_back(start);
+        cout << ans.size() << nl;
+        for (ll i: ans) {
             cout << i << ' ';
         }
-        cout << ans[0] << '\n';
+        cout << nl;
     }
 }
-
 void file()
 {
 #ifndef ONLINE_JUDGE

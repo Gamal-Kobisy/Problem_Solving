@@ -1,4 +1,4 @@
-// LINK : https://codeforces.com/problemset/problem/242/C
+// LINK : https://codeforces.com/problemset/problem/1063/B
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -20,56 +20,78 @@ using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 int dx[] = {-1, 0, 1, 0, -1, 1, 1, -1};
 int dy[] = {0, 1, 0, -1, 1, 1, -1, -1};
+char di[] = {'U', 'R', 'D', 'L'};
 int knightx[] = {-2, -1, 1, 2, 2, 1, -1, -2};
 int knighty[] = {1, 2, 2, 1, -1, -2, -2, -1};
-const ll N = 1e9 + 1;
-ll n , x , y , X , Y;
-map<pair<ll , ll> , bool>grid;
-map<pair<ll ,ll> , ll>dist;
-bool valid(ll nx , ll ny)
-{
-    return (nx <= 1e9 && nx > 0 && ny <= 1e9 && ny > 0 && grid[{nx, ny}] && dist[{nx, ny}] == 0);
-}
 
-void bfs(ll x , ll y)
+int n , m , r , c ,  x , y , ans = 0;
+vector<vector<char>>grid;
+vector<vector<pair<ll ,ll>>>dist;
+
+bool valid(int i , int j)
+{
+    return (i < n && i >= 0 && j < m && j >= 0 && dist[i][j].first + dist[i][j].second == 20e10 && grid[i][j] == '.');
+}
+void bfs(int x1 , int y1)
 {
     queue<pair<ll ,ll>>q;
-    q.push({x , y});
-    dist[{x , y}] = 0;
+    q.push({x1 , y1});
+    dist[x1][y1] = {0 , 0};
     while (!q.empty())
     {
-        pair<ll ,ll> cur = q.front();
+        auto cur = q.front();
         q.pop();
-        for (ll i = 0; i < 8; ++i) {
-            ll nx = cur.first + dx[i] , ny = cur.second + dy[i];
+        for (ll i = 0; i < 4; ++i) {
+            int nx = cur.first + dx[i] , ny = cur.second + dy[i];
             if(valid(nx , ny))
             {
-                q.push({nx , ny});
-                dist[{nx, ny}] = dist[cur] + 1;
+                int xx = nx +1;
+                while (valid(xx , ny))
+                {
+                    ll l = dist[cur.first][cur.second].first + (i == 1), r = dist[cur.first][cur.second].second + (i == 3);
+                    dist[xx][ny].first = dist[cur.first][cur.second].first + (i == 1);
+                    dist[xx][ny].second = dist[cur.first][cur.second].second + (i == 3);
+                    q.push({xx, ny});
+                    xx++;
+                }
+                while (valid(nx , ny))
+                {
+                    ll l = dist[cur.first][cur.second].first + (i == 1), r = dist[cur.first][cur.second].second + (i == 3);
+                    dist[nx][ny].first = dist[cur.first][cur.second].first + (i == 1);
+                    dist[nx][ny].second = dist[cur.first][cur.second].second + (i == 3);
+                    q.push({nx, ny});
+                    nx--;
+                }
             }
         }
     }
 }
 void solve() {
-    cin >> x >> y >> X >> Y >> n;
+    cin >> n >> m >> r >> c >>  x >> y;
+    grid = vector<vector<char>>(n , vector<char>(m));
+    dist = vector<vector<pair<ll ,ll>>>(n , vector<pair<ll ,ll>>(m , {10e10 , 10e10}));
     for (ll i = 0; i < n; ++i) {
-        ll r , a , b;
-        cin >> r >> a >> b;
-        for (ll j = a; j <= b; ++j) {
-            grid[{r, j}] = true;
+        for (ll j = 0; j < m; ++j) {
+            cin >> grid[i][j];
         }
     }
 
-    bfs(x , y);
-
-    if(dist[{X , Y}])
-    {
-        cout << dist[{X , Y}] << nl;
+    bfs(r - 1, c - 1);
+    for (ll i = 0; i < n; ++i) {
+        for (ll j = 0; j < m; ++j) {
+            if(dist[i][j].first <= y && dist[i][j].second <= x)
+            {
+//                cout << '+';
+                ans++;
+            }
+            else
+            {
+//                cout << grid[i][j];
+            }
+        }
+//        cout << nl;
     }
-    else
-    {
-        cout << -1 << nl;
-    }
+    cout << ans << nl;
 }
 void file()
 {
