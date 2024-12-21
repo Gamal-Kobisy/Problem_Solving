@@ -12,35 +12,53 @@
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-const int N = 2e2 + 5, M = 512 + 5, LOG = 20, inf = 0x3f3f3f3f;
-ll infLL = 0x3f3f3f3f3f3f3f3f;
-int n , m;
-int a[N] , b[N] , dp[N][M];
+const int N = 1e3 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
+const ll MOD = 1e9 + 7;
 
-int calc(int i , int preOR)
+ll add(ll a  , ll b)
 {
-    if(i == n)
-        return preOR;
-    int &ret = dp[i][preOR];
-    if(ret != inf)
-        return ret;
-    for (ll j = 0; j < m; ++j) {
-        int c = a[i] & b[j];
-        ret = min(ret , calc(i + 1 , preOR | c));
-    }
-    return ret;
+    return ((a % MOD) + (b % MOD)) % MOD;
 }
 
+ll sub(ll a , ll b)
+{
+    return ((a % MOD) - (b % MOD) + MOD) % MOD;
+}
+
+ll mul(ll a , ll b)
+{
+    return ((a % MOD) * (b % MOD)) % MOD;
+}
+ll infLL = 0x3f3f3f3f3f3f3f3f;
+int n;
+string grid[N];
+int dp[N][N];
+
 void solve() {
-    memset(dp , inf , sizeof dp);
-    cin >> n >> m;
-    for (ll i = 0; i < n; ++i) {
-        cin >> a[i];
+    cin >> n;
+    for (int i = 0; i < n; ++i) {
+        cin >> grid[i];
     }
-    for (ll i = 0; i < m; ++i) {
-        cin >> b[i];
+    for (ll i = n - 1; i >= 0 ; --i) {
+        for (ll j = n - 1; j >= 0; --j) {
+            int &ret = dp[i][j];
+            if(grid[i][j] != '.')
+            {
+                ret = 0;
+                continue;
+            }
+            if(i == n - 1 && j == n - 1){
+                ret = 1;
+                continue;
+            }
+            ret = 0;
+            if(i + 1 < n && grid[i][j] == '.')
+                ret = add(ret , dp[i + 1][j]);
+            if(j + 1 < n && grid[i][j] == '.')
+                ret = add(ret , dp[i][j + 1]);
+        }
     }
-    cout << calc(0 , 0) << nl;
+    cout << dp[0][0] << nl;
 }
 void file()
 {

@@ -12,35 +12,36 @@
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-const int N = 2e2 + 5, M = 512 + 5, LOG = 20, inf = 0x3f3f3f3f;
+const int N = 1e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-int n , m;
-int a[N] , b[N] , dp[N][M];
+ll act[3][N] , dp[N][3] , n;
 
-int calc(int i , int preOR)
+ll calc(int i , int c)
 {
     if(i == n)
-        return preOR;
-    int &ret = dp[i][preOR];
-    if(ret != inf)
+        return 0;
+
+    ll &ret = dp[i][c];
+    if(ret)
         return ret;
-    for (ll j = 0; j < m; ++j) {
-        int c = a[i] & b[j];
-        ret = min(ret , calc(i + 1 , preOR | c));
+
+    for (ll j = 0; j < 3; ++j) {
+        if(j != c)
+            ret = max(ret , calc(i + 1 , j) + act[j][i]);
     }
+
     return ret;
 }
 
 void solve() {
-    memset(dp , inf , sizeof dp);
-    cin >> n >> m;
+    memset(dp , 0 , sizeof dp);
+    cin >> n;
     for (ll i = 0; i < n; ++i) {
-        cin >> a[i];
+        for (ll j = 0; j < 3; ++j) {
+            cin >> act[j][i];
+        }
     }
-    for (ll i = 0; i < m; ++i) {
-        cin >> b[i];
-    }
-    cout << calc(0 , 0) << nl;
+    cout << calc(0 , -1) << nl;
 }
 void file()
 {

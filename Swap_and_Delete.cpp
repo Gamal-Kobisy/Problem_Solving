@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK :
+// LINK : https://codeforces.com/contest/1913/problem/B
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -12,35 +12,38 @@
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-const int N = 2e2 + 5, M = 512 + 5, LOG = 20, inf = 0x3f3f3f3f;
+const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-int n , m;
-int a[N] , b[N] , dp[N][M];
-
-int calc(int i , int preOR)
-{
-    if(i == n)
-        return preOR;
-    int &ret = dp[i][preOR];
-    if(ret != inf)
-        return ret;
-    for (ll j = 0; j < m; ++j) {
-        int c = a[i] & b[j];
-        ret = min(ret , calc(i + 1 , preOR | c));
-    }
-    return ret;
-}
 
 void solve() {
-    memset(dp , inf , sizeof dp);
-    cin >> n >> m;
-    for (ll i = 0; i < n; ++i) {
-        cin >> a[i];
+    string s;
+    cin >> s;
+    int zeros = 0 , ones = 0 , ans = s.size();
+    for (ll i = 0; i < s.size(); ++i) {
+        (s[i] == '1'? ones++ : zeros++);
     }
-    for (ll i = 0; i < m; ++i) {
-        cin >> b[i];
+    for (ll i = 0; i < s.size(); ++i) {
+        if(s[i] == '1')
+        {
+            if(zeros--)
+                ans--;
+            else
+            {
+                cout << ans << nl;
+                return;
+            }
+        } else
+        {
+            if(ones--)
+                ans--;
+            else
+            {
+                cout << ans << nl;
+                return;
+            }
+        }
     }
-    cout << calc(0 , 0) << nl;
+    cout << ans << nl;
 }
 void file()
 {
@@ -57,7 +60,7 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll t = 1;
-    // cin >> t;
+     cin >> t;
     while (t--)
     {
         solve();

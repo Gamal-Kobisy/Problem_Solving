@@ -12,35 +12,51 @@
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-const int N = 2e2 + 5, M = 512 + 5, LOG = 20, inf = 0x3f3f3f3f;
+const int N = 3e3 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
+string s , t;
 int n , m;
-int a[N] , b[N] , dp[N][M];
-
-int calc(int i , int preOR)
+int dp[N][N];
+int calc(int i , int j)
 {
-    if(i == n)
-        return preOR;
-    int &ret = dp[i][preOR];
-    if(ret != inf)
+    if(i == n || j == m)
+        return 0;
+
+    int &ret = dp[i][j];
+
+    if(~ret)
         return ret;
-    for (ll j = 0; j < m; ++j) {
-        int c = a[i] & b[j];
-        ret = min(ret , calc(i + 1 , preOR | c));
-    }
+    if(s[i] == t[j])
+        ret = calc(i + 1 , j + 1) + 1;
+    else
+        ret = max(calc(i + 1 , j) , calc(i , j + 1));
+
     return ret;
 }
 
+void build(int i , int j)
+{
+    if(i == n || j == m)
+        return;
+    if(s[i] == t[j])
+    {
+        cout << s[i];
+        build(i + 1 , j + 1);
+    }
+    else
+    {
+        if(calc(i + 1 , j ) >= calc(i , j + 1))
+            build(i + 1 , j);
+        else
+            build(i , j + 1);
+    }
+}
 void solve() {
-    memset(dp , inf , sizeof dp);
-    cin >> n >> m;
-    for (ll i = 0; i < n; ++i) {
-        cin >> a[i];
-    }
-    for (ll i = 0; i < m; ++i) {
-        cin >> b[i];
-    }
-    cout << calc(0 , 0) << nl;
+    memset(dp , -1 , sizeof dp);
+    cin >> s >> t;
+    n = s.size();
+    m = t.size();
+    build(0 , 0);
 }
 void file()
 {

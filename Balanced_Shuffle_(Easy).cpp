@@ -12,35 +12,27 @@
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-const int N = 2e2 + 5, M = 512 + 5, LOG = 20, inf = 0x3f3f3f3f;
+const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-int n , m;
-int a[N] , b[N] , dp[N][M];
 
-int calc(int i , int preOR)
-{
-    if(i == n)
-        return preOR;
-    int &ret = dp[i][preOR];
-    if(ret != inf)
-        return ret;
-    for (ll j = 0; j < m; ++j) {
-        int c = a[i] & b[j];
-        ret = min(ret , calc(i + 1 , preOR | c));
-    }
-    return ret;
-}
+int dx[] = {-1, 0, 1, 0, -1, 1, 1, -1};
+int dy[] = {0, 1, 0, -1, 1, 1, -1, -1};
+char di[] = {'U', 'R', 'D', 'L'};
+int knightx[] = {-2, -1, 1, 2, 2, 1, -1, -2};
+int knighty[] = {1, 2, 2, 1, -1, -2, -2, -1};
 
 void solve() {
-    memset(dp , inf , sizeof dp);
-    cin >> n >> m;
-    for (ll i = 0; i < n; ++i) {
-        cin >> a[i];
+    string s;
+    cin >> s;
+    multiset<pair<int , int>>ms;
+    int pre = 0;
+    for (ll i = 0; i < s.size(); ++i) {
+        ms.emplace(pre , -(i + 1));
+        pre += (s[i] == '(' ? 1 : -1);
     }
-    for (ll i = 0; i < m; ++i) {
-        cin >> b[i];
+    for (auto i: ms) {
+        cout << s[-(i.second + 1)];
     }
-    cout << calc(0 , 0) << nl;
 }
 void file()
 {

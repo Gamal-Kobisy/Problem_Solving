@@ -12,35 +12,49 @@
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-const int N = 2e2 + 5, M = 512 + 5, LOG = 20, inf = 0x3f3f3f3f;
+const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-int n , m;
-int a[N] , b[N] , dp[N][M];
-
-int calc(int i , int preOR)
-{
-    if(i == n)
-        return preOR;
-    int &ret = dp[i][preOR];
-    if(ret != inf)
-        return ret;
-    for (ll j = 0; j < m; ++j) {
-        int c = a[i] & b[j];
-        ret = min(ret , calc(i + 1 , preOR | c));
-    }
-    return ret;
-}
 
 void solve() {
-    memset(dp , inf , sizeof dp);
-    cin >> n >> m;
+    ll n , k;
+    cin >> n >> k;
+    map<ll , ll>a;
+    ll maxi = LLONG_MIN;
     for (ll i = 0; i < n; ++i) {
-        cin >> a[i];
+        ll x;
+        cin >> x;
+        maxi = max(maxi , x);
+        a[x]++;
     }
-    for (ll i = 0; i < m; ++i) {
-        cin >> b[i];
+    vector<ll>pre(maxi + 1);
+    for (ll i = 1; i <= maxi; ++i) {
+        ll freq;
+        if(a.find(i) == a.end())
+            freq = 0;
+        else
+            freq = a[i];
+        pre[i] = pre[i - 1] + freq;
     }
-    cout << calc(0 , 0) << nl;
+
+    ll l = 0 , r = 1 , ans = 0;
+    while(l <= r && r <= maxi)
+    {
+        if(r - l <= k && a[r])
+        {
+            ans = max(ans , pre[r] - pre[l]);
+            r++;
+        }
+        else if(r - l > k)
+        {
+            l++;
+        }
+        else
+        {
+            l = r;
+            r++;
+        }
+    }
+    cout << ans << nl;
 }
 void file()
 {
@@ -57,7 +71,7 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll t = 1;
-    // cin >> t;
+     cin >> t;
     while (t--)
     {
         solve();

@@ -12,35 +12,33 @@
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-const int N = 2e2 + 5, M = 512 + 5, LOG = 20, inf = 0x3f3f3f3f;
+const int N = 50 + 5 , M = 1e3 + 5, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-int n , m;
-int a[N] , b[N] , dp[N][M];
+int n, w[N] , val[N] , dp[N][M];
 
-int calc(int i , int preOR)
+int calc(int i , int remC)
 {
     if(i == n)
-        return preOR;
-    int &ret = dp[i][preOR];
-    if(ret != inf)
+        return 0;
+
+    int &ret = dp[i][remC];
+    if(~ret)
         return ret;
-    for (ll j = 0; j < m; ++j) {
-        int c = a[i] & b[j];
-        ret = min(ret , calc(i + 1 , preOR | c));
-    }
+    ret = calc(i + 1 , remC);
+    if(remC >= w[i])
+        ret = max(ret , calc(i + 1 , remC - w[i]) + val[i]);
+
     return ret;
 }
 
 void solve() {
-    memset(dp , inf , sizeof dp);
-    cin >> n >> m;
+    memset(dp , -1 , sizeof dp);
+    int c;
+    cin >> c >> n;
     for (ll i = 0; i < n; ++i) {
-        cin >> a[i];
+        cin >> w[i] >> val[i];
     }
-    for (ll i = 0; i < m; ++i) {
-        cin >> b[i];
-    }
-    cout << calc(0 , 0) << nl;
+    cout << "Hey stupid robber, you can get " << calc(0 , c) << '.' << nl;
 }
 void file()
 {
@@ -57,7 +55,7 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll t = 1;
-    // cin >> t;
+     cin >> t;
     while (t--)
     {
         solve();

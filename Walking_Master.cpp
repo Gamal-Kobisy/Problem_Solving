@@ -1,12 +1,15 @@
-// LINK : https://cses.fi/problemset/task/1622
+// LINK : https://codeforces.com/problemset/problem/1806/A
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
-#define all(a) a.begin(),a.end()
-#define allr(a) a.rbegin(),a.rend()
-#define no cout<<"NO\n"
-#define yes cout<<"YES\n"
-#define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
+#define all(a) a.begin(), a.end()
+#define allr(a) a.rbegin(), a.rend()
+#define no cout << "NO\n"
+#define yes cout << "YES\n"
+#define ENG_GAMAL                     \
+    ios_base::sync_with_stdio(false); \
+    cin.tie(nullptr);                 \
+    cout.tie(nullptr);
 using namespace std;
 
 /*
@@ -18,30 +21,23 @@ using namespace std;
  ╚══════╝╚═╝  ╚═══╝ ╚═════╝       ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝
 */
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-set<string>ans;
-void generate(string s , string r)
+int inf = 0x3f3f3f3f;
+ll infLL = 0x3f3f3f3f3f3f3f3f;
+
+void solve()
 {
-    if(r == "")
-    {
-        ans.emplace(s);
-        return;
-    }
-    for (ll i = 0; i < r.size(); ++i) {
-        string new_s = s , new_r;
-        new_s += r.substr(i , 1);
-        new_r = r.substr(0 , i) + r.substr(i + 1);
-        generate(new_s , new_r);
-    }
+    ll a, b, c, d;
+    cin >> a >> b >> c >> d;
+    ll operations = 0;
+
+    operations += abs(b - d);
+    a += operations;
+    if (a < c || b > d)
+        return void(cout << -1 << nl);
+    operations += abs(a - c);
+    cout << operations << nl;
 }
-void solve() {
-    string s;
-    cin >> s;
-    generate("" , s);
-    cout << ans.size() << nl;
-    for(string i : ans) {
-        cout << i << nl;
-    }
-}
+
 void file()
 {
 #ifndef ONLINE_JUDGE
@@ -50,14 +46,15 @@ void file()
     freopen("Error.txt", "w", stderr);
 #endif
 }
-int main() {
+int main()
+{
     file();
     ENG_GAMAL
-// test-independent code ——————————————————————
-// ————————————————————————————————————————————
+    // test-independent code ——————————————————————
+    // ————————————————————————————————————————————
     ll t = 1;
-//    cin >> t;
-    while(t--)
+    cin >> t;
+    while (t--)
     {
         solve();
     }

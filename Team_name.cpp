@@ -42,12 +42,15 @@ using ordered_set = tree<T, null_type, un_ordered, rb_tree_tag, tree_order_stati
 void solve()
 {
     srand(time(0));
-    string name[] = {"O(Zay ma teegy teegy)" , "Ehna el talata test cases" , "DP wel 2alb shariyeh" , "Makhowafaty code hayaty"};
+    string name[] = {"El-code ye7kom", "yitm tanfeedh el-backtrack 3alina" , "El dp ehna awla beh" ,"O(Zay ma teegy teegy)" , "Ehna el talata test cases" , "DP wel 2alb shariyeh" , "Makhowafaty code hayaty"};
     map<string , ll>names;
     names["O(Zay ma teegy teegy)"];
     names["Ehna el talata test cases"];
     names["DP wel 2alb shariyeh"];
     names["Makhowafaty code hayaty"];
+    names["El dp ehna awla beh"];
+    names["El-code ye7kom"];
+    names["yitm tanfeedh el-backtrack 3alina"];
     for (ll i = 0; i < 1000; ++i) {
         names[name[rand() % 4]]++;
     }
