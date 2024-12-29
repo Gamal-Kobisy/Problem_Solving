@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/2025/C
+// LINK : https://codeforces.com/contest/2033/problem/D
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -16,40 +16,39 @@ const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
 void solve() {
-    ll n , k;
-    cin >> n >> k;
-    map<ll , ll>freq;
-    for (ll i = 0; i < n; ++i) {
-        ll x;
-        cin >> x;
-        freq[x]++;
+    int n;
+    cin >> n;
+    vector<int> a(n);
+    for (int i = 0; i < n; ++i) {
+        cin >> a[i];
     }
-    vector<vector<ll>>chains;
-    vector<ll>curr{0};
-    ll last = freq.begin()->first;
-    for (auto i: freq) {
-        if(curr.empty() || i.first - last <=  1)
-            curr.emplace_back(freq[i.first] + curr.back());
-        else
-            chains.emplace_back(curr) , curr.clear() , curr.emplace_back(0) , curr.emplace_back(freq[i.first]);
-        last = i.first;
-    }
-    if(!curr.empty())
-        chains.emplace_back(curr);
 
-        ll ans = 0;
-    for (ll i = 0; i < chains.size(); ++i) {
-        curr = chains[i];
-        if(curr.size() - 1 <= k)
-            ans = max(ans  , curr.back());
-        else
-        {
-            for (ll j = 0; j < curr.size() - k; ++j) {
-                ans = max(ans , curr[j + k] - curr[j]);
+    map<long long, int> prefixSumMap;
+    long long prefixSum = 0;
+    int beautifulSegments = 0;
+    prefixSumMap[0] = -1;  // Mark the prefix sum 0 as "before the start"
+
+    int lastBeautifulEnd = -1;  // Tracks the last index of a beautiful segment
+
+    for (int i = 0; i < n; ++i) {
+        prefixSum += a[i];
+
+        if (prefixSumMap.find(prefixSum) != prefixSumMap.end()) {
+            // Ensure the new beautiful segment doesn't overlap with the previous one
+            if (prefixSumMap[prefixSum] >= lastBeautifulEnd) {
+                beautifulSegments++;
+                lastBeautifulEnd = i;
             }
+            // Clear the prefix sum map after counting this segment
+            prefixSumMap.clear();
+            prefixSumMap[0] = i;  // Reset to start fresh after a beautiful segment
+            prefixSum = 0;
+        } else {
+            prefixSumMap[prefixSum] = i;
         }
     }
-    cout << ans << nl;
+
+    cout << beautifulSegments << endl;
 }
 void file()
 {
@@ -66,7 +65,7 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll t = 1;
-     cin >> t;
+    cin >> t;
     while (t--)
     {
         solve();

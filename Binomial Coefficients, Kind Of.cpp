@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/2025/C
+// LINK : https://codeforces.com/contest/2025/problem/B
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -15,41 +15,45 @@ using namespace std;
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
-void solve() {
-    ll n , k;
-    cin >> n >> k;
-    map<ll , ll>freq;
-    for (ll i = 0; i < n; ++i) {
-        ll x;
-        cin >> x;
-        freq[x]++;
-    }
-    vector<vector<ll>>chains;
-    vector<ll>curr{0};
-    ll last = freq.begin()->first;
-    for (auto i: freq) {
-        if(curr.empty() || i.first - last <=  1)
-            curr.emplace_back(freq[i.first] + curr.back());
-        else
-            chains.emplace_back(curr) , curr.clear() , curr.emplace_back(0) , curr.emplace_back(freq[i.first]);
-        last = i.first;
-    }
-    if(!curr.empty())
-        chains.emplace_back(curr);
+const ll MOD = 1e9 + 7;
 
-        ll ans = 0;
-    for (ll i = 0; i < chains.size(); ++i) {
-        curr = chains[i];
-        if(curr.size() - 1 <= k)
-            ans = max(ans  , curr.back());
-        else
-        {
-            for (ll j = 0; j < curr.size() - k; ++j) {
-                ans = max(ans , curr[j + k] - curr[j]);
-            }
-        }
+ll add(ll a  , ll b)
+{
+    return ((a % MOD) + (b % MOD)) % MOD;
+}
+
+ll sub(ll a , ll b)
+{
+    return ((a % MOD) - (b % MOD) + MOD) % MOD;
+}
+
+ll mul(ll a , ll b)
+{
+    return ((a % MOD) * (b % MOD)) % MOD;
+}
+
+int power(int b, int p) {
+    int ans = 1;
+    while (p) {
+        if (p & 1)
+            ans = mul(ans, b);
+        b = mul(b, b);
+        p /= 2;
     }
-    cout << ans << nl;
+    return ans;
+}
+
+void solve() {
+    ll n;
+    cin >> n;
+    ll x;
+    for (ll i = 0; i < n; ++i) {
+        cin >> x;
+    }
+    for (ll i = 0; i < n; ++i) {
+        cin >> x;
+        cout << power(2 , x) << nl;
+    }
 }
 void file()
 {
@@ -66,7 +70,7 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll t = 1;
-     cin >> t;
+//     cin >> t;
     while (t--)
     {
         solve();
