@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK :
+// LINK : https://codeforces.com/contest/665/problem/D
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -16,46 +16,67 @@ using namespace std;
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
-ll gcd(ll a, ll b) {
-    while (b != 0) {
-        ll temp = b;
-        b = a % b;
-        a = temp;
+bool isPrime(int n) {
+    // Handle edge cases
+    if (n <= 1) return false;
+    if (n <= 3) return true;
+    if (n % 2 == 0 || n % 3 == 0) return false;
+
+    for (int i = 5; i * i <= n; i += 6) {
+        if (n % i == 0 || n % (i + 2) == 0) return false;
     }
-    return a;
-}
-ll gcd_Vector(const std::vector<ll>& nums) {
-    ll result = nums[1] - nums[0];
-    for (size_t i = 2; i < nums.size(); ++i) {
-        result = gcd(result, nums[i] - nums[0]);
-        if (result == 1) {
-            return 1;
-        }
-    }
-    return result;
+
+    return true;
 }
 
 void solve() {
-    ll n , m;
-    cin >> n >> m;
-    vector<ll>a(n) , b(m);
+    ll n , a;
+    cin >> n;
+    vector<ll>odd{infLL} , even;
     for (ll i = 0; i < n; ++i) {
-        cin >> a[i];
+        cin >> a;
+        if(a & 1)
+            odd.emplace_back(a);
+        else
+            even.emplace_back(a);
     }
-    for (ll i = 0; i < m; ++i) {
-        cin >> b[i];
+    sort(all(even));
+    sort(all(odd));
+    for (ll i = 0; i < odd.size() - 1; ++i) {
+        for (ll j = 0; j < even.size(); ++j) {
+            if(isPrime(odd[i] + even[j]))
+            {
+                if(odd[i] == 1)
+                {
+                    ll ones = count(all(odd) , 1);
+                    cout <<  ones + 1 << nl;
+                    for (ll k = 0; k < ones; ++k) {
+                        cout << 1 << sp;
+                    }
+                    cout << even[j] << nl;
+                }
+                else
+                {
+                    cout << 2 << nl << odd[i] << sp << even[j] << nl;
+                }
+                return;
+            }
+        }
+        if(odd[i] == 1)
+        {
+            ll ones = count(all(odd) , 1);
+            if(ones < 2)
+                continue;
+            cout <<  ones  << nl;
+            for (ll k = 0; k < ones; ++k) {
+                cout << 1 << sp;
+            }
+            cout << nl;
+            return;
+        }
     }
-    sort(all(a));
-    ll Gcd;
-    if(n == 1)
-        Gcd = 0;
-    else
-        Gcd = gcd_Vector(a);
-    for (ll i = 0; i < m; ++i) {
-        cout << gcd(a[0] + b[i] ,Gcd) <<  sp;
-    }
-    return;
 
+    cout << 1 << nl << a << nl;
 }
 void file()
 {
