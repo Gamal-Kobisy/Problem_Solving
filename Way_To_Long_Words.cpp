@@ -1,6 +1,7 @@
 #include <iostream>
 #include <deque>
 #include <string>
+// Link : https://codeforces.com/contest/71/problem/A
 using namespace std;
 int main()
 {
