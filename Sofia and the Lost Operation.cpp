@@ -1,4 +1,4 @@
-// LINK : https://codeforces.com/contest/1692/problem/A
+// LINK : https://codeforces.com/contest/1980/problem/C
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -19,17 +19,57 @@ using namespace std;
 */
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 void solve() {
-    vector<ll>v(3);
-    ll a  , ans = 0;
-    cin >> a;
-    for (ll i = 0; i < 3; ++i) {
-        cin >> v[i];
-        if(v[i] > a)
+    ll n;
+    cin >> n;
+    vector<ll>a(n) , b(n);
+    for (ll i = 0; i < n; ++i) {
+        cin >> a[i];
+    }
+    ll cnt = 0;
+    for (ll i = 0; i < n; ++i) {
+        cin >> b[i];
+        if(a[i] != b[i])
         {
-            ans++;
+            cnt++;
         }
     }
-    cout << ans << nl;
+    ll m;
+    cin >> m;
+    vector<ll>d(m);
+    map<ll , ll>freq;
+    for (ll i = 0; i < m; ++i) {
+        cin >> d[i];
+        freq[d[i]]++;
+    }
+    if(cnt > m)
+    {
+        no;
+        return;
+    }
+    for (ll i = 0; i < n; ++i) {
+        if(a[i] != b[i])
+        {
+            if(freq[b[i]])
+            {
+                freq[b[i]]--;
+                continue;
+            }
+            else
+            {
+                no;
+                return;
+            }
+        }
+    }
+    if(find(all(b) , d[m - 1]) == b.end())
+    {
+        no;
+    }
+    else
+    {
+        yes;
+    }
+
 }
 void file()
 {

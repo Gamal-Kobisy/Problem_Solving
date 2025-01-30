@@ -1,4 +1,4 @@
-// LINK : https://codeforces.com/contest/1692/problem/A
+// LINK : https://codeforces.com/contest/1692/problem/C
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -18,18 +18,29 @@ using namespace std;
  ╚══════╝╚═╝  ╚═══╝ ╚═════╝       ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝
 */
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+int dx[] = {-1, 0, 1, 0, -1, 1, 1, -1};
+int dy[] = {0, 1, 0, -1, 1, 1, -1, -1};
+int knightx[] = {-2, -1, 1, 2, 2, 1, -1, -2};
+int knighty[] = {1, 2, 2, 1, -1, -2, -2, -1};
 void solve() {
-    vector<ll>v(3);
-    ll a  , ans = 0;
-    cin >> a;
-    for (ll i = 0; i < 3; ++i) {
-        cin >> v[i];
-        if(v[i] > a)
-        {
-            ans++;
+    vector<vector<char>>grid(8 , vector<char>(8));
+    for (ll i = 0; i < 8; ++i) {
+        for (ll j = 0; j < 8; ++j) {
+            cin >> grid[i][j];
         }
     }
-    cout << ans << nl;
+    for (ll i = 1; i < 7; ++i) {
+        for (ll j = 1; j < 7; ++j) {
+            if(grid[i][j] == '#')
+            {
+                if(grid[i - 1][j+1] == '#' && grid[i + 1][j + 1] == '#' && grid[i + 1][j - 1] == '#' && grid[i - 1][j - 1] == '#')
+                {
+                    cout << i +1 << ' ' << j + 1 << nl;
+                    return;
+                }
+            }
+        }
+    }
 }
 void file()
 {

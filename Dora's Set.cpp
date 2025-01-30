@@ -1,4 +1,4 @@
-// LINK : https://codeforces.com/contest/1692/problem/A
+// LINK : https://codeforces.com/contest/2007/problem/A
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -19,17 +19,14 @@ using namespace std;
 */
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 void solve() {
-    vector<ll>v(3);
-    ll a  , ans = 0;
-    cin >> a;
-    for (ll i = 0; i < 3; ++i) {
-        cin >> v[i];
-        if(v[i] > a)
-        {
-            ans++;
-        }
+    ll l ,r;
+    cin >> l >> r;
+    ll cnt = 0;
+    for (ll i = l; i <= r; ++i) {
+        if(i % 2)
+            cnt++;
     }
-    cout << ans << nl;
+    cout << cnt / 2 << nl;
 }
 void file()
 {

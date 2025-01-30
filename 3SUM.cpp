@@ -1,4 +1,4 @@
-// LINK : https://codeforces.com/contest/1692/problem/A
+// LINK : https://codeforces.com/contest/1692/problem/F
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -19,17 +19,36 @@ using namespace std;
 */
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 void solve() {
-    vector<ll>v(3);
-    ll a  , ans = 0;
-    cin >> a;
-    for (ll i = 0; i < 3; ++i) {
-        cin >> v[i];
-        if(v[i] > a)
-        {
-            ans++;
+    ll n;
+    cin >> n;
+    vector<int>v(n);
+    map<ll,ll>freq;
+    for (ll i = 0; i < n; ++i) {
+        ll x;
+        cin >> x;
+        x %= 10;
+        freq[x]++;
+        v[i] = x;
+    }
+    for (ll i = 0; i <= 9; ++i) {
+        for (ll j = 0; j <= 9 ; ++j) {
+            for (ll k = 0; k < 9 ; ++k) {
+                ll fk = freq[k] , fi = freq[i] , fj = freq[j];
+                if(freq[k]-- && freq[i]-- && freq[j]--)
+                {
+                    if((i + j + k) % 10 == 3)
+                    {
+                        yes;
+                        return;
+                    }
+                }
+                freq[k] = fk;
+                freq[i] = fi;
+                freq[j] = fj;
+            }
         }
     }
-    cout << ans << nl;
+    no;
 }
 void file()
 {

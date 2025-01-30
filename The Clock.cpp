@@ -1,4 +1,4 @@
-// LINK : https://codeforces.com/contest/1692/problem/A
+// LINK : https://codeforces.com/contest/1692/problem/D
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -18,16 +18,40 @@ using namespace std;
  ╚══════╝╚═╝  ╚═══╝ ╚═════╝       ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝
 */
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+bool valid(ll h , ll m)
+{
+    return (h % 10 == m / 10) && (h / 10 == m % 10);
+}
 void solve() {
-    vector<ll>v(3);
-    ll a  , ans = 0;
-    cin >> a;
-    for (ll i = 0; i < 3; ++i) {
-        cin >> v[i];
-        if(v[i] > a)
+    string s;
+    ll x , ans = 0;
+    cin >> s >> x;
+    ll h = stoi(s.substr(0 , 2)) , m = stoi(s.substr(3));
+    if(valid(h , m))
+    {
+        ans++;
+    }
+    ll h2 = h + (x / 60) , m2 = m + (x % 60);
+    if(m2 >= 60)
+    {
+        h2 += m2 / 60;
+        m2 %= 60;
+    }
+    h2 %= 24;
+    while (h2 != h || m2 != m)
+    {
+        if(valid(h2 , m2))
         {
             ans++;
         }
+        h2 += (x / 60) ;
+        m2 += (x % 60) ;
+        if(m2 >= 60)
+        {
+            h2 += m2 / 60;
+            m2 %= 60;
+        }
+        h2 %= 24;
     }
     cout << ans << nl;
 }
