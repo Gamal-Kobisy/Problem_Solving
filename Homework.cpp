@@ -1,3 +1,4 @@
+// LINK : https://vjudge.net/problem/Gym-481102L
 #include <iostream>
 #include <vector>
 using namespace std;

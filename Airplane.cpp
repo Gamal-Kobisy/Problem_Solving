@@ -1,3 +1,4 @@
+// LINK : https://vjudge.net/problem/AtCoder-abc129_a
 #include <iostream>
 
 using namespace std;

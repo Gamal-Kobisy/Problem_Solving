@@ -1,3 +1,4 @@
+// LINK : https://vjudge.net/problem/Gym-481102N
 #include <iostream>
 #include <deque>
 using namespace std;

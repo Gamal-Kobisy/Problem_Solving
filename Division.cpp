@@ -1,3 +1,4 @@
+// LINK : https://vjudge.net/problem/CodeForces-1669A
 #include <iostream>
 
 using namespace std;

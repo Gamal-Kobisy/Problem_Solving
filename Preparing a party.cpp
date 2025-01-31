@@ -1,3 +1,4 @@
+// LINK : https://vjudge.net/problem/Gym-481102B
 #include <iostream>
 #include <algorithm>
 #include <climits>
@@ -10,9 +11,10 @@ int main(){
     for(int i = 0 ; i < x ; i++){
         cin >> arr[i] ;
     }
-    for(int i = 0 ; i < x ; i++){
-        min_diff = min(min_diff , arr[i]);
-        max_diff = max(max_diff , arr[i]);
+// 8 6 -1 3 0
+    for(int i = 1 ; i < x ; i++){
+        min_diff = min(min_diff , abs(arr[i]-arr[i-1]));
+        max_diff = max(max_diff , abs(arr[i]-arr[i-1]));
     }
     cout << max_diff << " " << min_diff << endl;
 }

@@ -1,3 +1,4 @@
+// LINK : https://vjudge.net/problem/SPOJ-QUEUEEZ
 #include <iostream>
 #include <deque>
 using namespace std;

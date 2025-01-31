@@ -1,3 +1,4 @@
+// LINK : https://vjudge.net/problem/Gym-481102K
 #include <iostream>
 #include <vector>
 using namespace std;
@@ -5,8 +6,11 @@ int main()
 {
     long long n;
     cin >> n;
-    char word[n];
-    cin >> word;
+    vector<char> word(n);
+    for (int i = 0; i < n; i++)
+    {
+        cin >> word[i];
+    }
     for (int i = 0; i < n; i++)
     {
         if (int(word[i]) < 97)
