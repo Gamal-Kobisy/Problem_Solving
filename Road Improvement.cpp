@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://www.spoj.com/problems/MAKETREE/
+// LINK : https://codeforces.com/problemset/problem/638/C
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -13,48 +13,52 @@
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-const int N = 1e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
+const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
-int n , k;
-vector<vector<int>>adj(N);
-vector<bool>vis(N);
-vector<int>ans;
-void dfs(int v)
+vector<vector<int>>adj(N) , ans(N);
+map<pair<int , int> , int>idx;
+
+void dfs(int v , int par = -1 , int last_used = 0)
 {
-    vis[v] = true;
+    int d = 1;
     for(int u : adj[v])
     {
-        if(!vis[u])
-            dfs(u);
+        if(u == par)
+            continue;
+        d += (d == last_used);
+        ans[d].emplace_back(idx[{v , u}]);
+        dfs(u , v , d);
+        d++;
     }
-    ans.emplace_back(v);
 }
 
 void solve() {
-    cin >> n >> k;
-    for (ll i = 0; i < k; ++i) {
-        int w;
-        cin >> w;
-        for (ll j = 0; j < w; ++j) {
-            int b;
-            cin >> b;
-            adj[i + 1].emplace_back(b);
+    int n;
+    cin >> n;
+    for (ll i = 0; i < n - 1; ++i) {
+        int a , b;
+        cin >> a >> b;
+        idx[{a, b}] = idx[{b , a}] = i + 1;
+        adj[a].emplace_back(b);
+        adj[b].emplace_back(a);
+    }
+    dfs(1);
+    int days = 0;
+    for (ll i = 1; i < N; ++i) {
+        if(ans[i].empty())
+        {
+            days = i - 1;
+            break;
         }
     }
-
-    for (ll i = 1; i <= n; ++i) {
-        if(!vis[i])
-            dfs(i);
-    }
-    reverse(all(ans));
-    vector<int>boss(n + 1);
-    boss[ans[0]] = 0;
-    for (ll i = 1; i < n; ++i) {
-        boss[ans[i]] = ans[i - 1];
-    }
-    for (ll i = 1; i <= n; ++i) {
-        cout << boss[i] << nl;
+    cout << days << nl;
+    for (ll i = 1; i <= days; ++i) {
+        cout << ans[i].size() << sp;
+        for (ll j = 0; j < ans[i].size(); ++j) {
+            cout << ans[i][j] << sp;
+        }
+        cout << nl;
     }
 }
 void file()

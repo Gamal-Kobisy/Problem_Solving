@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://www.spoj.com/problems/MAKETREE/
+// LINK : https://codeforces.com/problemset/problem/1975/D
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -13,49 +13,68 @@
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-const int N = 1e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
+const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
-int n , k;
+int n , a , b;
 vector<vector<int>>adj(N);
-vector<bool>vis(N);
-vector<int>ans;
-void dfs(int v)
+vector<int>parent(N) , depth(N);
+
+void find_root(int v , int par = -1)
 {
-    vis[v] = true;
+    parent[v] = par;
+    if(v == b)
+        return;
     for(int u : adj[v])
     {
-        if(!vis[u])
-            dfs(u);
+        if(u == par)
+            continue;
+        find_root(u , v);
     }
-    ans.emplace_back(v);
+}
+
+void dfs(int v , int par = -1)
+{
+    for(int u : adj[v])
+    {
+        if(u == par)
+            continue;
+        depth[u] = depth[v] + 1;
+        dfs(u , v);
+    }
 }
 
 void solve() {
-    cin >> n >> k;
-    for (ll i = 0; i < k; ++i) {
-        int w;
-        cin >> w;
-        for (ll j = 0; j < w; ++j) {
-            int b;
-            cin >> b;
-            adj[i + 1].emplace_back(b);
-        }
-    }
-
+    cin >> n >> a >> b;
     for (ll i = 1; i <= n; ++i) {
-        if(!vis[i])
-            dfs(i);
+        adj[i].clear();
+        parent[i] = 0;
     }
-    reverse(all(ans));
-    vector<int>boss(n + 1);
-    boss[ans[0]] = 0;
-    for (ll i = 1; i < n; ++i) {
-        boss[ans[i]] = ans[i - 1];
+    for (ll i = 0; i < n - 1; ++i) {
+        int x , y;
+        cin >> x >> y;
+        adj[x].emplace_back(y);
+        adj[y].emplace_back(x);
     }
+    find_root(a);
+    vector<int>path;
+    int curr = b;
+    while (curr != -1)
+    {
+        path.emplace_back(curr);
+        curr = parent[curr];
+    }
+    int root = path[path.size() / 2];
+    depth[root] = 0;
+    dfs(root);
+    vector<int>dis;
     for (ll i = 1; i <= n; ++i) {
-        cout << boss[i] << nl;
+        if(adj[i].size() == 1)
+            dis.emplace_back(depth[i]);
     }
+    int maxi = *max_element(depth.begin() , depth.begin() + n + 1) , ans = path.size() / 2;
+    ans += 2 * (n - 1);
+    cout << ans - maxi << nl;
 }
 void file()
 {
@@ -72,7 +91,7 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll t = 1;
-    // cin >> t;
+    cin >> t;
     while (t--)
     {
         solve();

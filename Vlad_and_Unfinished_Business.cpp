@@ -1,102 +1,73 @@
-// LINK :
+// "ولا تقولن لشيء إني فاعل ذلك غدا"
+// "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
+
+// LINK : https://codeforces.com/problemset/problem/1675/F
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
+#define sp ' '
 #define all(a) a.begin(),a.end()
 #define allr(a) a.rbegin(),a.rend()
 #define no cout<<"NO\n"
 #define yes cout<<"YES\n"
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
-
-/*
- ███████╗███╗   ██╗ ██████╗       ██████╗  █████╗ ███╗   ███╗ █████╗ ██╗
- ██╔════╝████╗  ██║██╔════╝      ██╔════╝ ██╔══██╗████╗ ████║██╔══██╗██║
- █████╗  ██╔██╗ ██║██║  ███╗     ██║  ███╗███████║██╔████╔██║███████║██║
- ██╔══╝  ██║╚██╗██║██║   ██║     ██║   ██║██╔══██║██║╚██╔╝██║██╔══██║██║
- ███████╗██║ ╚████║╚██████╔╝     ╚██████╔╝██║  ██║██║ ╚═╝ ██║██║  ██║███████╗
- ╚══════╝╚═╝  ╚═══╝ ╚═════╝       ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝
-*/
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-const int N = 2e5 + 1;
-int n , k , x , y ;
-pair<int , int>y_dist;
-vector<int>adj[N];
-bool vis[N] , houses[N];
-vector<vector<ll>>dist;
-bool found = false;
+const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
+ll infLL = 0x3f3f3f3f3f3f3f3f;
 
-void dfs(int v , pair<pair<int , int> , int>dis)
+int n , k , x , y;
+vector<vector<int>>adj(N);
+vector<bool>Nastya(N) , house(N);
+void dfs(int v , int parent = -1)
 {
-    vis[v] = true;
-    if(houses[v])
-    {
-        dis.first.second = dis.first.first;
-    }
-    if(v == y)
-    {
-        y_dist = {dis.first.first , dis.second};
-    }
-    bool leaf = true;
-    int idx = dis.second;
     for(int u : adj[v])
     {
-        if(v == x){idx++;}
-        if(!vis[u])
-        {
-            leaf = false;
-            dfs(u , {{dis.first.first + 1, dis.first.second} , idx});
-        }
-    }
-    if(leaf)
-    {
-        dist[dis.second - 1].emplace_back(dis.first.second);
+        if(u == parent)
+            continue;
+        dfs(u , v);
+        if(house[u])
+            house[v] = true;
+        if(Nastya[u])
+            Nastya[v] = true;
     }
 }
 
+
+
+
 void solve() {
-    cin >> n >> k;
-    for (ll i = 0; i <= n; ++i) {
+    cin >> n >> k >> x >> y;
+    for (ll i = 1; i <= n; ++i) {
         adj[i].clear();
-        vis[i] = false;
-        houses[i] = false;
+        Nastya[i] = false;
+        house[i] = false;
     }
-    cin >> x >> y;
+
     for (ll i = 0; i < k; ++i) {
-        int a;
-        cin >> a ;
-        houses[a] = true;
+        int c;
+        cin >> c;
+        house[c] = true;
     }
+    Nastya[y] = true;
     for (ll i = 0; i < n - 1; ++i) {
         int a , b;
         cin >> a >> b;
         adj[a].emplace_back(b);
         adj[b].emplace_back(a);
     }
-    dist = vector<vector<ll>>((int)adj[x].size());
-    ll total_dist = 0;
-    dfs(x , {{0 , 0} , 0});
-    for (ll i = 0; i < adj[x].size(); ++i) {
-        if(dist[i].size() == 1)
-        {
-            total_dist += dist[i].front() * 2;
-        }
-        else
-        {
-            total_dist += dist[i].front();
-            for(auto j : dist[i])
-            {
-                total_dist += j;
-            }
-        }
-        for(auto j : dist[i])
-        {
-            cout << j << ' ';
-        }
-        cout << nl;
+    dfs(x);
+    ll ans = 0;
+    for (ll i = 1; i <= n; ++i) {
+        if(i == x)
+            continue;
+        if(Nastya[i])
+            ans++;
+        else if(house[i])
+            ans += 2;
     }
-    cout << y_dist.first << ' ' << y_dist.second << nl;
-    cout << total_dist << nl;
+    cout << ans << nl;
+
 }
 void file()
 {
@@ -106,14 +77,15 @@ void file()
     freopen("Error.txt", "w", stderr);
 #endif
 }
+
 int main() {
     file();
     ENG_GAMAL
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll t = 1;
-    cin >> t;
-    while(t--)
+     cin >> t;
+    while (t--)
     {
         solve();
     }

@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://www.spoj.com/problems/MAKETREE/
+// LINK : https://codeforces.com/gym/105501/problem/B
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -13,49 +13,27 @@
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-const int N = 1e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
+const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
-int n , k;
-vector<vector<int>>adj(N);
-vector<bool>vis(N);
-vector<int>ans;
-void dfs(int v)
-{
-    vis[v] = true;
-    for(int u : adj[v])
-    {
-        if(!vis[u])
-            dfs(u);
-    }
-    ans.emplace_back(v);
-}
-
 void solve() {
-    cin >> n >> k;
-    for (ll i = 0; i < k; ++i) {
-        int w;
-        cin >> w;
-        for (ll j = 0; j < w; ++j) {
-            int b;
-            cin >> b;
-            adj[i + 1].emplace_back(b);
-        }
+    string s = "CDEFGAB";
+    int idx = 0 , n = 1;
+    string last = "C1";
+    map<string , int>rank;
+    for (ll i = 1; i <= 50; ++i) {
+        string key = s[idx] + to_string(n);
+        rank[key] = rank[last];
+        last = key;
+        if(idx != 0 && idx != 3)
+            rank[key]++;
+        idx++;
+        if(idx == 7)
+            idx = 0 , n++;
     }
-
-    for (ll i = 1; i <= n; ++i) {
-        if(!vis[i])
-            dfs(i);
-    }
-    reverse(all(ans));
-    vector<int>boss(n + 1);
-    boss[ans[0]] = 0;
-    for (ll i = 1; i < n; ++i) {
-        boss[ans[i]] = ans[i - 1];
-    }
-    for (ll i = 1; i <= n; ++i) {
-        cout << boss[i] << nl;
-    }
+    string k1 , k2;
+    cin >> k1 >> k2;
+    cout << rank[k2] - rank[k1];
 }
 void file()
 {

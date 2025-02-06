@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://www.spoj.com/problems/MAKETREE/
+// LINK : https://codeforces.com/problemset/problem/1739/D
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -13,49 +13,53 @@
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-const int N = 1e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
+const int N = 2e5 + 5, M = 1e3, LOG = 20 , inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
 int n , k;
+
 vector<vector<int>>adj(N);
-vector<bool>vis(N);
-vector<int>ans;
-void dfs(int v)
+vector<int>OutDeg(N) , depth(N) , parent(N);
+
+void dfs(int v , int d = 0)
 {
-    vis[v] = true;
+    depth[v] = d;
     for(int u : adj[v])
     {
-        if(!vis[u])
-            dfs(u);
+        dfs(u , d + 1);
     }
-    ans.emplace_back(v);
 }
 
 void solve() {
     cin >> n >> k;
+    for (ll i = 0; i <= n; ++i) {
+        adj[i].clear();
+        depth[i] = OutDeg[i] = parent[i] = 0;
+    }
+    for (ll i = 2; i <= n; ++i) {
+        int p;
+        cin >> p;
+        parent[i] = p;
+        adj[p].emplace_back(i);
+        OutDeg[p]++;
+    }
+    dfs(1);
+    priority_queue<pair<int , int>>leafs;
+    for (ll i = 1; i <= n; ++i) {
+        if(OutDeg[i] == 0)
+            leafs.push({depth[i] , i});
+    }
     for (ll i = 0; i < k; ++i) {
-        int w;
-        cin >> w;
-        for (ll j = 0; j < w; ++j) {
-            int b;
-            cin >> b;
-            adj[i + 1].emplace_back(b);
-        }
+        auto [d , node] = leafs.top();
+        leafs.pop();
+        depth[node] = 1;
+        leafs.push({1 , node});
+        OutDeg[parent[node]]--;
+        if(!OutDeg[parent[node]])
+            leafs.push({depth[parent[node]] , parent[node]});
+        parent[node] = 1;
     }
-
-    for (ll i = 1; i <= n; ++i) {
-        if(!vis[i])
-            dfs(i);
-    }
-    reverse(all(ans));
-    vector<int>boss(n + 1);
-    boss[ans[0]] = 0;
-    for (ll i = 1; i < n; ++i) {
-        boss[ans[i]] = ans[i - 1];
-    }
-    for (ll i = 1; i <= n; ++i) {
-        cout << boss[i] << nl;
-    }
+    cout << leafs.top().first << nl;
 }
 void file()
 {
@@ -72,7 +76,7 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll t = 1;
-    // cin >> t;
+     cin >> t;
     while (t--)
     {
         solve();
