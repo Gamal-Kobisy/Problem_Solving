@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/1516/B
+// LINK : https://codeforces.com/problemset/problem/2009/C
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -17,21 +17,12 @@ const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
 void solve() {
-    int n;
-    cin >> n;
-    vector<ll>pre(n + 1);
-    ll Xor = 0;
-    for (ll i = 1; i <= n; ++i) {
-        cin >> pre[i];
-        pre[i] ^= pre[i - 1];
-    }
-    bool ok = !pre[n];
-    for (ll i = 1; i <= n; ++i) {
-        for (ll j = i + 1; j <= n; ++j) {
-            ok |= (pre[i] == (pre[j] ^ pre[i]) && pre[i] == (pre[n] ^ pre[j]));
-        }
-    }
-    ok ? yes : no;
+    long double x , y ,k;
+    cin >> x >> y >> k;
+    if(ceil(x / k) > ceil(y / k))
+        cout << (ll)ceil(x / k) * 2 - 1 << nl;
+    else
+        cout << (ll)ceil(y / k) * 2 << nl;
 }
 void file()
 {

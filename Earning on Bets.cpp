@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/1516/B
+// LINK : https://codeforces.com/contest/1979/problem/C
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -16,22 +16,44 @@ using namespace std;
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
+ll gcd(ll a, ll b) {
+    while (b != 0) {
+        ll temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+
+ll lcm(ll a, ll b) {
+    return abs(a * b) / gcd(a, b);
+}
+
+ll lcm_Vector(vector<ll>& nums) {
+    ll result = nums[0];
+    for (size_t i = 1; i < nums.size(); ++i) {
+        result = lcm(result, nums[i]);
+    }
+    return result;
+}
+
 void solve() {
     int n;
     cin >> n;
-    vector<ll>pre(n + 1);
-    ll Xor = 0;
-    for (ll i = 1; i <= n; ++i) {
-        cin >> pre[i];
-        pre[i] ^= pre[i - 1];
+    vector<ll>a(n);
+    for (ll i = 0; i < n; ++i) {
+        cin >> a[i];
     }
-    bool ok = !pre[n];
-    for (ll i = 1; i <= n; ++i) {
-        for (ll j = i + 1; j <= n; ++j) {
-            ok |= (pre[i] == (pre[j] ^ pre[i]) && pre[i] == (pre[n] ^ pre[j]));
-        }
+    ll LCM = lcm_Vector(a) , sum = 0;
+    for (ll i = 0; i < n; ++i) {
+        sum += LCM / a[i];
     }
-    ok ? yes : no;
+    if(sum >= LCM)
+        return void(cout << -1 << nl);
+    for (ll i = 0; i < n; ++i) {
+        cout << LCM / a[i] << sp;
+    }
+    cout << nl;
 }
 void file()
 {

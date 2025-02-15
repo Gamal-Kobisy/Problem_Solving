@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/1516/B
+// LINK : https://codeforces.com/problemset/problem/1990/B
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -17,21 +17,24 @@ const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
 void solve() {
-    int n;
-    cin >> n;
-    vector<ll>pre(n + 1);
-    ll Xor = 0;
-    for (ll i = 1; i <= n; ++i) {
-        cin >> pre[i];
-        pre[i] ^= pre[i - 1];
+    int n , x , y;
+    cin >> n >> x >> y;
+    vector<int>ans(n , 1);
+    x-- , y--;
+    int sign = -1;
+    for (ll i = x + 1; i < n; ++i) {
+        ans[i] = sign;
+        sign *= -1;
     }
-    bool ok = !pre[n];
-    for (ll i = 1; i <= n; ++i) {
-        for (ll j = i + 1; j <= n; ++j) {
-            ok |= (pre[i] == (pre[j] ^ pre[i]) && pre[i] == (pre[n] ^ pre[j]));
-        }
+    sign = -1;
+    for (ll i = y - 1; i >= 0; --i) {
+        ans[i] = sign;
+        sign *= -1;
     }
-    ok ? yes : no;
+    for (ll i = 0; i < n; ++i) {
+        cout << ans[i] << sp;
+    }
+    cout << nl;
 }
 void file()
 {
