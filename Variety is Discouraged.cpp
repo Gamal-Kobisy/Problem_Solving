@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/gymProblem/100814/G
+// LINK : https://codeforces.com/contest/2064/problem/B
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -15,66 +15,35 @@ using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-int n , m , k;
-
-vector<vector<pair<int , pair<ll , ll>>>>adj(N);
-
-bool dijkstra(ll mid)
-{
-    vector<ll>dist(n , infLL);
-    priority_queue<pair<ll , int> , vector<pair<ll , int>> , greater<>>pq;
-    pq.push({0 , 0});
-    dist[0] = 0;
-
-    while (!pq.empty())
-    {
-        auto [curDis , curNode] = pq.top();
-        pq.pop();
-        if(curDis != dist[curNode])
-        {
-            continue;
-        }
-        for(auto i : adj[curNode])
-        {
-            if(dist[i.first] > curDis + i.second.first && i.second.second <= mid)
-            {
-                dist[i.first] = curDis + i.second.first;
-                pq.push({dist[i.first] , i.first});
-            }
-        }
-
-    }
-    return (dist[n - 1] < k);
-}
 
 void solve() {
-    cin >> n >> m >> k;
+    ll n;
+    cin >> n;
+    vector<ll>a(n) , dist(n);
+    map<ll , ll>freq;
     for (ll i = 0; i < n; ++i) {
-        adj[i].clear();
+        cin >> a[i];
+        freq[a[i]]++;
     }
-    for (ll i = 0; i < m; ++i) {
-        int a , b , c , w;
-        cin >> a >> b >> c >> w;
-        a-- , b--;
-        adj[a].push_back({b , {c , w}});
-        adj[b].push_back({a , {c , w}});
-    }
-
-    ll l = 1 , r = 1e11 , ans = -1;
-    while (l <= r)
-    {
-        ll mid = (r + l) / 2;
-        if(dijkstra(mid))
+    pair<ll , ll>ans = {-1 , -1};
+    ll maxi = 0;
+    for (ll i = 0; i < n; ++i) {
+        if(freq[a[i]] == 1)
         {
-            ans = mid;
-            r = mid - 1;
-        }
-        else
-        {
-            l = mid + 1;
+            int j = i + 1;
+            ll sz = 1;
+            while (freq[a[j]] == 1 && j< n)
+            {
+                sz++ , j++;
+            }
+            if(sz > maxi)
+                ans = {i + 1 , j} , maxi = sz;
+            i = j;
         }
     }
-    cout << ans << nl;
+    if(ans.first + ans.second == -2)
+        return void(cout << 0 << nl);
+    cout << ans.first << sp << ans.second << nl;
 }
 void file()
 {
@@ -91,7 +60,7 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll t = 1;
-     cin >> t;
+    cin >> t;
     while (t--)
     {
         solve();

@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/gymProblem/100814/G
+// LINK : https://codeforces.com/contest/2064/problem/C
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -15,64 +15,27 @@ using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-int n , m , k;
-
-vector<vector<pair<int , pair<ll , ll>>>>adj(N);
-
-bool dijkstra(ll mid)
-{
-    vector<ll>dist(n , infLL);
-    priority_queue<pair<ll , int> , vector<pair<ll , int>> , greater<>>pq;
-    pq.push({0 , 0});
-    dist[0] = 0;
-
-    while (!pq.empty())
-    {
-        auto [curDis , curNode] = pq.top();
-        pq.pop();
-        if(curDis != dist[curNode])
-        {
-            continue;
-        }
-        for(auto i : adj[curNode])
-        {
-            if(dist[i.first] > curDis + i.second.first && i.second.second <= mid)
-            {
-                dist[i.first] = curDis + i.second.first;
-                pq.push({dist[i.first] , i.first});
-            }
-        }
-
-    }
-    return (dist[n - 1] < k);
-}
 
 void solve() {
-    cin >> n >> m >> k;
-    for (ll i = 0; i < n; ++i) {
-        adj[i].clear();
+    ll n;
+    cin >> n;
+    vector<ll> a(n);
+    for(ll i=0; i<n; i++){
+        cin >> a[i];
     }
-    for (ll i = 0; i < m; ++i) {
-        int a , b , c , w;
-        cin >> a >> b >> c >> w;
-        a-- , b--;
-        adj[a].push_back({b , {c , w}});
-        adj[b].push_back({a , {c , w}});
+    vector<ll> pre(n+1,0);
+    for(ll i=1; i<=n; i++){
+        pre[i] = pre[i-1] + (a[i-1] > 0 ? a[i-1] : 0);
+    }
+    vector<ll> suf(n+2,0);
+    for(ll i=n; i>=1; i--){
+        suf[i] = suf[i+1] + (a[i-1] < 0 ? -a[i-1] : 0);
     }
 
-    ll l = 1 , r = 1e11 , ans = -1;
-    while (l <= r)
-    {
-        ll mid = (r + l) / 2;
-        if(dijkstra(mid))
-        {
-            ans = mid;
-            r = mid - 1;
-        }
-        else
-        {
-            l = mid + 1;
-        }
+    ll ans = 0;
+    for(ll k=0; k<=n; k++){
+        ll candidate = pre[k] + ((k < n) ? suf[k+1] : 0);
+        ans = max(ans, candidate);
     }
     cout << ans << nl;
 }
@@ -91,7 +54,7 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll t = 1;
-     cin >> t;
+    cin >> t;
     while (t--)
     {
         solve();

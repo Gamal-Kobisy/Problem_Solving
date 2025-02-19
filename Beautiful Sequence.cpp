@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/gymProblem/100814/G
+// LINK : https://codeforces.com/contest/2069/problem/C
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -15,66 +15,63 @@ using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-int n , m , k;
 
-vector<vector<pair<int , pair<ll , ll>>>>adj(N);
+const ll MOD = 998244353;
 
-bool dijkstra(ll mid)
-{
-    vector<ll>dist(n , infLL);
-    priority_queue<pair<ll , int> , vector<pair<ll , int>> , greater<>>pq;
-    pq.push({0 , 0});
-    dist[0] = 0;
+int add(ll a, ll b) {
+    return (0ll + a + b) % MOD;
+}
 
-    while (!pq.empty())
-    {
-        auto [curDis , curNode] = pq.top();
-        pq.pop();
-        if(curDis != dist[curNode])
-        {
-            continue;
-        }
-        for(auto i : adj[curNode])
-        {
-            if(dist[i.first] > curDis + i.second.first && i.second.second <= mid)
-            {
-                dist[i.first] = curDis + i.second.first;
-                pq.push({dist[i.first] , i.first});
-            }
-        }
+int sub(ll a, ll b) {
+    return ((0ll + a - b) % MOD + MOD) % MOD;
+}
 
+int mul(ll a, ll b) {
+    return (1ll * a * b) % MOD;
+}
+
+int power(ll b, ll p) {
+    int ans = 1;
+    while (p) {
+        if (p & 1)
+            ans = mul(ans, b);
+        b = mul(b, b);
+        p /= 2;
     }
-    return (dist[n - 1] < k);
+    return ans;
+}
+
+int divide(ll a, ll b) {
+    return mul(a, power(b, MOD - 2)) % MOD;
 }
 
 void solve() {
-    cin >> n >> m >> k;
+    ll n;
+    cin >> n;
+    vector<ll>a(n) , suf(n + 1);
     for (ll i = 0; i < n; ++i) {
-        adj[i].clear();
+        cin >> a[i];
     }
-    for (ll i = 0; i < m; ++i) {
-        int a , b , c , w;
-        cin >> a >> b >> c >> w;
-        a-- , b--;
-        adj[a].push_back({b , {c , w}});
-        adj[b].push_back({a , {c , w}});
+    vector<ll> cnt(n, 0);
+    ll ones = 0, subs = 0;
+    for (ll j = 0; j < n; ++j) {
+        if (a[j] == 1)
+            ++ones;
+        else if (a[j] == 3)
+            cnt[j] = ones;
+        subs += cnt[j];
     }
-
-    ll l = 1 , r = 1e11 , ans = -1;
-    while (l <= r)
-    {
-        ll mid = (r + l) / 2;
-        if(dijkstra(mid))
-        {
-            ans = mid;
-            r = mid - 1;
-        }
-        else
-        {
-            l = mid + 1;
-        }
+    for (ll i = n - 1; i >= 0 ; --i) {
+        suf[i] += suf[i + 1] + (a[i] == 2);
     }
-    cout << ans << nl;
+    ll ans = 0 , d = 0;
+    for (ll i = 0; i < n; ++i) {
+        if(a[i] == 1)
+            d = add(d , power(2ll , suf[i]));
+        else if(a[i] == 3)
+            ans = add(ans , divide(d , power(2ll , suf[i])));
+    }
+    cout << sub(ans , subs) << nl;
 }
 void file()
 {
@@ -91,7 +88,7 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll t = 1;
-     cin >> t;
+    cin >> t;
     while (t--)
     {
         solve();
