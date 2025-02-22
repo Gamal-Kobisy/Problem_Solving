@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/1875/C
+// LINK :
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -16,55 +16,33 @@ using namespace std;
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
-ll gcd(ll a, ll b) {
-    while (b != 0) {
-        ll temp = b;
-        b = a % b;
-        a = temp;
+void solve() {
+    ll n;
+    cin >> n;
+    vector<ll>a(n);
+    for (ll i = 0; i < n; ++i) {
+        cin >> a[i];
     }
-    return a;
-}
-ll gcd_Vector(const std::vector<ll>& nums) {
-    ll result = nums[0];
-    for (size_t i = 1; i < nums.size(); ++i) {
-        result = gcd(result, nums[i]);
-        if (result == 1) {
-            return 1; // GCD is 1, no need to continue
+    sort(all(a));
+    set<ll>pairs;
+    for (ll i = 0; i < n - 1; ++i) {
+        if(a[i] == a[i + 1])
+            pairs.insert(a[i]) , i++;
+    }
+    if(pairs.size() >= 2)
+        return void(cout << *pairs.begin() << sp << *pairs.begin() << sp << *next(pairs.begin()) << sp << *next(pairs.begin()) << nl);
+    if(pairs.size() == 1)
+    {
+        auto it = lower_bound(all(a) , *pairs.begin());
+        a.erase(next(it));
+        a.erase(it);
+        for (ll i = 0; i < a.size(); ++i) {
+            it = upper_bound(all(a) , (a[i] - 2 * *pairs.begin()));
+            if(it != a.end() && it - a.begin() != i)
+                return void(cout << *pairs.begin() << sp << *pairs.begin() << sp << a[i] << sp << *it << nl);
         }
     }
-    return result;
-}
-void solve() {
-    ll n , m;
-    cin >> n >> m;
-    ll n_copy = n , m_copy = m;
-    while (m % 2 == 0)
-        m /= 2;
-    while (n % 2 == 0)
-        n /= 2;
-    if(n % m)
-        return void(cout << -1 << nl);
-    double each = (double)n_copy / m_copy;
-    each -= (ll)each;
-//    cout << each << nl;
-    ll ans = 0;
-    for (ll i = 1; i <= 32; ++i) {
-        each *= 2;
-        ans += (ll)each * (powl(2 , i) - 1) * (m_copy / powl(2 , i));
-        each -= (ll)each;
-    }
-    cout << ans << nl;
-}
-
-void good_solve()
-{
-    ll n , m;
-    cin >> n >> m;
-    n %= m;
-    ll a = n / gcd(n , m) , b = m / gcd(n , m);
-    if(__builtin_popcount(b) > 1)
-        return void(cout << -1 << nl);
-    cout << __builtin_popcount(a) * m - n << nl;
+    cout << -1 << nl;
 }
 void file()
 {
@@ -84,7 +62,7 @@ int main() {
      cin >> t;
     while (t--)
     {
-        good_solve();
+        solve();
     }
 
     return 0;
