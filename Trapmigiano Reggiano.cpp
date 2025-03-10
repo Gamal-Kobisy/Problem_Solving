@@ -17,42 +17,25 @@ const int N = 1e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 ll n , st , ed;
 vector<vector<ll>>adj(N);
-vector<ll>road(N) , parent(N) , subtree_size(N);
+vector<ll>depth(N);
 
-void dfs1(ll v = st , ll par = -1)
+void dfs(ll v = ed , ll par = 0)
 {
-    parent[v] = par;
-     if(v == ed)
-     {
-         ll curr = ed;
-         while (curr != -1)
-         {
-             road[curr] = 1;
-             curr = parent[curr];
-         }
-     }
-     for(ll u : adj[v])
-     {
-         if(u == par)
-             continue;
-         dfs1(u , v);
-     }
+    depth[v] = depth[par] + 1;
+    for(ll u : adj[v])
+    {
+        if(u == par)
+            continue;
+        dfs(u , v);
+    }
 }
 
-ll dfs2(ll v, ll par) {
-    ll size = 1;
-    for (ll u : adj[v]) {
-        if (u == par || road[u]) continue;
-        size += dfs2(u, v);
-    }
-    return subtree_size[v] = size;
-}
 
 void solve() {
     cin >> n >> st >> ed;
     for (ll i = 0; i <= n; ++i) {
         adj[i].clear();
-        road[i] = parent[i] = subtree_size[i] = 0;
+        depth[i] = 0;
     }
     for (ll i = 0; i < n - 1; ++i) {
         ll a , b;
@@ -60,10 +43,14 @@ void solve() {
         adj[a].emplace_back(b);
         adj[b].emplace_back(a);
     }
-    dfs1();
-    if(dfs2(st , -1) != dfs2(ed , -1))
-        return void(cout << -1 << nl);
-    cout << dfs2(st , -1) << sp << dfs2(ed , -1) << nl;
+    dfs();
+    vector<ll>ans(n);
+    iota(all(ans) , 1);
+    sort(all(ans) , [&](ll a , ll b){return depth[a] > depth[b];});
+    for (ll i = 0; i < n; ++i) {
+        cout << ans[i] << sp;
+    }
+    cout << nl;
 }
 void file()
 {

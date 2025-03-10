@@ -49,7 +49,8 @@ void solve() {
     for (ll i = 1; !nodes_in_depth[i + 1].empty() ; ++i) {
         for(int v : nodes_in_depth[i])
         {
-            ans += nodes_in_depth[i + 1].size() - adj[v].size();
+            if(nodes_in_depth[i + 1].size() - adj[v].size())
+            ans *= nodes_in_depth[i + 1].size() - adj[v].size();
         }
     }
     cout << ans  << nl;

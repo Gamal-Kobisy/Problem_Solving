@@ -1,7 +1,9 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://vjudge.net/problem/UVA-674
+// TIME LIMIT EXCEEDED
+
+// LINK : https://cses.fi/problemset/task/1636
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -13,20 +15,64 @@
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-const int N = 7489 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
+
+const int N = 1e6 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-ll dp[N];
-int coins[] = {1, 5, 10, 25, 50};
-int n;
-void solve() {
-    memset(dp , 0 , sizeof dp);
-    dp[0] = 1;
-    for (ll i = 0; i < 5; ++i) {
-        for (ll j = coins[i]; j < N; ++j) {
-            dp[j] += dp[j - coins[i]];
-        }
+
+const ll MOD = 1e9 + 7;
+
+ll add(ll a  , ll b)
+{
+    return ((a % MOD) + (b % MOD)) % MOD;
+}
+
+ll sub(ll a , ll b)
+{
+    return ((a % MOD) - (b % MOD) + MOD) % MOD;
+}
+
+ll mul(ll a , ll b)
+{
+    return ((a % MOD) * (b % MOD)) % MOD;
+}
+
+ll power(ll b, ll p) {
+    ll ans = 1;
+    while (p) {
+        if (p & 1)
+            ans = mul(ans, b);
+        b = mul(b, b);
+        p /= 2;
     }
-    cout << dp[n] << nl;
+    return ans;
+}
+
+int dp[101][N] , coins[100] , n , x;
+
+ll calc(ll i , ll sum)
+{
+    if(i == n || sum > x)
+        return 0;
+    if(sum == x)
+        return 1;
+    int &ret = dp[i][sum];
+    if(~ret)
+        return ret;
+    ret = 0;
+    for (ll j = i; j < n; ++j) {
+        ret = add(ret , calc(j , sum + coins[j]));
+    }
+    return ret;
+}
+
+void solve() {
+    cin >> n >> x;
+    for (ll i = 0; i < n; ++i) {
+        cin >> coins[i];
+    }
+    memset(dp , -1 , sizeof dp);
+    cout << calc(0 , 0) << nl;
+
 }
 void file()
 {
@@ -44,7 +90,7 @@ int main() {
 // ————————————————————————————————————————————
     ll t = 1;
     // cin >> t;
-    while (cin >> n)
+    while (t--)
     {
         solve();
     }

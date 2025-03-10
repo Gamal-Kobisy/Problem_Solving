@@ -1,10 +1,11 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK :
+// LINK : https://atcoder.jp/contests/dp/tasks/dp_c?lang=en
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
+#define sp ' '
 #define all(a) a.begin(),a.end()
 #define allr(a) a.rbegin(),a.rend()
 #define no cout<<"NO\n"
@@ -14,34 +15,33 @@ using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 const int N = 1e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-ll act[3][N] , dp[N][3] , n;
 
-ll calc(int i , int c)
+ll n , act[3][N] , dp[3][N];
+
+ll calc(int c , int idx)
 {
-    if(i == n)
+    if(idx > n)
         return 0;
-
-    ll &ret = dp[i][c];
+    ll &ret = dp[c][idx];
     if(ret)
         return ret;
-
-    for (ll j = 0; j < 3; ++j) {
-        if(j != c)
-            ret = max(ret , calc(i + 1 , j) + act[j][i]);
+    for (ll i = 0; i < 3; ++i) {
+        if(i != c)
+            ret = max(ret , calc(i , idx + 1) + act[i][idx]);
     }
-
     return ret;
 }
+
 
 void solve() {
     memset(dp , 0 , sizeof dp);
     cin >> n;
-    for (ll i = 0; i < n; ++i) {
+    for (ll i = 1; i <= n; ++i) {
         for (ll j = 0; j < 3; ++j) {
             cin >> act[j][i];
         }
     }
-    cout << calc(0 , -1) << nl;
+    cout << calc(0 , 0) << nl;
 }
 void file()
 {
