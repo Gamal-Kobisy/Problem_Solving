@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://cses.fi/problemset/task/1158
+// LINK : https://cses.fi/problemset/task/1639
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -13,36 +13,45 @@
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-const int N = 1e3 + 5, M = 1e5 + 5, LOG = 20, inf = 0x3f3f3f3f;
+const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
-int W[N], V[N], dp[N][M], n, x;
+string s, t;
 
-int calc(ll idx, ll w) {
-    if (idx == n || w > x)
-        return 0;
+int dp[5005][5005];
 
-    int &ret = dp[idx][w];
-    if (~ret)
+int calc(int idx1 , int idx2) {
+    if (idx1 == s.size())
+        return t.size() - idx2;
+    if (idx2 == t.size())
+        return s.size() - idx1;
+    int &ret = dp[idx1][idx2];
+    if (ret != inf)
         return ret;
-    ret = calc(idx + 1, w);
-    if (w + W[idx] <= x)
-        ret = max(ret, calc(idx + 1, w + W[idx]) + V[idx]);
-
+    if (idx1 < s.size() && idx2 < t.size() && s[idx1] == t[idx2])
+        ret = calc(idx1 + 1, idx2 + 1);
+    else {
+        if (idx1 + 1 <= s.size() && idx2 + 1 <= t.size())
+            ret = calc(idx1 + 1, idx2 + 1) + 1;
+        if (idx1 + 1 <= s.size())
+            ret = min(ret , calc(idx1 + 1, idx2) + 1);
+        if (idx2 + 1 <= t.size())
+            ret = min(ret , calc(idx1, idx2 + 1) + 1);
+    }
     return ret;
 }
 
 void solve() {
-    cin >> n >> x;
-    for (ll i = 0; i < n; ++i)
-        cin >> W[i];
-    for (ll i = 0; i < n; ++i)
-        cin >> V[i];
-    memset(dp, -1, sizeof dp);
+    cin >> s >> t;
+    memset(dp, inf, sizeof(dp));
+    // if (s.size() > t.size())
+    //     swap(s, t);
+    // while (s.size() != t.size())
+    //     s += "*";
     cout << calc(0, 0) << nl;
 }
-void file()
-{
+
+void file() {
 #ifndef ONLINE_JUDGE
     freopen("Input.txt", "r", stdin);
     freopen("Output.txt", "w", stdout);
@@ -53,12 +62,11 @@ void file()
 int main() {
     file();
     ENG_GAMAL
-// test-independent code ——————————————————————
-// ————————————————————————————————————————————
+    // test-independent code ——————————————————————
+    // ————————————————————————————————————————————
     ll t = 1;
-    // cin >> t;
-    while (t--)
-    {
+    //     cin >> t;
+    while (t--) {
         solve();
     }
 

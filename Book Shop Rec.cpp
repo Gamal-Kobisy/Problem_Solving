@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/contest/2069/problem/D
+// LINK : https://cses.fi/problemset/task/1158
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -13,58 +13,36 @@
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
+const int N = 1e3 + 5, M = 1e5 + 5, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
+int W[N], V[N], dp[N][M], n, x;
+
+int calc(ll idx, ll w) {
+    if (idx == n || w > x)
+        return 0;
+
+    int &ret = dp[idx][w];
+    if (~ret)
+        return ret;
+    ret = calc(idx + 1, w);
+    if (w + W[idx] <= x)
+        ret = max(ret, calc(idx + 1, w + W[idx]) + V[idx]);
+
+    return ret;
+}
 
 void solve() {
-    string s;
-    cin >> s;
-    int i = 0 , n = s.size();
-    while (i <= n / 2 && s[i] == s[n - i - 1])
-        i++;
-    n -= i * 2;
-    s = s.substr(i , n);
-    int ans[2] = {0 , 0};
-    for (ll j = 0; j < 2; ++j) {
-        int l = 0 , r = n;
-        while (l <= r)
-        {
-            int mid = (r + l) / 2;
-            vector<int>freq(26);
-            for (ll i = 0 ; i < mid; ++i) {
-                freq[s[i] - 'a']++;
-            }
-            bool ok = true;
-            for (ll i = 0; i < min(n / 2, n - mid); ++i) {
-                char c = s[s.size() - i - 1];
-                if (i < mid)
-                {
-                    ok &= freq[c - 'a'] > 0;
-                    freq[c - 'a']--;
-                }
-                else
-                {
-                    ok &= (c == s[i]);
-                }
-            }
-            for (ll i = 0; i < 26; ++i) {
-                ok &= (freq[i] % 2 == 0);
-            }
-            if(ok)
-            {
-                r = mid - 1;
-                ans[j] = mid;
-            }
-            else
-            {
-                l = mid + 1;
-            }
-        }
-        reverse(all(s));
-    }
-    cout << min(ans[0] , ans[1]) << nl;
+    cin >> n >> x;
+    for (ll i = 0; i < n; ++i)
+        cin >> W[i];
+    for (ll i = 0; i < n; ++i)
+        cin >> V[i];
+    memset(dp, -1, sizeof dp);
+    cout << calc(0, 0) << nl;
 }
+
+
 void file()
 {
 #ifndef ONLINE_JUDGE
@@ -80,7 +58,7 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll t = 1;
-    cin >> t;
+    // cin >> t;
     while (t--)
     {
         solve();
