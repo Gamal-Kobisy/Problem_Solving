@@ -1,10 +1,12 @@
-// "ولا تقولن لشيء إني فاعل ذلك غدا"
+ // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://vjudge.net/problem/UVA-10405
+// LINK : https://codeforces.com/problemset/problem/189/A
+
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
+#define sp ' '
 #define all(a) a.begin(),a.end()
 #define allr(a) a.rbegin(),a.rend()
 #define no cout<<"NO\n"
@@ -12,36 +14,30 @@
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-const int N = 3e3 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
+const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-string s , t;
-int n , m;
-int dp[N][N];
-int calc(int i , int j)
-{
-    if(i == n || j == m)
-        return 0;
 
-    int &ret = dp[i][j];
+int n , a , b , c , dp[4005];
 
-    if(~ret)
-        return ret;
-    if(s[i] == t[j])
-        ret = calc(i + 1 , j + 1) + 1;
-    else
-        ret = max(calc(i + 1 , j) , calc(i , j + 1));
-
-    return ret;
-}
 
 void solve() {
-    memset(dp , -1 , sizeof dp);
-    n = s.size();
-    m = t.size();
-    cout << calc(0 , 0) << nl;
+    cin >> n >> a >> b >> c;
+    memset(dp,-inf,sizeof(dp));
+
+    dp[0] = 1;
+
+    for (int i = 0; i <= n; ++i) {
+        if (i >= a)
+            dp[i] = max(dp[i], dp[i - a] + 1);
+        if (i >= b)
+            dp[i] = max(dp[i], dp[i - b] + 1);
+        if (i >= c)
+            dp[i] = max(dp[i], dp[i - c] + 1);
+    }
+    cout << dp[n] - 1 << nl;
 }
-void file()
-{
+
+void file() {
 #ifndef ONLINE_JUDGE
     freopen("Input.txt", "r", stdin);
     freopen("Output.txt", "w", stdout);
@@ -52,13 +48,11 @@ void file()
 int main() {
     file();
     ENG_GAMAL
-// test-independent code ——————————————————————
-// ————————————————————————————————————————————
-    string line1, line2;
-
-    while (getline(cin, line1) && getline(cin, line2)) {
-        s = line1;
-        t = line2;
+    // test-independent code ——————————————————————
+    // ————————————————————————————————————————————
+    ll t = 1;
+    //     cin >> t;
+    while (t--) {
         solve();
     }
 
