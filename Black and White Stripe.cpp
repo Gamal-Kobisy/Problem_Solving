@@ -17,6 +17,7 @@ const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
 void solve() {
+
     ll n, k;
     string s;
     cin >> n >> k >> s;
