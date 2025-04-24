@@ -1,7 +1,7 @@
 ﻿// "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/1690/D
+// LINK :
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -17,19 +17,22 @@ const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
 void solve() {
-
-    ll n, k;
     string s;
-    cin >> n >> k >> s;
-    ll ans = infLL;
-	vector<ll>pre(n + 1, 0);
-	for (int i = 1; i <= n; i++) {
-		pre[i] = pre[i - 1] + (s[i - 1] == 'W');
-	}
-	for (int i = 0; i <= n - k; i++) {
-		ans = min(ans, pre[i + k] - pre[i]);
-	}
-	cout << (ans == infLL ? 0 : ans) << nl;
+    cin >> s;
+	reverse(all(s));
+	ll ans = 0;
+    for (int i = 0; i < s.size(); i++)
+    {
+        if (s[i] == '0')
+            ans++;
+        else
+        {
+			ans += count_if(s.begin() + i, s.end(), [](char c) { return c != '0'; });
+            break;
+        }
+    }
+	cout << ans - 1 << nl;
+
 }
 
 int main() {

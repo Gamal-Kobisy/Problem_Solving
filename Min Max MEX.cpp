@@ -1,7 +1,7 @@
 ﻿// "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/1690/D
+// LINK : https://codeforces.com/contest/2093/problem/E
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -17,19 +17,45 @@ const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
 void solve() {
+    ll n, m;
+    cin >> n >> m;
+    vector<ll> a(n);
+    for (ll i = 0; i < n; i++) {
+        cin >> a[i];
+    }
 
-    ll n, k;
-    string s;
-    cin >> n >> k >> s;
-    ll ans = infLL;
-	vector<ll>pre(n + 1, 0);
-	for (int i = 1; i <= n; i++) {
-		pre[i] = pre[i - 1] + (s[i - 1] == 'W');
-	}
-	for (int i = 0; i <= n - k; i++) {
-		ans = min(ans, pre[i + k] - pre[i]);
-	}
-	cout << (ans == infLL ? 0 : ans) << nl;
+    ll l = 0, r = n / m, ans = 0;
+    while (l <= r) {
+        ll mid = (l + r) / 2;
+        vector< bool > freq(mid + 1);
+        int mex = 0;
+        int cnt = 0;
+        for (int i = 0; i < n; i++) {
+            if (a[i] < mid) {
+                freq[a[i]] = true;
+            }
+            while (freq[mex]) {
+                mex++;
+            }
+            if (mex == mid) {
+                mex = 0;
+                cnt++;
+                fill(all(freq), false);
+                if (cnt >= m) {
+                    break;
+                }
+            }
+        }
+        if (cnt >= m) {
+            ans = mid;
+            l = mid + 1;
+        }
+        else {
+            r = mid - 1;
+        }
+    }
+
+    cout << ans << nl;
 }
 
 int main() {
