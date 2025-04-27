@@ -1,49 +1,26 @@
-//
-// Created by Gamal on 8/4/2024.
-//
+﻿ // "ولا تقولن لشيء إني فاعل ذلك غدا"
+// "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
+
+// LINK :
 
 #include <bits/stdc++.h>
-#include <ext/pb_ds/assoc_container.hpp>
-#include <ext/pb_ds/tree_policy.hpp>
 #define ll long long
 #define nl '\n'
+#define sp ' '
 #define all(a) a.begin(),a.end()
 #define allr(a) a.rbegin(),a.rend()
-#define f1(n) for(int i=1;i<n;i++)
-#define f0(n) for(int i=0;i<n;++i)
-#define fe(v) for(auto & it:v)
-#define pi 3.141592653589793238462643383279502884197
-#define e 2.718281828459045
+#define no cout<<"NO\n"
+#define yes cout<<"YES\n"
+#define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
-using namespace __gnu_pbds;
-struct un_ordered
-{
-    bool operator()(const long long &a, const long long &b) const
-    {
-        return true;
-    }
-};
-long long gcd(long long a, long long b) {
-    while (b != 0) {
-        long long temp = b;
-        b = a % b;
-        a = temp;
-    }
-    return a;
-}
+// ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
+ll infLL = 0x3f3f3f3f3f3f3f3f;
 
-long long lcm(long long a, long long b) {
-    return a / gcd(a, b) * b;  // Use the GCD to calculate the LCM
-}
-
-template <class T>
-using ordered_set = tree<T, null_type, un_ordered, rb_tree_tag, tree_order_statistics_node_update>;
-
-void solve()
-{
+void solve() {
     srand(time(0));
-    string name[] = {"El-code ye7kom", "yitm tanfeedh el-backtrack 3alina" , "El dp ehna awla beh" ,"O(Zay ma teegy teegy)" , "Ehna el talata test cases" , "DP wel 2alb shariyeh" , "Makhowafaty code hayaty"};
-    map<string , ll>names;
+    string name[] = { "yitm tanfeedh el-backtrack 3alina" , "El dp ehna awla beh"};
+    map<string, ll>names;
     names["O(Zay ma teegy teegy)"];
     names["Ehna el talata test cases"];
     names["DP wel 2alb shariyeh"];
@@ -52,33 +29,29 @@ void solve()
     names["El-code ye7kom"];
     names["yitm tanfeedh el-backtrack 3alina"];
     for (ll i = 0; i < 1000; ++i) {
-        names[name[rand() % 4]]++;
+        names[name[rand() % 2]]++;
     }
-    for (auto i: names) {
+    for (auto i : names) {
         cout << i.first << " : " << i.second << nl;
     }
 }
 
-void file()
-{
+void file() {
 #ifndef ONLINE_JUDGE
     freopen("Input.txt", "r", stdin);
     freopen("Output.txt", "w", stdout);
     freopen("Error.txt", "w", stderr);
 #endif
 }
-void fast()
-{
-    ios_base::sync_with_stdio(0), cin.tie(0), cout.tie(0);
 
-}
 int main() {
     file();
-    fast();
+    ENG_GAMAL
+    // test-independent code ——————————————————————
+    // ————————————————————————————————————————————
     ll t = 1;
-    // cin >> t;
-    while(t--)
-    {
+    //     cin >> t;
+    while (t--) {
         solve();
     }
 
