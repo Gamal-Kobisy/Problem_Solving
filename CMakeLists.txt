@@ -10,7 +10,7 @@ project(ProblemSolving)
 
 # Add source files to this project's executable
 add_executable(CMakeTarget
-    "Black and White Stripe.cpp"
+        "Flower Boy.cpp"
 )
 
 # Set the C++ standard if CMake version is greater than 3.12
