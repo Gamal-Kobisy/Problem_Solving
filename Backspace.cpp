@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/1169/B
+// LINK : https://open.kattis.com/problems/backspace
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -17,27 +17,17 @@ const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
 void solve() {
-    ll n , m;
-    cin >> n >> m;
-    vector<pair<ll , ll>>a(m);
-    for (int i = 0; i < m; ++i) {
-        cin >> a[i].first >> a[i].second;
-    }
-
-    for(ll cand : {a[0].first , a[0].second})
-    {
-        ll cnt = 0;
-        vector<ll>freq(n + 1);
-        for (int i = 0; i < m; ++i) {
-            if(a[i].first == cand || a[i].second == cand)
-                cnt++;
-            else
-                freq[a[i].first]++ , freq[a[i].second]++;
+    string s, ans;
+    cin >> s;
+    for (char c : s) {
+        if (c == '<') {
+            if (!ans.empty())
+                ans.pop_back();
+        } else {
+            ans += c;
         }
-        if(cnt + *max_element(all(freq)) == m)
-            return void(yes);
     }
-    no;
+    cout << ans << nl;
 }
 void file()
 {
@@ -49,7 +39,7 @@ void file()
 }
 
 int main() {
-    file();
+//    file();
     ENG_GAMAL
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————

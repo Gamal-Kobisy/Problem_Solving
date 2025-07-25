@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/1169/B
+// LINK : https://codeforces.com/contest/892/problem/C
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -16,28 +16,53 @@ using namespace std;
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
-void solve() {
-    ll n , m;
-    cin >> n >> m;
-    vector<pair<ll , ll>>a(m);
-    for (int i = 0; i < m; ++i) {
-        cin >> a[i].first >> a[i].second;
+ll gcd(ll a, ll b) {
+    while (b != 0) {
+        ll temp = b;
+        b = a % b;
+        a = temp;
     }
+    return a;
+}
 
-    for(ll cand : {a[0].first , a[0].second})
-    {
-        ll cnt = 0;
-        vector<ll>freq(n + 1);
-        for (int i = 0; i < m; ++i) {
-            if(a[i].first == cand || a[i].second == cand)
-                cnt++;
-            else
-                freq[a[i].first]++ , freq[a[i].second]++;
+ll gcd_vector(const vector<ll>& vec) {
+    ll result = vec[0];
+    for (size_t i = 1; i < vec.size(); ++i) {
+        result = gcd(result, vec[i]);
+        if (result == 1) {
+            return 1;
         }
-        if(cnt + *max_element(all(freq)) == m)
-            return void(yes);
     }
-    no;
+    return result;
+}
+
+void solve() {
+    ll n;
+    cin >> n;
+    vector<ll>a(n);
+    ll cnt_one = 0;
+    for (int i = 0; i < n; ++i) {
+        cin >> a[i];
+        cnt_one += a[i] == 1;
+    }
+    if(cnt_one)
+        return void(cout << n - cnt_one << nl);
+
+    ll ans = infLL;
+    for (int i = 0; i < n; ++i) {
+        ll GCD = a[i];
+        for (int j = i + 1; j < n; ++j) {
+            GCD = gcd(GCD , a[j]);
+            if(GCD == 1)
+            {
+                ans = min(ans , n + (j - i - 1));
+                break;
+            }
+        }
+    }
+    if(ans == infLL)
+        return void(cout << -1 << nl);
+    cout << ans << nl;
 }
 void file()
 {

@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/1169/B
+// LINK : https://codeforces.com/problemset/problem/5/C
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -17,27 +17,51 @@ const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
 void solve() {
-    ll n , m;
-    cin >> n >> m;
-    vector<pair<ll , ll>>a(m);
-    for (int i = 0; i < m; ++i) {
-        cin >> a[i].first >> a[i].second;
-    }
-
-    for(ll cand : {a[0].first , a[0].second})
-    {
-        ll cnt = 0;
-        vector<ll>freq(n + 1);
-        for (int i = 0; i < m; ++i) {
-            if(a[i].first == cand || a[i].second == cand)
-                cnt++;
-            else
-                freq[a[i].first]++ , freq[a[i].second]++;
+    string s , temp;
+    cin >> s;
+    vector<string>a;
+    vector<ll>ans(s.size() + 1);
+    ll balance = 0 , len;
+    for (int i = 0; i < s.size(); ++i) {
+        s[i] == ')' ? balance-- : balance++;
+        if(balance < 0)
+        {
+            balance = 0;
+            if(!temp.empty())
+            {
+                a.emplace_back(temp);
+                temp.clear();
+            }
+            continue;
         }
-        if(cnt + *max_element(all(freq)) == m)
-            return void(yes);
+        temp += s[i];
     }
-    no;
+    if(!temp.empty())
+        a.emplace_back(temp);
+
+    for (int idx = 0; idx < a.size(); ++idx) {
+//        cout << a[idx] << nl;
+        balance = 0 , len = 0;
+        for (int i = a[idx].size() - 1; i >= 0; --i) {
+            len++;
+            if(a[idx][i] == '(')
+                balance--;
+            else
+                balance++;
+            if(balance == 0)
+                ans[len]++ ;
+            if(balance < 0)
+                len = 0 , balance = 0;
+        }
+    }
+    ans[0] = 1;
+    for (int i = s.size(); i >= 0; --i) {
+        if(ans[i])
+        {
+            cout << i << sp << ans[i] << nl;
+            return;
+        }
+    }
 }
 void file()
 {

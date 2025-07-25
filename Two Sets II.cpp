@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/1169/B
+// LINK : https://cses.fi/problemset/task/1093
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -16,28 +16,38 @@ using namespace std;
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
-void solve() {
-    ll n , m;
-    cin >> n >> m;
-    vector<pair<ll , ll>>a(m);
-    for (int i = 0; i < m; ++i) {
-        cin >> a[i].first >> a[i].second;
-    }
+const ll MOD = 1e9 + 7;
 
-    for(ll cand : {a[0].first , a[0].second})
-    {
-        ll cnt = 0;
-        vector<ll>freq(n + 1);
-        for (int i = 0; i < m; ++i) {
-            if(a[i].first == cand || a[i].second == cand)
-                cnt++;
-            else
-                freq[a[i].first]++ , freq[a[i].second]++;
+ll add(ll a, ll b)
+{
+    return ((a % MOD) + (b % MOD)) % MOD;
+}
+
+ll sub(ll a, ll b)
+{
+    return ((a % MOD) - (b % MOD) + MOD) % MOD;
+}
+
+ll mul(ll a, ll b)
+{
+    return ((a % MOD) * (b % MOD)) % MOD;
+}
+
+ll dp[501] , n;
+
+void solve() {
+    cin >> n;
+    if(((n * (n + 1)) / 2) % 2)
+        return void(cout << 0 << nl);
+    dp[0] = 1;
+    for (int i = 1; i < n; ++i) {
+        for (int j = n; j >= i; --j) {
+            dp[j] = add(dp[j] , dp[j - i]);
         }
-        if(cnt + *max_element(all(freq)) == m)
-            return void(yes);
     }
-    no;
+    for (int i = 1; i <= n; ++i) {
+        cout << dp[i] << nl;
+    }
 }
 void file()
 {

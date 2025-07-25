@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/1169/B
+// LINK : https://codeforces.com/problemset/problem/545/C
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -13,31 +13,27 @@
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
+const int N = 1e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
-void solve() {
-    ll n , m;
-    cin >> n >> m;
-    vector<pair<ll , ll>>a(m);
-    for (int i = 0; i < m; ++i) {
-        cin >> a[i].first >> a[i].second;
-    }
+ll X[N] , H[N] , n ;
 
-    for(ll cand : {a[0].first , a[0].second})
-    {
-        ll cnt = 0;
-        vector<ll>freq(n + 1);
-        for (int i = 0; i < m; ++i) {
-            if(a[i].first == cand || a[i].second == cand)
-                cnt++;
-            else
-                freq[a[i].first]++ , freq[a[i].second]++;
-        }
-        if(cnt + *max_element(all(freq)) == m)
-            return void(yes);
+int calc(int i, ll last) {
+    if (i >= n)
+        return 0;
+    if (X[i] - H[i] > last)
+        return 1 + calc(i + 1, X[i]);
+    if (X[i] + H[i] < X[i + 1])
+        return 1 + calc(i + 1, X[i] + H[i]);
+    return calc(i + 1, X[i]);
+}
+
+void solve() {
+    cin >> n;
+    for (int i = 0; i < n; ++i) {
+        cin >> X[i + 1] >> H[i + 1];
     }
-    no;
+    cout << calc(2 , X[1]) + min(2ll , n) << nl;
 }
 void file()
 {

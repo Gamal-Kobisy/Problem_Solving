@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/1169/B
+// LINK : https://onlinejudge.org/index.php?option=onlinejudge&page=show_problem&problem=1266
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -16,28 +16,49 @@ using namespace std;
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
-void solve() {
-    ll n , m;
-    cin >> n >> m;
-    vector<pair<ll , ll>>a(m);
-    for (int i = 0; i < m; ++i) {
-        cin >> a[i].first >> a[i].second;
-    }
+ll n , m;
 
-    for(ll cand : {a[0].first , a[0].second})
-    {
-        ll cnt = 0;
-        vector<ll>freq(n + 1);
-        for (int i = 0; i < m; ++i) {
-            if(a[i].first == cand || a[i].second == cand)
-                cnt++;
-            else
-                freq[a[i].first]++ , freq[a[i].second]++;
-        }
-        if(cnt + *max_element(all(freq)) == m)
-            return void(yes);
+ll gcd(ll a, ll b) {
+    while (b != 0) {
+        ll temp = b;
+        b = a % b;
+        a = temp;
     }
-    no;
+    return a;
+}
+
+ll lcm(ll a, ll b) {
+    return a / gcd(a, b) * b;
+}
+
+ll lcm_vector(const vector<ll>& vec) {
+    ll result = vec[0];
+    for (size_t i = 1; i < vec.size(); ++i) {
+        result = lcm(result, vec[i]);
+    }
+    return result;
+}
+
+void solve() {
+    vector<int>a(m);
+    for (int i = 0; i < m; ++i) {
+        cin >> a[i];
+    }
+    ll ans = 0;
+    for (int i = 1 ; i < (1 << m); ++i) {
+        ll l = 1;
+        for (int j = 0; j < m; ++j) {
+            if(i & (1 << j))
+                l = lcm(l , a[j]);
+//            if(l > n)
+//                break;
+        }
+        if(__builtin_popcount(i) & 1)
+            ans += n / l;
+        else
+            ans -= n / l;
+    }
+    cout << n - ans << nl;
 }
 void file()
 {
@@ -55,7 +76,7 @@ int main() {
 // ————————————————————————————————————————————
     ll t = 1;
 //     cin >> t;
-    while (t--)
+    while (cin >> n >> m)
     {
         solve();
     }
