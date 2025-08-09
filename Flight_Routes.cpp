@@ -24,7 +24,6 @@ ll infLL = 0x3f3f3f3f3f3f3f3f;
 int n , m , k;
 vector<pair<int , int>>adj[N];
 vector<multiset<ll>>dist(N);
-
 void dijkstra(int start)
 {
     priority_queue<pair<ll , int> , vector<pair<ll , int>> , greater<>>pq;

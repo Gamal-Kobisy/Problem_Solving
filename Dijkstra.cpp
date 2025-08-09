@@ -25,7 +25,6 @@ int n , m;
 
 vector<vector<pair<int  , int>>>adj(N);
 vector<ll>dist(N , infLL) , parent(N , -1);
-
 void dijkstra()
 {
     priority_queue<pair<ll , int> , vector<pair<ll , int>> , greater<>>pq;
@@ -49,6 +48,7 @@ void dijkstra()
         }
     }
 }
+
 void solve() {
     cin >> n >> m;
     for (ll i = 0; i < m; ++i) {

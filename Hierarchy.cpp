@@ -16,10 +16,10 @@ using namespace std;
 const int N = 1e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
-int n , k;
-vector<vector<int>>adj(N);
+int n , m;
+vector<int>adj[N];
 vector<bool>vis(N);
-vector<int>ans;
+vector<int>chain;
 void dfs(int v)
 {
     vis[v] = true;
@@ -28,33 +28,33 @@ void dfs(int v)
         if(!vis[u])
             dfs(u);
     }
-    ans.emplace_back(v);
+    chain.emplace_back(v);
 }
-
 void solve() {
-    cin >> n >> k;
-    for (ll i = 0; i < k; ++i) {
+    cin >> n >> m;
+    for (int i = 1; i <= m; ++i) {
         int w;
         cin >> w;
-        for (ll j = 0; j < w; ++j) {
-            int b;
-            cin >> b;
-            adj[i + 1].emplace_back(b);
+        for (int j = 0; j < w; ++j) {
+            int c;
+            cin >> c;
+            adj[i].emplace_back(c);
         }
     }
-
-    for (ll i = 1; i <= n; ++i) {
+    vector<int>ans(n + 1);
+    for (int i = 1; i <= n; ++i) {
         if(!vis[i])
+        {
             dfs(i);
+        }
     }
-    reverse(all(ans));
-    vector<int>boss(n + 1);
-    boss[ans[0]] = 0;
-    for (ll i = 1; i < n; ++i) {
-        boss[ans[i]] = ans[i - 1];
+    reverse(all(chain));
+    ans[chain[0]] = 0;
+    for (int i = 1; i < chain.size(); ++i) {
+        ans[chain[i]] = chain[i - 1];
     }
-    for (ll i = 1; i <= n; ++i) {
-        cout << boss[i] << nl;
+    for (int i = 1; i <= n; ++i) {
+        cout << ans[i] << nl;
     }
 }
 void file()
@@ -72,7 +72,7 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll t = 1;
-    // cin >> t;
+//     cin >> t;
     while (t--)
     {
         solve();

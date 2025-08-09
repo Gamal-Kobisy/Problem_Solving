@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://cses.fi/problemset/task/1678
+// LINK : https://codeforces.com/contest/104/problem/C
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -13,52 +13,51 @@
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-const int N = 1e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
+const int N = 100 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 int n , m;
-vector<int>adj[N] , parent(N);
+vector<int>adj[N];
 vector<bool>vis(N) , ancs(N);
+bool cycle , mcycle;
 
 void dfs(int v , int par)
 {
     vis[v] = true;
     ancs[v] = true;
-    parent[v] = par;
-    for(int u : adj[v])
+    for(auto u : adj[v])
     {
+        if(u == par)
+            continue;
         if(ancs[u])
         {
-            vector<int>ans{u};
-            ll curr = v;
-            while(curr != u)
-            {
-                ans.emplace_back(curr);
-                curr = parent[curr];
-            }
-            cout << ans.size() + 1 << nl;
-            cout << ans[0] << sp;
-            for (int i = ans.size() - 1; i >= 0; i--) {
-                cout << ans[i] << sp;
-            }
-            exit(0);
+            if(!cycle)
+                cycle = true;
+            else
+                mcycle = true;
         }
         if(!vis[u])
             dfs(u , v);
     }
     ancs[v] = false;
 }
+
 void solve() {
+    cycle = mcycle = false;
     cin >> n >> m;
     for (int i = 0; i < m; ++i) {
         int a , b;
         cin >> a >> b;
         adj[a].emplace_back(b);
+        adj[b].emplace_back(a);
     }
+    dfs(1 , -1);
+    if(!cycle || mcycle)
+        return void(no);
     for (int i = 1; i <= n; ++i) {
         if(!vis[i])
-            dfs(i , -1);
+            return void(no);
     }
-    cout << "IMPOSSIBLE" << nl;
+    cout << "FHTAGN!" << nl;
 }
 void file()
 {

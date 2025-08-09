@@ -1,75 +1,61 @@
-// LINK : https://www.spoj.com/problems/KATHTHI/en/
+// "ولا تقولن لشيء إني فاعل ذلك غدا"
+// "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
+
+// LINK : https://www.spoj.com/problems/TOPOSORT/en/
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
+#define sp ' '
 #define all(a) a.begin(),a.end()
 #define allr(a) a.rbegin(),a.rend()
 #define no cout<<"NO\n"
 #define yes cout<<"YES\n"
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
-
-/*
- ███████╗███╗   ██╗ ██████╗       ██████╗  █████╗ ███╗   ███╗ █████╗ ██╗
- ██╔════╝████╗  ██║██╔════╝      ██╔════╝ ██╔══██╗████╗ ████║██╔══██╗██║
- █████╗  ██╔██╗ ██║██║  ███╗     ██║  ███╗███████║██╔████╔██║███████║██║
- ██╔══╝  ██║╚██╗██║██║   ██║     ██║   ██║██╔══██║██║╚██╔╝██║██╔══██║██║
- ███████╗██║ ╚████║╚██████╔╝     ╚██████╔╝██║  ██║██║ ╚═╝ ██║██║  ██║███████╗
- ╚══════╝╚═╝  ╚═══╝ ╚═════╝       ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝
-*/
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-int dx[] = {-1, 0, 1, 0, -1, 1, 1, -1};
-int dy[] = {0, 1, 0, -1, 1, 1, -1, -1};
-char di[] = {'U', 'R', 'D', 'L'};
-int knightx[] = {-2, -1, 1, 2, 2, 1, -1, -2};
-int knighty[] = {1, 2, 2, 1, -1, -2, -2, -1};
-const ll N = 1e4 + 1;
-ll n , m;
-vector<ll>adj[N];
-vector<ll>inDeg(N) , ans;
-
+const int N = 1e4 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
+ll infLL = 0x3f3f3f3f3f3f3f3f;
+int n , m;
+vector<int>adj[N] , inDeg(N) , ans;
 void bfs()
 {
-    priority_queue<ll , vector<ll> , greater<>>q;
-    for (ll i = 1; i <= n; ++i) {
+    priority_queue<int , vector<int> , greater<>>pq;
+    for (int i = 1; i <= n; ++i) {
         if(inDeg[i] == 0)
-        {
-            q.push(i);
-        }
+            pq.emplace(i);
     }
-
-    while (!q.empty())
+    while(!pq.empty())
     {
-        ll cur = q.top();
-        ans.push_back(cur);
-        q.pop();
-        for(ll u : adj[cur])
+        int cur = pq.top();
+        pq.pop();
+        for(int u : adj[cur])
         {
             inDeg[u]--;
             if(inDeg[u] == 0)
             {
-                q.push(u);
+                pq.emplace(u);
             }
         }
+        ans.emplace_back(cur);
     }
 }
 void solve() {
     cin >> n >> m;
-    for (ll i = 0; i < m; ++i) {
-        ll a , b;
+    for (int i = 0; i < m; ++i) {
+        int a , b;
         cin >> a >> b;
-        adj[a].push_back(b);
+        adj[a].emplace_back(b);
         inDeg[b]++;
     }
-
     bfs();
     if(ans.size() != n)
+        cout << "IMPOSSIBLE" << nl;
+    else
     {
-        cout << "Sandro fails." << nl;
-        return;
-    }
-    for (ll i: ans) {
-        cout << i << ' ';
+        for (int i = 0; i < n; ++i) {
+            cout <<  ans[i] << sp;
+        }
+        cout << nl;
     }
 }
 void file()
@@ -80,14 +66,15 @@ void file()
     freopen("Error.txt", "w", stderr);
 #endif
 }
+
 int main() {
     file();
     ENG_GAMAL
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll t = 1;
-//    cin >> t;
-    while(t--)
+//     cin >> t;
+    while (t--)
     {
         solve();
     }

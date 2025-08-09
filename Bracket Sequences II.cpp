@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://cses.fi/problemset/task/1678
+// LINK : https://cses.fi/problemset/task/2187
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -13,52 +13,80 @@
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-const int N = 1e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
+const int N = 2e6 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-int n , m;
-vector<int>adj[N] , parent(N);
-vector<bool>vis(N) , ancs(N);
 
-void dfs(int v , int par)
+ll fact[N] , modinv[N];
+
+const ll MOD = 1e9 + 7;
+
+ll add(ll a, ll b)
 {
-    vis[v] = true;
-    ancs[v] = true;
-    parent[v] = par;
-    for(int u : adj[v])
-    {
-        if(ancs[u])
-        {
-            vector<int>ans{u};
-            ll curr = v;
-            while(curr != u)
-            {
-                ans.emplace_back(curr);
-                curr = parent[curr];
-            }
-            cout << ans.size() + 1 << nl;
-            cout << ans[0] << sp;
-            for (int i = ans.size() - 1; i >= 0; i--) {
-                cout << ans[i] << sp;
-            }
-            exit(0);
-        }
-        if(!vis[u])
-            dfs(u , v);
-    }
-    ancs[v] = false;
+    return ((a % MOD) + (b % MOD)) % MOD;
 }
+
+ll sub(ll a, ll b)
+{
+    return ((a % MOD) - (b % MOD) + MOD) % MOD;
+}
+
+ll mul(ll a, ll b)
+{
+    return ((a % MOD) * (b % MOD)) % MOD;
+}
+
+ll power(ll b, ll p) {
+    ll ans = 1;
+    while (p) {
+        if (p & 1)
+            ans = mul(ans , b);
+        b = mul(b , b);
+        p /= 2;
+    }
+    return ans;
+}
+
+void pre(){
+    fact[0] = 1;
+    for (int i = 1; i < N; ++i) {
+        fact[i] = mul(fact[i - 1] , i);
+    }
+    modinv[N - 1] = power(fact[N - 1] , MOD - 2);
+    for (int i = N - 2; i >= 0 ; --i) {
+        modinv[i] = mul(i + 1  , modinv[i + 1]);
+    }
+}
+
+ll nCr(int n, int r) {
+    return mul(mul(fact[n], modinv[n - r]), modinv[r]);
+}
+
+ll nPr(int n, int r) {
+    return mul(fact[n], modinv[n - r]);
+}
+
+
 void solve() {
-    cin >> n >> m;
-    for (int i = 0; i < m; ++i) {
-        int a , b;
-        cin >> a >> b;
-        adj[a].emplace_back(b);
+    ll n;
+    string s;
+    cin >> n >> s;
+    if(n & 1)
+        return void(cout << 0 << nl);
+    int balance = 0;
+    for(char c : s)
+    {
+        if(c == '(')
+            balance++;
+        else
+            balance--;
+        if(balance < 0)
+            return void(cout << 0 << nl);
     }
-    for (int i = 1; i <= n; ++i) {
-        if(!vis[i])
-            dfs(i , -1);
-    }
-    cout << "IMPOSSIBLE" << nl;
+    if(n < s.size() + balance)
+        return void(cout << 0 << nl);
+//    n = sub(n , s.size() + balance);
+    cout << mul(nCr(n , n / 2) , power(n / 2 + 1 , MOD - 2)) << nl;
+
 }
 void file()
 {
@@ -73,6 +101,7 @@ int main() {
     file();
     ENG_GAMAL
 // test-independent code ——————————————————————
+    pre();
 // ————————————————————————————————————————————
     ll t = 1;
 //     cin >> t;
