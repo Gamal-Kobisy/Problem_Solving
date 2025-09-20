@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/445/B
+// LINK : https://vjudge.net/contest/746355#problem/C
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -15,38 +15,36 @@ using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-vector<int>adj[N];
-vector<bool>vis(N);
-ll n , m , danger;
-void dfs(int v)
+int n , ans;
+vector<int>adj[N] , depth(N);
+
+int dfs(int v , int par , int d)
 {
-    vis[v] = true;
+    depth[v] = d;
+    int max_depth_node = v;
     for(int u : adj[v])
     {
-        if(not vis[u])
-        {
-           danger *= 2;
-           dfs(u);
-        }
+        if(u == par)
+            continue;
+        int cand = dfs(u , v , d + 1);
+        if(depth[cand] > depth[max_depth_node])
+            max_depth_node = cand;
     }
+    return max_depth_node;
 }
 
 void solve() {
-    danger = 1;
-    cin >> n >> m;
-    for (int i = 0; i < m; ++i) {
+    ans = 0;
+    cin >> n;
+    for (int i = 0; i < n - 1; ++i) {
         int a , b;
         cin >> a >> b;
         adj[a].emplace_back(b);
         adj[b].emplace_back(a);
     }
-    for (int i = 1; i <= n; ++i) {
-        if(not vis[i])
-        {
-            dfs(i);
-        }
-    }
-    cout << danger << nl;
+    int a = dfs(1 , -1 , 0);
+    int b = dfs(a , -1 , 0);
+    cout << depth[b] << nl;
 }
 void file()
 {

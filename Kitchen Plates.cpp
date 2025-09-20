@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/445/B
+// LINK : https://codeforces.com/gym/102219/problem/J
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -15,38 +15,72 @@ using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-vector<int>adj[N];
-vector<bool>vis(N);
-ll n , m , danger;
+vector<int>adj[6] , last , in_deg(6);
+vector<bool>ancs(6) , vis(6);
+bool imp = false;
 void dfs(int v)
 {
-    vis[v] = true;
+    ancs[v] = true;
     for(int u : adj[v])
     {
-        if(not vis[u])
+        if(ancs[u])
         {
-           danger *= 2;
-           dfs(u);
+            imp = true;
+            return;
+        }
+        if(vis[u])
+        {
+            continue;
+        }
+        if(!vis[u])
+        {
+            dfs(u);
         }
     }
+    vis[v] = true;
+    ancs[v] = false;
+    last.push_back(v);
 }
 
 void solve() {
-    danger = 1;
-    cin >> n >> m;
-    for (int i = 0; i < m; ++i) {
-        int a , b;
-        cin >> a >> b;
-        adj[a].emplace_back(b);
-        adj[b].emplace_back(a);
+    for(int i = 0 ; i < 5 ; i++)
+    {
+        string s;
+        cin >> s;
+        if(s[1] == '>')
+        {
+            adj[s[2] - 'A'].emplace_back(s[0] - 'A');
+        }
+        else
+        {
+            adj[s[0] - 'A'].emplace_back(s[2] - 'A');
+        }
     }
-    for (int i = 1; i <= n; ++i) {
-        if(not vis[i])
+    for (int i = 0 ; i < 5 ; i++) {
+        if(!vis[i] && adj[i].size())
         {
             dfs(i);
         }
     }
-    cout << danger << nl;
+    if(imp)
+    {
+        cout << "impossible" << nl;
+    }
+    else
+    {
+        reverse(all(last));
+        for(char c : last)
+        {
+            cout << char(c + 'A');
+        }
+        for (ll i = 0; i < 5; ++i) {
+            if(!vis[i])
+            {
+                cout << char(i + 'A');
+            }
+        }
+    }
+    cout << nl;
 }
 void file()
 {

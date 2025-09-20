@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/445/B
+// LINK : https://codeforces.com/contest/2109/problem/A
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -15,38 +15,38 @@ using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-vector<int>adj[N];
-vector<bool>vis(N);
-ll n , m , danger;
-void dfs(int v)
-{
-    vis[v] = true;
-    for(int u : adj[v])
-    {
-        if(not vis[u])
-        {
-           danger *= 2;
-           dfs(u);
-        }
-    }
-}
 
 void solve() {
-    danger = 1;
-    cin >> n >> m;
-    for (int i = 0; i < m; ++i) {
-        int a , b;
-        cin >> a >> b;
-        adj[a].emplace_back(b);
-        adj[b].emplace_back(a);
+    int n;
+    cin >> n;
+   vector<int>a(n);
+    for (int i = 0; i < n; ++i) {
+        cin >> a[i];
     }
-    for (int i = 1; i <= n; ++i) {
-        if(not vis[i])
+    for (int i = 0; i < n - 1; ++i) {
+        if(a[i] == 0 && a[i + 1] == 0)
+            return void(yes);
+        if(a[i] == 1)
         {
-            dfs(i);
+            bool found_zero = false;
+            if(i > 0 && a[i - 1] == 0)
+                found_zero = true;
+            while(i < n)
+            {
+                if(a[i] == 0)
+                {
+                    found_zero = true;
+                    break;
+                }
+                else
+                    i++;
+            }
+            if(!found_zero)
+                return void(yes);
+            i--;
         }
     }
-    cout << danger << nl;
+    no;
 }
 void file()
 {
@@ -63,7 +63,7 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll t = 1;
-//     cin >> t;
+     cin >> t;
     while (t--)
     {
         solve();

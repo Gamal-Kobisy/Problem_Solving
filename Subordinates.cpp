@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/445/B
+// LINK : https://vjudge.net/contest/746355#problem/A
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -15,38 +15,35 @@ using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-vector<int>adj[N];
-vector<bool>vis(N);
-ll n , m , danger;
-void dfs(int v)
+int n;
+vector<int>adj[N] , sub_tree_size(N);
+
+int dfs(int v , int par)
 {
-    vis[v] = true;
+    int size = 1;
     for(int u : adj[v])
     {
-        if(not vis[u])
-        {
-           danger *= 2;
-           dfs(u);
-        }
+        if(u == par)
+            continue;
+        size += dfs(u , v);
     }
+    sub_tree_size[v] = size;
+    return sub_tree_size[v];
 }
 
 void solve() {
-    danger = 1;
-    cin >> n >> m;
-    for (int i = 0; i < m; ++i) {
-        int a , b;
-        cin >> a >> b;
-        adj[a].emplace_back(b);
-        adj[b].emplace_back(a);
+    cin >> n;
+    for (int i = 2; i <= n; ++i) {
+        int u;
+        cin >> u;
+        adj[i].emplace_back(u);
+        adj[u].emplace_back(i);
     }
-    for (int i = 1; i <= n; ++i) {
-        if(not vis[i])
-        {
-            dfs(i);
-        }
+    dfs(1 , -1);
+    for (int i = 0; i < n; ++i) {
+        cout << sub_tree_size[i + 1] - 1 << sp;
     }
-    cout << danger << nl;
+    cout << nl;
 }
 void file()
 {

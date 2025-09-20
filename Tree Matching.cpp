@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/445/B
+// LINK : https://vjudge.net/contest/746355#problem/B
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -15,38 +15,31 @@ using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-vector<int>adj[N];
-vector<bool>vis(N);
-ll n , m , danger;
-void dfs(int v)
-{
-    vis[v] = true;
-    for(int u : adj[v])
-    {
-        if(not vis[u])
-        {
-           danger *= 2;
-           dfs(u);
+int n;
+vector<int> adj[N];
+vector<bool> used(N, false);
+int ans = 0;
+
+void dfs(int u, int p) {
+    for (int v : adj[u]) {
+        if (v == p) continue;
+        dfs(v, u);
+        if (!used[u] && !used[v]) {
+            used[u] = used[v] = true;
+            ans++;
         }
     }
 }
-
 void solve() {
-    danger = 1;
-    cin >> n >> m;
-    for (int i = 0; i < m; ++i) {
+    cin >> n;
+    for (int i = 0; i < n - 1; ++i) {
         int a , b;
         cin >> a >> b;
         adj[a].emplace_back(b);
         adj[b].emplace_back(a);
     }
-    for (int i = 1; i <= n; ++i) {
-        if(not vis[i])
-        {
-            dfs(i);
-        }
-    }
-    cout << danger << nl;
+    dfs(1, -1);
+    cout << ans << nl;
 }
 void file()
 {

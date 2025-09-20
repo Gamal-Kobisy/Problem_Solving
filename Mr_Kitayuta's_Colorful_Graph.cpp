@@ -1,75 +1,62 @@
+// "ولا تقولن لشيء إني فاعل ذلك غدا"
+// "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
+
 // LINK : https://codeforces.com/problemset/problem/505/B
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
+#define sp ' '
 #define all(a) a.begin(),a.end()
 #define allr(a) a.rbegin(),a.rend()
 #define no cout<<"NO\n"
 #define yes cout<<"YES\n"
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
-
-/*
- ███████╗███╗   ██╗ ██████╗       ██████╗  █████╗ ███╗   ███╗ █████╗ ██╗
- ██╔════╝████╗  ██║██╔════╝      ██╔════╝ ██╔══██╗████╗ ████║██╔══██╗██║
- █████╗  ██╔██╗ ██║██║  ███╗     ██║  ███╗███████║██╔████╔██║███████║██║
- ██╔══╝  ██║╚██╗██║██║   ██║     ██║   ██║██╔══██║██║╚██╔╝██║██╔══██║██║
- ███████╗██║ ╚████║╚██████╔╝     ╚██████╔╝██║  ██║██║ ╚═╝ ██║██║  ██║███████╗
- ╚══════╝╚═╝  ╚═══╝ ╚═════╝       ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝
-*/
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-int n , m;
-vector<vector<pair<ll , ll>>>adj;
-vector<vector<bool>>vis;
+const int N = 100 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
+ll infLL = 0x3f3f3f3f3f3f3f3f;
+vector<pair<int , int>>adj[N];
+vector<vector<bool>>vis(N , vector<bool>(N));
 
-bool dfsC(ll v , ll u , ll color)
+bool dfs(int v, int color, int end)
 {
     vis[v][color] = true;
-    if(v == u)
-    {
+    if(v == end)
         return true;
-    }
-    bool can = false;
-    for(auto i : adj[v])
+    bool ret = false;
+    for(auto [u , c] : adj[v])
     {
-        if(i.second == color && !vis[i.first][i.second])
+        if(not vis[u][color] and c == color)
         {
-            can += dfsC(i.first , u ,i.second);
+            ret |= dfs(u, c, end);
         }
     }
-    return can;
-}
-
-ll dfs(ll v , ll u)
-{
-    ll cnt = 0;
-    for(auto i : adj[v])
-    {
-        if(!vis[i.first][i.second])
-        {
-            cnt += dfsC(i.first , u ,i.second);
-        }
-    }
-    return cnt;
+    return ret;
 }
 
 void solve() {
+    int n , m;
     cin >> n >> m;
-    adj = vector<vector<pair<ll,ll>>>(n + 1);
-    vis = vector<vector<bool>>(n + 1 , vector<bool>(m + 1));
-    for (ll i = 0; i < m; ++i) {
-        ll a , b , c;
+    for (int i = 0; i < m; ++i) {
+        int a , b , c;
         cin >> a >> b >> c;
-        adj[a].push_back({b , c});
-        adj[b].push_back({a , c});
+        adj[a].emplace_back(b , c);
+        adj[b].emplace_back(a , c);
     }
-    ll q;
+    int q;
     cin >> q;
-    for (ll i = 0; i < q; ++i) {
-        ll u , v;
-        cin >> u >> v;
-        cout << dfs(v , u) << nl;
-        vis = vector<vector<bool>>(n + 1 , vector<bool>(m + 1));
+    while(q--)
+    {
+        int st , ed , cnt = 0;
+        cin >> st >> ed;
+        for(auto [u , c] : adj[st])
+        {
+            vis[st][c] = true;
+            if(not vis[u][c])
+                cnt += dfs(u , c , ed);
+        }
+        vis = vector<vector<bool>>(N , vector<bool>(N));
+        cout << cnt << nl;
     }
 }
 void file()
@@ -80,14 +67,15 @@ void file()
     freopen("Error.txt", "w", stderr);
 #endif
 }
+
 int main() {
     file();
     ENG_GAMAL
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll t = 1;
-//    cin >> t;
-    while(t--)
+//     cin >> t;
+    while (t--)
     {
         solve();
     }

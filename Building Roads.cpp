@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/445/B
+// LINK : https://vjudge.net/contest/746355#problem/F
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -15,24 +15,21 @@ using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
+int n , m;
 vector<int>adj[N];
 vector<bool>vis(N);
-ll n , m , danger;
+
 void dfs(int v)
 {
     vis[v] = true;
     for(int u : adj[v])
     {
         if(not vis[u])
-        {
-           danger *= 2;
-           dfs(u);
-        }
+            dfs(u);
     }
 }
 
 void solve() {
-    danger = 1;
     cin >> n >> m;
     for (int i = 0; i < m; ++i) {
         int a , b;
@@ -40,13 +37,20 @@ void solve() {
         adj[a].emplace_back(b);
         adj[b].emplace_back(a);
     }
+    vector<int>nodes;
+    int roads = -1;
     for (int i = 1; i <= n; ++i) {
         if(not vis[i])
         {
             dfs(i);
+            roads++;
+            nodes.emplace_back(i);
         }
     }
-    cout << danger << nl;
+    cout << roads << nl;
+    for (int i = 0; i < roads; ++i) {
+        cout << nodes[i] << sp << nodes[i + 1] << nl;
+    }
 }
 void file()
 {
