@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://cses.fi/problemset/task/1679/
+// LINK : https://codeforces.com/problemset/problem/217/A
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -15,51 +15,40 @@ using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-vector<int>adj[N] , in_deg(N) , ans;
-vector<bool>vis(N);
-int n , m;
+int n;
+vector<pair<int , int>>drifts;
+vector<vector<bool>>vis(1001 , vector<bool>(1001));
 
-void bfs()
+void dfs(int x, int y)
 {
-    queue<int>q;
-    for(int i = 1 ; i <= n ; i++)
+    vis[x][y] = true;
+    for(auto [a , b] : drifts)
     {
-        if(not in_deg[i])
-            q.emplace(i) , vis[i] = true;
-    }
-    while(not q.empty())
-    {
-        int cur = q.front();
-        q.pop();
-        ans.emplace_back(cur);
-        for(int u : adj[cur])
-        {
-            if(not vis[u])
-            {
-                in_deg[u]--;
-                if(in_deg[u] <= 0)
-                    q.emplace(u) , vis[u] = true;
-            }
-        }
+        if(a == x and b == y)
+            continue;
+        if((a == x or b == y) and not vis[a][b])
+            dfs(a , b);
     }
 }
+
 void solve() {
-    cin >> n >> m;
-    for(int i = 0 , a , b ; i < m ; i++)
+    cin >> n;
+    for(int i = 0 ; i < n; i++)
     {
-        cin >> a >> b;
-        adj[a].emplace_back(b);
-        in_deg[b]++;
+        int x , y;
+        cin >> x >> y;
+        drifts.emplace_back(x, y);
     }
-    bfs();
-    if(ans.size() != n)
-        cout << "IMPOSSIBLE" << nl;
-    else
+    int ans = -1;
+    for(auto [x , y] : drifts)
     {
-        for (int i = 0; i < n; ++i) {
-            cout << ans[i] << sp;
+        if(not vis[x][y])
+        {
+            dfs(x , y);
+            ans++;
         }
     }
+    cout << ans << nl;
 }
 void file()
 {

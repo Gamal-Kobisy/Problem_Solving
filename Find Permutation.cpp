@@ -1,65 +1,69 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://cses.fi/problemset/task/1679/
+// LINK : https://atcoder.jp/contests/abc291/tasks/abc291_e?lang=en
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
 #define sp ' '
 #define all(a) a.begin(),a.end()
 #define allr(a) a.rbegin(),a.rend()
-#define no cout<<"NO\n"
-#define yes cout<<"YES\n"
+#define no cout<<"No\n"
+#define yes cout<<"Yes\n"
+#define imp cout<<"IMPOSSIBLE\n"
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-vector<int>adj[N] , in_deg(N) , ans;
-vector<bool>vis(N);
-int n , m;
 
-void bfs()
-{
-    queue<int>q;
+void solve() {
+    int n, m;
+    cin >> n >> m;
+
+    vector<set<int>> adj(n+1);
+    vector<int> indeg(n+1, 0);
+
+    for (int i = 0; i < m; i++) {
+        int x, y;
+        cin >> x >> y;
+        adj[x].insert(y);
+    }
     for(int i = 1 ; i <= n ; i++)
     {
-        if(not in_deg[i])
-            q.emplace(i) , vis[i] = true;
+        for(auto u : adj[i])
+            indeg[u]++;
     }
-    while(not q.empty())
-    {
-        int cur = q.front();
-        q.pop();
-        ans.emplace_back(cur);
-        for(int u : adj[cur])
-        {
-            if(not vis[u])
-            {
-                in_deg[u]--;
-                if(in_deg[u] <= 0)
-                    q.emplace(u) , vis[u] = true;
-            }
+    queue<int> q;
+    for (int i = 1; i <= n; i++) {
+        if (indeg[i] == 0) q.push(i);
+    }
+
+    vector<int> order;
+    while (!q.empty()) {
+        if (q.size() > 1) {
+            no;
+            return;
+        }
+        int cur = q.front(); q.pop();
+        order.push_back(cur);
+        for (int u : adj[cur]) {
+            if (--indeg[u] == 0) q.push(u);
         }
     }
-}
-void solve() {
-    cin >> n >> m;
-    for(int i = 0 , a , b ; i < m ; i++)
-    {
-        cin >> a >> b;
-        adj[a].emplace_back(b);
-        in_deg[b]++;
+
+    if ((int)order.size() != n) {
+        no;
+        return;
     }
-    bfs();
-    if(ans.size() != n)
-        cout << "IMPOSSIBLE" << nl;
-    else
-    {
-        for (int i = 0; i < n; ++i) {
-            cout << ans[i] << sp;
-        }
+
+    yes;
+    vector<int> ans(n+1);
+    for (int i = 0; i < n; i++) {
+        ans[order[i]] = i+1;
     }
+    for (int i = 1; i <= n; i++) cout << ans[i] << sp;
+    cout << nl;
 }
 void file()
 {

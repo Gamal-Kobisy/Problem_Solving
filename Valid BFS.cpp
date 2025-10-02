@@ -1,7 +1,8 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://cses.fi/problemset/task/1679/
+// LINK : https://codeforces.com/problemset/problem/1037/D
+
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -15,54 +16,49 @@ using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-vector<int>adj[N] , in_deg(N) , ans;
-vector<bool>vis(N);
-int n , m;
-
-void bfs()
-{
-    queue<int>q;
+int n;
+vector<int>adj[N] , dist(N);
+void solve() {
+    cin >> n;
+    for(int i = 0 , a , b; i < n - 1 ; i++)
+    {
+        cin >> a >> b;
+        adj[a].emplace_back(b);
+        adj[b].emplace_back(a);
+    }
+    vector<int>order(n) , index_of(n + 1);
+    for(int i = 0 ; i < n ; i++)
+    {
+        cin >> order[i];
+        index_of[order[i]] = i;
+    }
     for(int i = 1 ; i <= n ; i++)
     {
-        if(not in_deg[i])
-            q.emplace(i) , vis[i] = true;
+        sort(all(adj[i]) , [&](int a , int b){
+            return index_of[a] < index_of[b];
+        });
     }
+    reverse(all(order));
+    queue<int>q;
+    q.emplace(1);
+    dist[1] = 1;
     while(not q.empty())
     {
         int cur = q.front();
         q.pop();
-        ans.emplace_back(cur);
+        if(cur != order.back())
+            return void(no);
+        order.pop_back();
         for(int u : adj[cur])
         {
-            if(not vis[u])
-            {
-                in_deg[u]--;
-                if(in_deg[u] <= 0)
-                    q.emplace(u) , vis[u] = true;
-            }
+            if(not dist[u])
+                q.emplace(u) , dist[u] = dist[cur] + 1;
         }
     }
+    yes;
 }
-void solve() {
-    cin >> n >> m;
-    for(int i = 0 , a , b ; i < m ; i++)
-    {
-        cin >> a >> b;
-        adj[a].emplace_back(b);
-        in_deg[b]++;
-    }
-    bfs();
-    if(ans.size() != n)
-        cout << "IMPOSSIBLE" << nl;
-    else
-    {
-        for (int i = 0; i < n; ++i) {
-            cout << ans[i] << sp;
-        }
-    }
-}
-void file()
-{
+
+void file() {
 #ifndef ONLINE_JUDGE
     freopen("Input.txt", "r", stdin);
     freopen("Output.txt", "w", stdout);
@@ -73,12 +69,11 @@ void file()
 int main() {
     file();
     ENG_GAMAL
-// test-independent code ——————————————————————
-// ————————————————————————————————————————————
+    // test-independent code ——————————————————————
+    // ————————————————————————————————————————————
     ll t = 1;
-//     cin >> t;
-    while (t--)
-    {
+    //     cin >> t;
+    while (t--) {
         solve();
     }
 

@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://cses.fi/problemset/task/1679/
+// LINK : https://codeforces.com/problemset/problem/1183/E
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -10,56 +10,54 @@
 #define allr(a) a.rbegin(),a.rend()
 #define no cout<<"NO\n"
 #define yes cout<<"YES\n"
+#define imp cout<<"IMPOSSIBLE\n"
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-vector<int>adj[N] , in_deg(N) , ans;
-vector<bool>vis(N);
-int n , m;
+int n , k;
+string s;
+map<string , int>dist;
 
-void bfs()
+void bfs(int k)
 {
-    queue<int>q;
-    for(int i = 1 ; i <= n ; i++)
+    queue<string>q;
+    q.emplace(s);
+    dist[s] = 0;
+    k--;
+    while(not q.empty() and k > 0)
     {
-        if(not in_deg[i])
-            q.emplace(i) , vis[i] = true;
-    }
-    while(not q.empty())
-    {
-        int cur = q.front();
+        string cur = q.front();
         q.pop();
-        ans.emplace_back(cur);
-        for(int u : adj[cur])
+        k--;
+        for(int i = 0 ; i < cur.size() ; i++)
         {
-            if(not vis[u])
-            {
-                in_deg[u]--;
-                if(in_deg[u] <= 0)
-                    q.emplace(u) , vis[u] = true;
-            }
+            string adj = cur.substr(0 , i) + cur.substr(i + 1);
+            if(dist.find(adj) == dist.end())
+                q.emplace(adj) , dist[adj] = dist[cur] + 1;
+
         }
     }
 }
+
 void solve() {
-    cin >> n >> m;
-    for(int i = 0 , a , b ; i < m ; i++)
+    cin >> n >> k >> s;
+    bfs(k);
+    if(dist.size() < k)
+        return void(cout << -1 << nl);
+    vector<int>costs;
+    for(auto [s , d] : dist)
     {
-        cin >> a >> b;
-        adj[a].emplace_back(b);
-        in_deg[b]++;
+        costs.emplace_back(d);
     }
-    bfs();
-    if(ans.size() != n)
-        cout << "IMPOSSIBLE" << nl;
-    else
+    ll ans = 0;
+    sort(all(costs));
+    for(int i = 0 ; i < k ; i++)
     {
-        for (int i = 0; i < n; ++i) {
-            cout << ans[i] << sp;
-        }
+        ans += costs[i];
     }
+    cout << ans << nl;
 }
 void file()
 {

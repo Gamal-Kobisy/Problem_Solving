@@ -1,97 +1,83 @@
-// LINK : https://codeforces.com/problemset/problem/1063/B
+// "ولا تقولن لشيء إني فاعل ذلك غدا"
+// "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
+
+// LINK : https://cses.fi/problemset/task/1193
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
+#define sp ' '
 #define all(a) a.begin(),a.end()
 #define allr(a) a.rbegin(),a.rend()
 #define no cout<<"NO\n"
 #define yes cout<<"YES\n"
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
-
-/*
- ███████╗███╗   ██╗ ██████╗       ██████╗  █████╗ ███╗   ███╗ █████╗ ██╗
- ██╔════╝████╗  ██║██╔════╝      ██╔════╝ ██╔══██╗████╗ ████║██╔══██╗██║
- █████╗  ██╔██╗ ██║██║  ███╗     ██║  ███╗███████║██╔████╔██║███████║██║
- ██╔══╝  ██║╚██╗██║██║   ██║     ██║   ██║██╔══██║██║╚██╔╝██║██╔══██║██║
- ███████╗██║ ╚████║╚██████╔╝     ╚██████╔╝██║  ██║██║ ╚═╝ ██║██║  ██║███████╗
- ╚══════╝╚═╝  ╚═══╝ ╚═════╝       ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝
-*/
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-int dx[] = {-1, 0, 1, 0, -1, 1, 1, -1};
-int dy[] = {0, 1, 0, -1, 1, 1, -1, -1};
-char di[] = {'U', 'R', 'D', 'L'};
-int knightx[] = {-2, -1, 1, 2, 2, 1, -1, -2};
-int knighty[] = {1, 2, 2, 1, -1, -2, -2, -1};
-
-int n , m , r , c ,  x , y , ans = 0;
-vector<vector<char>>grid;
-vector<vector<pair<ll ,ll>>>dist;
-
-bool valid(int i , int j)
+const int N = 1e3 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
+ll infLL = 0x3f3f3f3f3f3f3f3f;
+int n , m;
+vector<string>grid(N);
+vector<vector<int>>par(N , vector<int>(N , -1));
+vector<vector<bool>>vis(N , vector<bool>(N));
+string di[] = {"D", "L", "R", "U", "DR", "DL", "UR", "UL"};
+int dx[] = {1, 0, 0, -1, 1, -1, 1, -1};
+int dy[] = {0, -1, 1, 0, 1, -1, -1, 1};
+int knightx[] = {2, 2, -2, -2, 1, 1, -1, -1};
+int knighty[] = {1, -1, 1, -1, 2, -2, 2, -2};
+bool valid(int x , int y)
 {
-    return (i < n && i >= 0 && j < m && j >= 0 && dist[i][j].first + dist[i][j].second == 20e10 && grid[i][j] == '.');
+    return x >= 0 and x < n and y >= 0 and y <= m and not vis[x][y] and grid[x][y] != '#';
 }
-void bfs(int x1 , int y1)
+
+void bfs(pair<int , int> start)
 {
-    queue<pair<ll ,ll>>q;
-    q.push({x1 , y1});
-    dist[x1][y1] = {0 , 0};
-    while (!q.empty())
+    queue<pair<int , int>>q;
+    q.emplace(start);
+    vis[start.first][start.second] = true;
+    while(not q.empty())
     {
-        auto cur = q.front();
+        auto [x , y] = q.front();
         q.pop();
-        for (ll i = 0; i < 4; ++i) {
-            int nx = cur.first + dx[i] , ny = cur.second + dy[i];
+        for(int i = 0 ; i < 4 ; i++)
+        {
+            int nx  = x + dx[i] , ny = y + dy[i];
             if(valid(nx , ny))
             {
-                int xx = nx +1;
-                while (valid(xx , ny))
-                {
-                    ll l = dist[cur.first][cur.second].first + (i == 1), r = dist[cur.first][cur.second].second + (i == 3);
-                    dist[xx][ny].first = dist[cur.first][cur.second].first + (i == 1);
-                    dist[xx][ny].second = dist[cur.first][cur.second].second + (i == 3);
-                    q.push({xx, ny});
-                    xx++;
-                }
-                while (valid(nx , ny))
-                {
-                    ll l = dist[cur.first][cur.second].first + (i == 1), r = dist[cur.first][cur.second].second + (i == 3);
-                    dist[nx][ny].first = dist[cur.first][cur.second].first + (i == 1);
-                    dist[nx][ny].second = dist[cur.first][cur.second].second + (i == 3);
-                    q.push({nx, ny});
-                    nx--;
-                }
+                q.emplace(nx , ny);
+                par[nx][ny] = i;
+                vis[nx][ny] = true;
             }
         }
     }
 }
 void solve() {
-    cin >> n >> m >> r >> c >>  x >> y;
-    grid = vector<vector<char>>(n , vector<char>(m));
-    dist = vector<vector<pair<ll ,ll>>>(n , vector<pair<ll ,ll>>(m , {10e10 , 10e10}));
-    for (ll i = 0; i < n; ++i) {
-        for (ll j = 0; j < m; ++j) {
-            cin >> grid[i][j];
+    cin >> n >> m;
+    pair<int , int> st , ed;
+    for(int i = 0 ; i < n ; i++)
+    {
+        cin >> grid[i];
+        for(int j = 0 ; j < m ; j++)
+        {
+            if(grid[i][j] == 'A')
+                st = {i , j};
+            if(grid[i][j] == 'B')
+                ed = {i , j};
         }
     }
-
-    bfs(r - 1, c - 1);
-    for (ll i = 0; i < n; ++i) {
-        for (ll j = 0; j < m; ++j) {
-            if(dist[i][j].first <= y && dist[i][j].second <= x)
-            {
-//                cout << '+';
-                ans++;
-            }
-            else
-            {
-//                cout << grid[i][j];
-            }
-        }
-//        cout << nl;
+    bfs(st);
+    if(not vis[ed.first][ed.second])
+        return void(no);
+    string path;
+    auto [x , y] = ed;
+    while(par[x][y] != -1)
+    {
+        path += di[par[x][y]];
+        int nx = x - dx[par[x][y]] , ny = y - dy[par[x][y]];
+        x = nx , y = ny;
     }
-    cout << ans << nl;
+    reverse(all(path));
+    yes;
+    cout << path.size() << nl << path << nl;
 }
 void file()
 {
@@ -101,14 +87,15 @@ void file()
     freopen("Error.txt", "w", stderr);
 #endif
 }
+
 int main() {
     file();
     ENG_GAMAL
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll t = 1;
-//    cin >> t;
-    while(t--)
+//     cin >> t;
+    while (t--)
     {
         solve();
     }

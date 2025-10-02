@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://cses.fi/problemset/task/1679/
+// LINK : https://codeforces.com/problemset/problem/520/B
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -10,56 +10,38 @@
 #define allr(a) a.rbegin(),a.rend()
 #define no cout<<"NO\n"
 #define yes cout<<"YES\n"
+#define imp cout<<"IMPOSSIBLE\n"
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
+const int N = 2e4 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-vector<int>adj[N] , in_deg(N) , ans;
-vector<bool>vis(N);
 int n , m;
+vector<int>dist(N , inf);
 
 void bfs()
 {
     queue<int>q;
-    for(int i = 1 ; i <= n ; i++)
-    {
-        if(not in_deg[i])
-            q.emplace(i) , vis[i] = true;
-    }
+    q.emplace(n);
+    dist[n] = 0;
+
     while(not q.empty())
     {
         int cur = q.front();
         q.pop();
-        ans.emplace_back(cur);
-        for(int u : adj[cur])
-        {
-            if(not vis[u])
-            {
-                in_deg[u]--;
-                if(in_deg[u] <= 0)
-                    q.emplace(u) , vis[u] = true;
-            }
-        }
+        ll op1 = cur - 1 , op2 = cur * 2;
+        if(dist[op1] == inf && cur > 1)
+            dist[op1] = dist[cur] + 1 , q.emplace(op1);
+        if(op2 <= N && dist[op2] == inf && cur < m)
+            dist[op2] = dist[cur]  + 1, q.emplace(op2);
+
     }
 }
+
 void solve() {
     cin >> n >> m;
-    for(int i = 0 , a , b ; i < m ; i++)
-    {
-        cin >> a >> b;
-        adj[a].emplace_back(b);
-        in_deg[b]++;
-    }
     bfs();
-    if(ans.size() != n)
-        cout << "IMPOSSIBLE" << nl;
-    else
-    {
-        for (int i = 0; i < n; ++i) {
-            cout << ans[i] << sp;
-        }
-    }
+    cout << dist[m] << nl;
 }
 void file()
 {
