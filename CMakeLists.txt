@@ -10,15 +10,7 @@ project(ProblemSolving)
 
 # Add source files to this project's executable
 add_executable(CMakeTarget
-        Badge.cpp
-        "Bear and Friendship Condition.cpp"
-        "Two Buttons.cpp"
-        "Lucky Permutation.cpp"
-        "Subsequences (easy version).cpp"
-        "Police Stations.cpp"
-        "Find Permutation.cpp"
-        "Valid BFS.cpp"
-        "Escape from Jail Again.cpp"
+        Batteries.cpp
         #                "Bracket Sequences II.cpp"
         #        Woodcutters_Dp.cpp
         #        "Two Sets II.cpp"
