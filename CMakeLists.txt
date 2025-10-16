@@ -9,8 +9,7 @@ cmake_minimum_required(VERSION 3.12)
 project(ProblemSolving)
 
 # Add source files to this project's executable
-add_executable(CMakeTarget
-        Batteries.cpp
+add_executable(
         #                "Bracket Sequences II.cpp"
         #        Woodcutters_Dp.cpp
         #        "Two Sets II.cpp"

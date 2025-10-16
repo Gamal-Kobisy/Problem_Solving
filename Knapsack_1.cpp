@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK :
+// LINK : https://atcoder.jp/contests/math-and-algorithm/tasks/dp_d?lang=en
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
