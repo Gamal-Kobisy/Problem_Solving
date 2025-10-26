@@ -15,42 +15,22 @@
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-const int N = 2e5 + 5, M = 1e3, LOG = 22, inf = 0x3f3f3f3f;
+const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-int n , s[N] , T[N][LOG];
-
-int merge(int a , int b){
-    return min(a , b);
-}
-
-void build(){
-    for (int i = 0; i < n; ++i) {
-        T[i][0] = s[i];
-    }
-    for(int pw = 1 ; (1 << pw) <= n ; pw++){
-        for (int i = 0; i + (1 << pw) <= n ; ++i) {
-            T[i][pw] = merge(T[i][pw - 1] , T[i + (1 << (pw - 1))][pw - 1]);
-        }
-    }
-}
-
-int query(int l  ,int r)
-{
-    int sz = r - l + 1;
-    int ret = infLL;
-    for (int i = 21; i >= 0; --i) {
-        if((sz >> i) & 1)
-        {
-            ret = merge(ret  , T[l][i]);
-            l += (1 << i);
-        }
+string s , t;
+deque<deque<int>>pos1(26) , pos2(26);
+int memo[26][1001][1001];
+int solve(int idxc , int idx1 , int idx2) {
+    int &ret = memo[idxc][idx1][idx2];
+    if(~ret) return ret;
+    ret = 0;
+    for (int i = 0; i < 26; ++i) {
+        auto next_idx1 = upper_bound(all(pos1[i]) , pos1[idxc][idx1]);
+        auto next_idx2 = upper_bound(all(pos2[i]) , pos2[idxc][idx2]);
+        if(next_idx1 != pos1[i].end() and next_idx2 != pos2[i].end())
+            ret = max(ret , solve(i , next_idx1 - pos1[i].begin() , next_idx2 - pos2[i].begin()) + 1);
     }
     return ret;
-}
-
-
-void solve() {
-
 }
 void file()
 {
@@ -66,12 +46,23 @@ signed main() {
     ENG_GAMAL
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
-    ll t = 1;
-     cin >> t;
-    while (t--)
-    {
-        solve();
+    int tc = 1;
+    cin >> tc;
+    while(tc--){
+        cin >> s >> t;
+        memset(memo , -1 , sizeof memo);
+        for (int i = 0; i < s.size(); ++i) {
+            pos1[s[i] - 'a'].emplace_back(i);
+        }
+        for (int i = 0; i < t.size(); ++i) {
+            pos2[t[i] - 'a'].emplace_back(i);
+        }
+        int ans = 0;
+        for (int i = 0; i < 26; ++i) {
+            if(not pos1[i].empty() and not pos2[i].empty())
+                ans = max(ans , solve(i , 0 , 0) + 1);
+        }
+        cout << ans << nl;
     }
-
     return 0;
 }

@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK :
+// LINK : https://cdn.vjudge.net.cn/81c566ac0d4de16114be3b9eced37614
 #include <bits/stdc++.h>
 #define ll long long
 #define int ll
@@ -15,42 +15,38 @@
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-const int N = 2e5 + 5, M = 1e3, LOG = 22, inf = 0x3f3f3f3f;
+const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-int n , s[N] , T[N][LOG];
-
-int merge(int a , int b){
-    return min(a , b);
-}
-
-void build(){
-    for (int i = 0; i < n; ++i) {
-        T[i][0] = s[i];
-    }
-    for(int pw = 1 ; (1 << pw) <= n ; pw++){
-        for (int i = 0; i + (1 << pw) <= n ; ++i) {
-            T[i][pw] = merge(T[i][pw - 1] , T[i + (1 << (pw - 1))][pw - 1]);
+double memo[76][76][76][2];
+bool vis[76][76][76][2];
+double solve(int c , int h , int x , bool who) {
+    if(who and c + x == 75) return 1;
+    if(who and c + x > 75) return 0;
+    if(not who and h + x == 75) return 0;
+    if(not who and h + x > 75) return 0;
+    double &ret = memo[c][h][x][who];
+    if(vis[c][h][x][who]) return ret;
+    if(who){
+        int op1 = 0 , op2 = 0;
+        if(x)
+            op1 = solve(c + x , h , 0 , false);
+        for (int i = 2; i <= 6; ++i) {
+            op2 += solve(c , h , x + i , true);
         }
-    }
-}
-
-int query(int l  ,int r)
-{
-    int sz = r - l + 1;
-    int ret = infLL;
-    for (int i = 21; i >= 0; --i) {
-        if((sz >> i) & 1)
-        {
-            ret = merge(ret  , T[l][i]);
-            l += (1 << i);
+        op2 /= 6;
+        ret = max(op1 , op2);
+    }else{
+        int op1 = 0 , op2 = 0;
+        if(x)
+            op1 = solve(c , h + x , 0 , true);
+        for (int i = 2; i <= 6; ++i) {
+            op2 += solve(c , h , x + i , false);
         }
+        op2 /= 6;
+        ret = min(op1 , op2);
     }
+    vis[c][h][x][who] = true;
     return ret;
-}
-
-
-void solve() {
-
 }
 void file()
 {
@@ -66,12 +62,19 @@ signed main() {
     ENG_GAMAL
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
-    ll t = 1;
-     cin >> t;
-    while (t--)
-    {
-        solve();
+    int q;
+    cin >> q;
+    memset(vis , false , sizeof vis);
+    while(q--){
+        int c , h , x;
+        cin >> c >> h >> x;
+        double ph = 0.0, pc = 0.0;
+        if(x) ph = solve(c + x, h, 0, false);
+        for (int i = 2; i <= 6; ++i) {
+            pc += solve(c, h, x + i, true);
+        }
+        pc /= 6.0;
+        cout << (ph > pc ? 'H' : 'C') << nl;
     }
-
     return 0;
 }

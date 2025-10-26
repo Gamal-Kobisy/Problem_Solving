@@ -2,9 +2,10 @@
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
 // LINK :
-#include <bits/stdc++.h>
+#include <iostream>
+#include <cstring>
 #define ll long long
-#define int ll
+//#define int ll
 #define nl '\n'
 #define sp ' '
 #define all(a) a.begin(),a.end()
@@ -12,45 +13,19 @@
 #define no cout<<"NO\n"
 #define yes cout<<"YES\n"
 #define imp cout<<"IMPOSSIBLE\n"
-#define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
+#define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(0); cout.tie(0);
 using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-const int N = 2e5 + 5, M = 1e3, LOG = 22, inf = 0x3f3f3f3f;
+const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-int n , s[N] , T[N][LOG];
-
-int merge(int a , int b){
-    return min(a , b);
-}
-
-void build(){
-    for (int i = 0; i < n; ++i) {
-        T[i][0] = s[i];
-    }
-    for(int pw = 1 ; (1 << pw) <= n ; pw++){
-        for (int i = 0; i + (1 << pw) <= n ; ++i) {
-            T[i][pw] = merge(T[i][pw - 1] , T[i + (1 << (pw - 1))][pw - 1]);
-        }
-    }
-}
-
-int query(int l  ,int r)
-{
-    int sz = r - l + 1;
-    int ret = infLL;
-    for (int i = 21; i >= 0; --i) {
-        if((sz >> i) & 1)
-        {
-            ret = merge(ret  , T[l][i]);
-            l += (1 << i);
-        }
-    }
+int n , a[101] , p[101] , memo[101][100001];
+int solve(int idx , int sum) {
+    if(idx >= n) return ((sum + 10) * p[n - 1]);
+    int &ret = memo[idx][sum];
+    if(~ret) return ret;
+    ret = min(solve(idx + 1 , sum) + (a[idx] + 10) * p[idx] ,
+              solve(idx + 1 , sum + a[idx]));
     return ret;
-}
-
-
-void solve() {
-
 }
 void file()
 {
@@ -61,16 +36,21 @@ void file()
 #endif
 }
 
-signed main() {
+int main() {
     file();
     ENG_GAMAL
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll t = 1;
-     cin >> t;
+    cin >> t;
     while (t--)
     {
-        solve();
+        cin >> n;
+        for (int i = 0; i < n; ++i) {
+            cin >> a[i] >> p[i];
+        }
+        memset(memo , -1 , sizeof memo);
+        cout << solve(0 , 0) << nl;
     }
 
     return 0;

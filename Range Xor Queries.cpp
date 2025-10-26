@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK :
+// LINK : https://cses.fi/problemset/task/1650
 #include <bits/stdc++.h>
 #define ll long long
 #define int ll
@@ -17,10 +17,10 @@ using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 const int N = 2e5 + 5, M = 1e3, LOG = 22, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-int n , s[N] , T[N][LOG];
+int n , q , s[N] , T[N][LOG];
 
 int merge(int a , int b){
-    return min(a , b);
+    return a ^ b;
 }
 
 void build(){
@@ -37,7 +37,7 @@ void build(){
 int query(int l  ,int r)
 {
     int sz = r - l + 1;
-    int ret = infLL;
+    int ret = 0;
     for (int i = 21; i >= 0; --i) {
         if((sz >> i) & 1)
         {
@@ -48,9 +48,24 @@ int query(int l  ,int r)
     return ret;
 }
 
+int query2(int l , int r){
+    int sz = r - l + 1;
+    int pw = log2(sz);
+    return merge(T[l][pw] , T[r - (1 << pw) + 1][pw]);
+}
+
 
 void solve() {
-
+    cin >> n >> q;
+    for (int i = 0; i < n; ++i) {
+        cin >> s[i];
+    }
+    build();
+    while (q--){
+        int l , r;
+        cin >> l >> r;
+        cout << query(--l , --r) << nl;
+    }
 }
 void file()
 {
@@ -67,7 +82,7 @@ signed main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll t = 1;
-     cin >> t;
+//    cin >> t;
     while (t--)
     {
         solve();

@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK :
+// LINK : https://atcoder.jp/contests/dp/tasks/dp_e
 #include <bits/stdc++.h>
 #define ll long long
 #define int ll
@@ -15,42 +15,21 @@
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-const int N = 2e5 + 5, M = 1e3, LOG = 22, inf = 0x3f3f3f3f;
+const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-int n , s[N] , T[N][LOG];
 
-int merge(int a , int b){
-    return min(a , b);
-}
+int n , w , W[101] , V[101] , memo[101][100001];
 
-void build(){
-    for (int i = 0; i < n; ++i) {
-        T[i][0] = s[i];
-    }
-    for(int pw = 1 ; (1 << pw) <= n ; pw++){
-        for (int i = 0; i + (1 << pw) <= n ; ++i) {
-            T[i][pw] = merge(T[i][pw - 1] , T[i + (1 << (pw - 1))][pw - 1]);
-        }
-    }
-}
-
-int query(int l  ,int r)
-{
-    int sz = r - l + 1;
-    int ret = infLL;
-    for (int i = 21; i >= 0; --i) {
-        if((sz >> i) & 1)
-        {
-            ret = merge(ret  , T[l][i]);
-            l += (1 << i);
-        }
-    }
+int solve(int idx , int sum) {
+    if(sum <= 0) return 0;
+    if(idx == n) return infLL;
+    int &ret = memo[idx][sum];
+    if(~ret) return ret;
+    ret = solve(idx + 1 , sum);
+    ret = min(ret ,
+              solve(idx + 1 , sum - V[idx]) + W[idx]
+              );
     return ret;
-}
-
-
-void solve() {
-
 }
 void file()
 {
@@ -66,11 +45,17 @@ signed main() {
     ENG_GAMAL
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
-    ll t = 1;
-     cin >> t;
-    while (t--)
-    {
-        solve();
+    cin >> n >> w;
+    for (int i = 0; i < n; ++i) {
+        cin >> W[i] >> V[i];
+    }
+    memset(memo , -1 , sizeof memo);
+
+    for(int ans = 1e5 ; ans >= 0 ; ans--){
+        if(solve(0 , ans) <= w){
+            cout << ans << nl;
+            return 0;
+        }
     }
 
     return 0;

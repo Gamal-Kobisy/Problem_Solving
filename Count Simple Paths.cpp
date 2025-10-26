@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK :
+// LINK : https://atcoder.jp/contests/abc284/tasks/abc284_e?lang=en
 #include <bits/stdc++.h>
 #define ll long long
 #define int ll
@@ -15,41 +15,40 @@
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-const int N = 2e5 + 5, M = 1e3, LOG = 22, inf = 0x3f3f3f3f;
+const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-int n , s[N] , T[N][LOG];
-
-int merge(int a , int b){
-    return min(a , b);
-}
-
-void build(){
-    for (int i = 0; i < n; ++i) {
-        T[i][0] = s[i];
-    }
-    for(int pw = 1 ; (1 << pw) <= n ; pw++){
-        for (int i = 0; i + (1 << pw) <= n ; ++i) {
-            T[i][pw] = merge(T[i][pw - 1] , T[i + (1 << (pw - 1))][pw - 1]);
+int n , m;
+vector<int>adj[N];
+vector<bool>ancs(N);
+bool stop = false;
+int dfs(int v){
+    if(stop)
+        return 0;
+    ancs[v] = true;
+    int ret = 1;
+    for(int u : adj[v]){
+        if(!ancs[u]){
+            ret += dfs(u);
+            if(ret >= 1e6){
+                ret = 1e6;
+                stop = true;
+                break;
+            }
         }
     }
-}
-
-int query(int l  ,int r)
-{
-    int sz = r - l + 1;
-    int ret = infLL;
-    for (int i = 21; i >= 0; --i) {
-        if((sz >> i) & 1)
-        {
-            ret = merge(ret  , T[l][i]);
-            l += (1 << i);
-        }
-    }
+    ancs[v] = false;
     return ret;
 }
 
-
 void solve() {
+    cin >> n >> m;
+    for (int i = 0; i < m; ++i) {
+        int a , b;
+        cin >> a >> b;
+        adj[a].emplace_back(b);
+        adj[b].emplace_back(a);
+    }
+    cout << dfs(1) << nl;
 
 }
 void file()
@@ -67,7 +66,7 @@ signed main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll t = 1;
-     cin >> t;
+//     cin >> t;
     while (t--)
     {
         solve();
