@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://cdn.vjudge.net.cn/81c566ac0d4de16114be3b9eced37614
+// LINK : https://codeforces.com/problemset/problem/1832/B
 #include <bits/stdc++.h>
 #define ll long long
 #define int ll
@@ -17,36 +17,24 @@ using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-double memo[76][76][76][2];
-bool vis[76][76][76][2];
-double solve(int c , int h , int x , bool who) {
-    if(who and c + x == 75) return 1;
-    if(who and c + x > 75) return 0;
-    if(not who and h + x == 75) return 0;
-    if(not who and h + x > 75) return 0;
-    double &ret = memo[c][h][x][who];
-    if(vis[c][h][x][who]) return ret;
-    if(who){
-        int op1 = 0 , op2 = 0;
-        if(x)
-            op1 = solve(c + x , h , 0 , false);
-        for (int i = 2; i <= 6; ++i) {
-            op2 += solve(c , h , x + i , true);
-        }
-        op2 /= 6;
-        ret = max(op1 , op2);
-    }else{
-        int op1 = 0 , op2 = 0;
-        if(x)
-            op1 = solve(c , h + x , 0 , true);
-        for (int i = 2; i <= 6; ++i) {
-            op2 += solve(c , h , x + i , false);
-        }
-        op2 /= 6;
-        ret = min(op1 , op2);
+
+void solve() {
+    int n , k;
+    cin >> n >> k;
+    vector<int>a(n) , pre(n + 1);
+    for (int i = 0; i < n; ++i) {
+        cin >> a[i];
     }
-    vis[c][h][x][who] = true;
-    return ret;
+    sort(all(a));
+    for(int i = 1 ; i <= n ; i++){
+        pre[i] = pre[i - 1] + a[i - 1];
+    }
+    int ans = 0;
+    for(int i = 0 ; i <= k ; i++){
+        int cand = pre[n - i] - pre[(k - i) * 2];
+        ans = max(ans , cand);
+    }
+    cout << ans << nl;
 }
 void file()
 {
@@ -62,19 +50,12 @@ signed main() {
     ENG_GAMAL
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
-    int q;
-    cin >> q;
-    memset(vis , false , sizeof vis);
-    while(q--){
-        int c , h , x;
-        cin >> c >> h >> x;
-        double ph = 0.0, pc = 0.0;
-        if(x) ph = solve(c + x, h, 0, false);
-        for (int i = 2; i <= 6; ++i) {
-            pc += solve(c, h, x + i, true);
-        }
-        pc /= 6.0;
-        cout << (ph > pc ? 'H' : 'C') << nl;
+    ll t = 1;
+     cin >> t;
+    while (t--)
+    {
+        solve();
     }
+
     return 0;
 }

@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK :
+// LINK : https://codeforces.com/contest/2167/problem/G
 #include <bits/stdc++.h>
 #define ll long long
 #define int ll
@@ -15,42 +15,29 @@
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-const int N = 2e5 + 5, M = 1e3, LOG = 22, inf = 0x3f3f3f3f;
+const int N = 8000 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-int n , s[N] , T_MAX[N][LOG];
-
-int merge(int a , int b){
-    return min(a , b);
-}
-
-void build(){
-    for (int i = 0; i < n; ++i) {
-        T_MAX[i][0] = s[i];
-    }
-    for(int pw = 1 ; (1 << pw) <= n ; pw++){
-        for (int i = 0; i + (1 << pw) <= n ; ++i) {
-            T_MAX[i][pw] = merge(T_MAX[i][pw - 1] , T_MAX[i + (1 << (pw - 1))][pw - 1]);
-        }
-    }
-}
-
-int query(int l  ,int r)
-{
-    int sz = r - l + 1;
-    int ret = infLL;
-    for (int i = 21; i >= 0; --i) {
-        if((sz >> i) & 1)
-        {
-            ret = merge(ret  , T_MAX[l][i]);
-            l += (1 << i);
-        }
-    }
+int  n , a[N] , c[N] , memo[N];
+int calc(int idx){
+    if(idx > n) return 0;
+    int &ret = memo[idx];
+    if(~ret) return ret;
+    ret = c[idx];
+    for(int j = idx + 1; j <= n; ++j)
+        if(a[j] >= a[idx]) ret = max(ret, c[idx] + calc(j));
     return ret;
 }
-
-
 void solve() {
-
+    cin >> n;
+    a[0] = c[0] = 0;
+    for(int i = 1; i <= n; i++) cin >> a[i];
+    int sum = 0;
+    for (int i = 1; i <= n; ++i) { cin >> c[i]; sum += c[i]; }
+    memset(memo, -1, sizeof memo);
+    int maxi = 0;
+    for(int i = 1; i <= n; ++i)
+        maxi = max(maxi, calc(i));
+    cout << sum - maxi << nl;
 }
 void file()
 {

@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK :
+// LINK : https://codeforces.com/contest/2167/problem/E
 #include <bits/stdc++.h>
 #define ll long long
 #define int ll
@@ -15,42 +15,45 @@
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-const int N = 2e5 + 5, M = 1e3, LOG = 22, inf = 0x3f3f3f3f;
+const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-int n , s[N] , T_MAX[N][LOG];
-
-int merge(int a , int b){
-    return min(a , b);
-}
-
-void build(){
-    for (int i = 0; i < n; ++i) {
-        T_MAX[i][0] = s[i];
-    }
-    for(int pw = 1 ; (1 << pw) <= n ; pw++){
-        for (int i = 0; i + (1 << pw) <= n ; ++i) {
-            T_MAX[i][pw] = merge(T_MAX[i][pw - 1] , T_MAX[i + (1 << (pw - 1))][pw - 1]);
-        }
-    }
-}
-
-int query(int l  ,int r)
-{
-    int sz = r - l + 1;
-    int ret = infLL;
-    for (int i = 21; i >= 0; --i) {
-        if((sz >> i) & 1)
-        {
-            ret = merge(ret  , T_MAX[l][i]);
-            l += (1 << i);
-        }
-    }
-    return ret;
-}
-
 
 void solve() {
-
+    int n , k , x;
+    cin >> n >> k >> x;
+    vector<int>a(n) , reversed(n);
+    for (int i = 0; i < n; ++i) {
+        cin >> a[i];
+        reversed[i] = -a[i];
+    }
+    sort(all(a));
+    vector<int>ans;
+    int lo = 0 , hi = infLL;
+    while(lo <= hi){
+        int mid = (hi + lo) >> 1;
+        vector<int>pos;
+        int first = 0;
+        while(abs(first - a.front()) >= mid and pos.size() < k )
+            pos.emplace_back(first) , first++;
+        int last = x;
+        while(abs(last - a.back()) >= mid and pos.size() < k)
+            pos.emplace_back(last) , last--;
+        for (int i = 0 ; i < n - 1 and pos.size() < k; ++i) {
+            for (int j = a[i] + mid ; j <= a[i + 1] - mid and pos.size() < k; ++j) {
+                pos.emplace_back(j);
+            }
+        }
+        if(pos.size() >= k){
+            ans = pos;
+            lo = mid + 1;
+        }else{
+            hi = mid - 1;
+        }
+    }
+    for (int i = 0; i < min((int)ans.size() , k); ++i) {
+        cout << ans[i] << sp;
+    }
+    cout << nl;
 }
 void file()
 {

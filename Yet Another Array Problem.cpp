@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK :
+// LINK : https://codeforces.com/contest/2167/problem/D
 #include <bits/stdc++.h>
 #define ll long long
 #define int ll
@@ -15,42 +15,42 @@
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-const int N = 2e5 + 5, M = 1e3, LOG = 22, inf = 0x3f3f3f3f;
+const int N = 1e6 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-int n , s[N] , T_MAX[N][LOG];
 
-int merge(int a , int b){
-    return min(a , b);
-}
+vector<int> primes;
+vector<bool> is_prime;
 
-void build(){
-    for (int i = 0; i < n; ++i) {
-        T_MAX[i][0] = s[i];
-    }
-    for(int pw = 1 ; (1 << pw) <= n ; pw++){
-        for (int i = 0; i + (1 << pw) <= n ; ++i) {
-            T_MAX[i][pw] = merge(T_MAX[i][pw - 1] , T_MAX[i + (1 << (pw - 1))][pw - 1]);
+void sieve(int n) {
+    is_prime.assign(n + 1, true);
+    is_prime[0] = is_prime[1] = false;
+
+    for (int i = 2; i <= n; i++) {
+        if (is_prime[i]) {
+            primes.push_back(i);
+            for (ll j = 1LL * i * i; j <= n; j += i) {
+                is_prime[j] = false;
+            }
         }
     }
 }
-
-int query(int l  ,int r)
-{
-    int sz = r - l + 1;
-    int ret = infLL;
-    for (int i = 21; i >= 0; --i) {
-        if((sz >> i) & 1)
-        {
-            ret = merge(ret  , T_MAX[l][i]);
-            l += (1 << i);
-        }
-    }
-    return ret;
-}
-
 
 void solve() {
-
+    int n;
+    cin >> n;
+    vector<int>a(n);
+    map<int , int>freq;
+    int ans = infLL;
+    for (int i = 0; i < n; ++i) {
+        cin >> a[i];
+        for(int p : primes){
+            if(a[i] % p){
+                ans = min(ans , p);
+                break;
+            }
+        }
+    }
+    cout << ans << nl;
 }
 void file()
 {
@@ -65,6 +65,7 @@ signed main() {
     file();
     ENG_GAMAL
 // test-independent code ——————————————————————
+    sieve(N);
 // ————————————————————————————————————————————
     ll t = 1;
      cin >> t;
