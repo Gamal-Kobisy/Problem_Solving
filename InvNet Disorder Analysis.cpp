@@ -1,11 +1,8 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://cses.fi/alon/task/1648
-#pragma GCC optimize("Ofast")
-#pragma GCC optimize("unroll-loops")
+// LINK : https://codeforces.com/group/Rilx5irOux/contest/627262/problem/C
 #include <bits/stdc++.h>
-#pragma GCC target("avx,avx2,fma")
 #define ll long long
 #define int ll
 #define nl '\n'
@@ -21,15 +18,21 @@ using namespace std;
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
-int n , q , s[N] , in[N] , out[N] , timer = 1;
-vector<int>adj[N];
-void dfs(int v , int par){
-    in[v] = timer++;
-    for(int u : adj[v]){
-        if(u != par) dfs(u , v);
+struct custom_hash {
+    static uint64_t splitmix64(uint64_t x) {
+        // http://xorshift.di.unimi.it/splitmix64.c
+        x += 0x9e3779b97f4a7c15;
+        x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
+        x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
+        return x ^ (x >> 31);
     }
-    out[v] = timer++;
-}
+
+    size_t operator()(uint64_t x) const {
+        static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
+        return splitmix64(x + FIXED_RANDOM);
+    }
+};
+
 struct Fenwick {
     int n;
     vector<ll> tree;
@@ -38,7 +41,7 @@ struct Fenwick {
         tree.assign(n + 1 , 0);
     }
     void update(int idx, int val) {
-        while (idx < n) {
+        while (idx <= n) {
             tree[idx] += val;
             idx += idx & -idx;
         }
@@ -57,36 +60,50 @@ struct Fenwick {
 };
 
 void TC() {
-    cin >> n >> q;
-    for (int i = 0; i < n; ++i) {
-        cin >> s[i + 1];
+    int n , q;
+    cin >> n ;
+    cin >> n;
+    vector<int>a(n + 1);
+    for (int i = 1; i <= n; ++i) {
+        cin >> a[i];
     }
-    for (int i = 0; i < n - 1; ++i) {
-        int a , b;
-        cin >> a >> b;
-        adj[a].emplace_back(b);
-        adj[b].emplace_back(a);
+    cin >> q;
+    struct Q { int l, r, idx; };
+    vector<Q> queries(q);
+    for (int i = 0; i < q; ++i) {
+        int l, r;
+        cin >> l >> r;
+        queries[i] = {l, r, i};
     }
-    dfs(1 , 1);
-    Fenwick tree(n * 2);
-    for(int i = 1 ; i < n ; i++){
-        tree.update(in[i] , s[i]);
-        tree.update(out[i] , -s[i]);
-    }
+    sort(queries.begin(), queries.end(), [](const Q &x, const Q &y){
+        return x.r < y.r;
+    });
 
-    while(q--){
-        int op , a , b;
-        cin >> op;
-        if(op == 1){
-            cin >> a >> b;
-            tree.update(in[a] , b - s[a]);
-            tree.update(out[a] , s[a] - b);
-            s[a] = b;
-        }else{
-            cin >> a;
-            cout << tree.query(in[a]) << nl;
+    Fenwick fw(n);
+    vector<int> ans(q);
+    unordered_map<long long,int> last;
+
+    int qi = 0;
+    for (int i = 1; i <= n; ++i) {
+        long long val = a[i];
+        if (last.count(val)) {
+            int prev = last[val];
+            fw.update(prev, -1);
+        }
+        fw.update(i, +1);
+        last[val] = i;
+
+        while (qi < q && queries[qi].r == i) {
+            ans[queries[qi].idx] = (int)fw.query_range(queries[qi].l, queries[qi].r);
+            ++qi;
         }
     }
+    while (qi < q) {
+        ans[queries[qi].idx] = (int)fw.query_range(queries[qi].l, queries[qi].r);
+        ++qi;
+    }
+
+    for (int i = 0; i < q; ++i) cout << ans[i] << '\n';
 }
 void file()
 {
@@ -103,7 +120,7 @@ signed main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll tc = 1;
-//     cin >> tc;
+     cin >> tc;
     while (tc--)
     {
         TC();

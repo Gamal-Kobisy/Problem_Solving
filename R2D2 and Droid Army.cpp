@@ -1,10 +1,10 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/1472/E
+// LINK : https://codeforces.com/problemset/problem/514/D
 #include <bits/stdc++.h>
 #define ll long long
-#define int ll
+//#define int ll
 #define nl '\n'
 #define sp ' '
 #define all(a) a.begin(),a.end()
@@ -81,74 +81,51 @@ struct SPT {
 };
 
 void solve() {
-    int n;
-    cin >> n;
-    vector<pair<int , int>>v(n);
-    vector<pair<pair<int , int> , int>>sorted(n);
+    int n , m , k;
+    cin >> n >> m >> k;
+    vector<vector<int>>a(n , vector<int>(m));
     for (int i = 0; i < n; ++i) {
-        int a , b;
-        cin >> a >> b;
-        v[i] = {a , b};
-        sorted[i] = {{a, b} , i};
-    }
-    sort(all(sorted));
-    vector<int>temp(n);
-    iota(all(temp) , 0);
-    auto merge = [sorted](int a , int b){
-        if(sorted[a].first.second < sorted[b].first.second)
-            return a;
-        else
-            return b;
-    };
-    SPT<int , decltype(merge)>min_height(temp , merge , infLL , true);
-
-    vector<pair<pair<int , int> , int>>sorted2 = sorted;
-    for (int i = 0; i < n; ++i) sorted2[i] = {{v[i].second , v[i].first} , i};
-    sort(all(sorted2));
-
-    vector<int>temp2(n);
-    iota(all(temp2) , 0);
-    auto merge2 = [sorted2](int a , int b){
-        if(sorted2[a].first.second < sorted2[b].first.second)
-            return a;
-        else
-            return b;
-    };
-    SPT<int , decltype(merge2)>min_width(temp2 , merge2 , infLL , true);
-
-    for (int i = 0; i < n; ++i) {
-        int right = lower_bound(all(sorted) , make_pair(v[i] , i)) - sorted.begin();
-        right--;
-        int right2 = lower_bound(all(sorted2) , make_pair(make_pair(v[i].second , v[i].first) , i)) - sorted2.begin();
-        right2--;
-
-        int ans = -1;
-
-        if(right >= 0){
-            int idx = min_height.query(0 , right);
-            int cand_width = sorted[idx].first.first;
-            int cand_height = sorted[idx].first.second;
-            if(cand_width < v[i].first and cand_height < v[i].second)
-                ans = sorted[idx].second + 1;
-            else if(cand_width < v[i].second and cand_height < v[i].first)
-                ans = sorted[idx].second + 1;
+        for (int j = 0; j < m; ++j) {
+            cin >> a[i][j];
         }
-
-        if(ans == -1 && right2 >= 0){
-            int idx2 = min_width.query(0 , right2);
-            int cand_width = sorted2[idx2].first.first;
-            int cand_height = sorted2[idx2].first.second;
-            if(cand_width < v[i].first and cand_height < v[i].second)
-                ans = sorted2[idx2].second + 1;
-            else if(cand_width < v[i].second and cand_height < v[i].first)
-                ans = sorted2[idx2].second + 1;
-        }
-
-        cout << ans << sp;
     }
-    cout << nl;
+    auto merge = [](int a , int b){
+        return max(a , b);
+    };
+    vector<SPT<int, decltype(merge)>> col_spt;
+    for (int j = 0; j < m; ++j) {
+        vector<int> col(n);
+        for (int i = 0; i < n; ++i) col[i] = a[i][j];
+        col_spt.emplace_back(col, merge, -inf, true);
+    }
+    int best_dit = 0;
+    vector<int>ans(m);
+    for (int l = 0; l < n; ++l) {
+        int lo = l , hi = n - 1;
+        while(lo <= hi){
+            int r = (hi + lo) >> 1;
+            int sum = 0;
+            for (int j = 0; j < m; ++j) {
+                sum += col_spt[j].query(l , r);
+            }
+            if(sum <= k){
+                if(r - l + 1 > best_dit){
+                    best_dit = r - l + 1;
+                    ans.clear();
+                    for (int i = 0; i < m; ++i) {
+                        ans.emplace_back(col_spt[i].query(l , r));
+                    }
+                }
+                lo = r + 1;
+            }else{
+                hi = r - 1;
+            }
+        }
+    }
+    for (int i = 0; i < m; ++i) {
+        cout << ans[i] << sp;
+    }
 }
-
 void file()
 {
 #ifndef ONLINE_JUDGE
@@ -164,7 +141,7 @@ signed main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll t = 1;
-     cin >> t;
+//     cin >> t;
     while (t--)
     {
         solve();

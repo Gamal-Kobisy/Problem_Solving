@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://vjudge.net/problem/QOJ-7332
+// LINK : https://codeforces.com/problemset/problem/2008/F
 #include <bits/stdc++.h>
 #define ll long long
 #define int ll
@@ -17,40 +17,72 @@ using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-string s , t;
-int n , m;
-vector<vector<int>>last_idx , memo;
-vector<vector<bool>>vis;
-int calc(int i , int len){
-    if(len == 0) return n;
-    if(i == m) return -1;
-    int &ret = memo[i][len];
-    if(vis[i][len]) return ret;
-    vis[i][len] = true;
-    ret = calc(i + 1, len);
-    int mxIndex = calc(i + 1, len - 1);
-    if(mxIndex > 0 && last_idx[mxIndex - 1][t[i] - 'a'] != -1) {
-        ret = max(ret, last_idx[mxIndex - 1][t[i] - 'a']);
-    }
-    return ret;
+
+ll fact[N] , modinv[N];
+
+const ll MOD = 1e9 + 7;
+
+ll add(ll a, ll b)
+{
+    return ((a % MOD) + (b % MOD)) % MOD;
 }
+
+ll sub(ll a, ll b)
+{
+    return ((a % MOD) - (b % MOD) + MOD) % MOD;
+}
+
+ll mul(ll a, ll b)
+{
+    return ((a % MOD) * (b % MOD)) % MOD;
+}
+
+ll power(ll b, ll p) {
+    ll ans = 1;
+    while (p) {
+        if (p & 1)
+            ans = mul(ans , b);
+        b = mul(b , b);
+        p /= 2;
+    }
+    return ans;
+}
+
+void pre(){
+    fact[0] = 1;
+    for (int i = 1; i < N; ++i) {
+        fact[i] = mul(fact[i - 1] , i);
+    }
+    modinv[N - 1] = power(fact[N - 1] , MOD - 2);
+    for (int i = N - 2; i >= 0 ; --i) {
+        modinv[i] = mul(i + 1  , modinv[i + 1]);
+    }
+}
+
+ll nCr(int n, int r) {
+    return mul(mul(fact[n], modinv[n - r]), modinv[r]);
+}
+
+ll nPr(int n, int r) {
+    return mul(fact[n], modinv[n - r]);
+}
+
 void solve() {
-    cin >> s >> t;
-    n = s.size() , m = t.size();
-    memo = vector<vector<int>>(m + 1 , vector<int>(m + 1));
-    vis = vector<vector<bool>>(m + 1 , vector<bool>(m + 1));
-    last_idx = vector<vector<int>>(n , vector<int>(26 , -1));
-    last_idx[0][s[0] - 'a'] = 0;
-    for (int i = 1; i < n; ++i) {
-        last_idx[i] = last_idx[i - 1];
-        last_idx[i][s[i] - 'a'] = i;
+    int n;
+    cin >> n;
+    vector<int>a(n);
+    int sum = 0;
+    for (int i = 0; i < n; ++i) {
+        cin >> a[i];
+        sum = add(sum , a[i]);
     }
-    for(int len = m; len >= 0; len--) {
-        if(calc(0, len) >= 0) {
-            cout << len << nl;
-            return;
-        }
+    int ans = 0;
+    for (int i = 0; i < n; ++i) {
+        sum = sub(sum ,a[i]);
+        ans = add(ans , mul(a[i] , sum));
     }
+    int cnt = mul(mul(n - 1 , n) , power(2 , MOD - 2));
+    cout << mul(ans , power(cnt , MOD - 2)) << nl;
 }
 void file()
 {
@@ -66,9 +98,9 @@ signed main() {
     ENG_GAMAL
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
-    ll tc = 1;
-     cin >> tc;
-    while (tc--)
+    ll t = 1;
+     cin >> t;
+    while (t--)
     {
         solve();
     }

@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/contest/2077/problem/A
+// LINK : https://codeforces.com/problemset/problem/2078/C
 #include <bits/stdc++.h>
 #define ll long long
 #define nl '\n'
@@ -20,22 +20,20 @@ void solve() {
     int n;
     cin >> n;
     vector<int> v;
+    map<int , int>freq;
     for (int i = 0, x; i < 2 * n; ++i) {
         cin >> x;
         v.push_back(x);
+        freq[x]++;
     }
     sort(all(v));
-    cout << v.back() << sp;
-    int sum = 0;
-    vector<int> l, r;
-    for (int i = 0; i < n - 1; ++i)
-        sum += v[i], l.push_back(v[i]);
-    for (int i = n - 1; i < 2 * n - 1; ++i)
-        sum -= v[i], r.push_back(v[i]);
-    l.push_back(v.back() - sum);
-    for (int i = 0; i < n; ++i)
-        cout << l[i] << sp << r[i] << sp;
-    cout << nl;
+    vector<int>pre(n + 1);
+    for (int i = 1; i < n + 1; ++i) {
+        pre[i] = pre[i - 1] + v[i - 1];
+    }
+    for (int i = 0; i < n / 2; ++i) {
+
+    }
 }
 void file()
 {

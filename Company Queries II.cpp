@@ -1,11 +1,8 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://cses.fi/alon/task/1648
-#pragma GCC optimize("Ofast")
-#pragma GCC optimize("unroll-loops")
+// LINK : https://cses.fi/problemset/task/1688/
 #include <bits/stdc++.h>
-#pragma GCC target("avx,avx2,fma")
 #define ll long long
 #define int ll
 #define nl '\n'
@@ -20,72 +17,81 @@ using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
+vector<int> adj[N];
+int n, q, depth[N], up[N][LOG], timer, tin[N], tout[N];
 
-int n , q , s[N] , in[N] , out[N] , timer = 1;
-vector<int>adj[N];
-void dfs(int v , int par){
-    in[v] = timer++;
-    for(int u : adj[v]){
-        if(u != par) dfs(u , v);
+void dfs(int u, int p) {
+    tin[u] = timer++;
+    up[u][0] = p;
+    for (auto v: adj[u]) {
+        if (v == p)continue;
+        depth[v] = depth[u] + 1;
+        dfs(v, u);
     }
-    out[v] = timer++;
+    tout[u] = timer - 1;
 }
-struct Fenwick {
-    int n;
-    vector<ll> tree;
-    Fenwick(int _n){
-        n = _n;
-        tree.assign(n + 1 , 0);
-    }
-    void update(int idx, int val) {
-        while (idx < n) {
-            tree[idx] += val;
-            idx += idx & -idx;
+
+bool isAncestor(int u, int v) {
+    return tin[u] <= tin[v] && tout[u] >= tout[v];
+}
+
+int LCA(int u, int v) {
+    if (depth[u] < depth[v])
+        swap(u, v);
+    int k = depth[u] - depth[v];
+    for (int i = 0; i < LOG; ++i) {
+        if ((1 << i) & k) {
+            u = up[u][i];
         }
     }
-    int query(int idx) {
-        int ret = 0;
-        while (idx > 0) {
-            ret += tree[idx];
-            idx -= idx & -idx;
+    if (u == v)
+        return u;
+    for (int i = LOG - 1; i >= 0; --i) {
+        if (up[u][i] != up[v][i]) {
+            u = up[u][i];
+            v = up[v][i];
         }
-        return ret;
     }
-    int query_range(int l , int r){
-        return query(r) - query(l - 1);
+    return up[u][0];
+}
+
+int Kthancestor(int u,int k){
+    if(k > depth[u])return -1;
+    for (int j = LOG - 1; j >= 0; --j) {
+        if(k&(1<<j)){
+            u = up[u][j];
+        }
     }
-};
+    return u;
+}
+
+void build() {
+    for (int i = 1; i <= n; ++i) {
+        for (int j = 0; j < LOG; ++j) up[i][j] = -1;
+    }
+    timer = 0;
+    depth[1] = 0;
+    dfs(1, -1);
+    for (int j = 1; j < LOG; ++j) {
+        for (int i = 1; i <= n; ++i) {
+            up[i][j] = up[up[i][j - 1]][j - 1];
+        }
+    }
+}
 
 void TC() {
     cin >> n >> q;
-    for (int i = 0; i < n; ++i) {
-        cin >> s[i + 1];
+    for (int i = 2; i <= n ; ++i) {
+        int boss;
+        cin >> boss;
+        adj[i].emplace_back(boss);
+        adj[boss].emplace_back(i);
     }
-    for (int i = 0; i < n - 1; ++i) {
+    build();
+    while(q--){
         int a , b;
         cin >> a >> b;
-        adj[a].emplace_back(b);
-        adj[b].emplace_back(a);
-    }
-    dfs(1 , 1);
-    Fenwick tree(n * 2);
-    for(int i = 1 ; i < n ; i++){
-        tree.update(in[i] , s[i]);
-        tree.update(out[i] , -s[i]);
-    }
-
-    while(q--){
-        int op , a , b;
-        cin >> op;
-        if(op == 1){
-            cin >> a >> b;
-            tree.update(in[a] , b - s[a]);
-            tree.update(out[a] , s[a] - b);
-            s[a] = b;
-        }else{
-            cin >> a;
-            cout << tree.query(in[a]) << nl;
-        }
+        cout << LCA(a , b) << nl;
     }
 }
 void file()

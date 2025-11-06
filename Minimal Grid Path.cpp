@@ -1,8 +1,11 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://vjudge.net/problem/QOJ-7332
+// LINK :
+#pragma GCC optimize("Ofast")
+#pragma GCC optimize("unroll-loops")
 #include <bits/stdc++.h>
+#pragma GCC target("avx,avx2,fma")
 #define ll long long
 #define int ll
 #define nl '\n'
@@ -15,42 +18,56 @@
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
+const int N = 3000 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-string s , t;
-int n , m;
-vector<vector<int>>last_idx , memo;
-vector<vector<bool>>vis;
-int calc(int i , int len){
-    if(len == 0) return n;
-    if(i == m) return -1;
-    int &ret = memo[i][len];
-    if(vis[i][len]) return ret;
-    vis[i][len] = true;
-    ret = calc(i + 1, len);
-    int mxIndex = calc(i + 1, len - 1);
-    if(mxIndex > 0 && last_idx[mxIndex - 1][t[i] - 'a'] != -1) {
-        ret = max(ret, last_idx[mxIndex - 1][t[i] - 'a']);
-    }
-    return ret;
-}
-void solve() {
-    cin >> s >> t;
-    n = s.size() , m = t.size();
-    memo = vector<vector<int>>(m + 1 , vector<int>(m + 1));
-    vis = vector<vector<bool>>(m + 1 , vector<bool>(m + 1));
-    last_idx = vector<vector<int>>(n , vector<int>(26 , -1));
-    last_idx[0][s[0] - 'a'] = 0;
-    for (int i = 1; i < n; ++i) {
-        last_idx[i] = last_idx[i - 1];
-        last_idx[i][s[i] - 'a'] = i;
-    }
-    for(int len = m; len >= 0; len--) {
-        if(calc(0, len) >= 0) {
-            cout << len << nl;
-            return;
+int n , vis[N][N];
+string grid[N] , memo[N][N];
+string di[] = {"D", "L", "R", "U", "DR", "DL", "UR", "UL"};
+int dx[] = {1, 0, 0, -1, 1, -1, 1, -1};
+int dy[] = {0, -1, 1, 0, 1, -1, -1, 1};
+int knightx[] = {2, 2, -2, -2, 1, 1, -1, -1};
+int knighty[] = {1, -1, 1, -1, 2, -2, 2, -2};
+string solve(int i, int j) {
+    if (vis[i][j]) return memo[i][j];
+    if (i == n && j == n) return "";
+
+    string best;
+    bool have = false;
+
+    if (j < n) {
+        string right = string(1, grid[i][j + 1]) + solve(i, j + 1);
+        if (!have || right < best) {
+            best = right;
+            have = true;
         }
     }
+    if (i < n) {
+        string down = string(1, grid[i + 1][j]) + solve(i + 1, j);
+        if (!have || down < best) {
+            best = down;
+            have = true;
+        }
+    }
+
+    // store and return
+    vis[i][j] = true;
+    memo[i][j] = best;
+    return memo[i][j];
+}
+
+void TC() {
+    cin >> n;
+    for (int i = 1; i <= n; ++i) {
+        cin >> grid[i];
+        grid[i] = "z" + grid[i];
+    }
+    for(int i : {0ll , n + 1}){
+        for (int j = 1; j <= n; ++j) {
+            grid[i][j] = 'z';
+        }
+    }
+    memset(vis , 0 , sizeof vis);
+    cout << grid[1][1] + solve(1 , 1) << nl;
 }
 void file()
 {
@@ -67,10 +84,10 @@ signed main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll tc = 1;
-     cin >> tc;
+//     cin >> tc;
     while (tc--)
     {
-        solve();
+        TC();
     }
 
     return 0;

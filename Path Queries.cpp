@@ -1,8 +1,11 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://vjudge.net/problem/QOJ-7332
+// LINK : https://cses.fi/problemset/task/1138/
+#pragma GCC optimize("Ofast")
+#pragma GCC optimize("unroll-loops")
 #include <bits/stdc++.h>
+#pragma GCC target("avx,avx2,fma")
 #define ll long long
 #define int ll
 #define nl '\n'
@@ -17,38 +20,72 @@ using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-string s , t;
-int n , m;
-vector<vector<int>>last_idx , memo;
-vector<vector<bool>>vis;
-int calc(int i , int len){
-    if(len == 0) return n;
-    if(i == m) return -1;
-    int &ret = memo[i][len];
-    if(vis[i][len]) return ret;
-    vis[i][len] = true;
-    ret = calc(i + 1, len);
-    int mxIndex = calc(i + 1, len - 1);
-    if(mxIndex > 0 && last_idx[mxIndex - 1][t[i] - 'a'] != -1) {
-        ret = max(ret, last_idx[mxIndex - 1][t[i] - 'a']);
+
+int n , q , s[N] , in[N] , out[N] , timer = 1;
+vector<int>adj[N];
+void dfs(int v , int par){
+    in[v] = timer++;
+    for(int u : adj[v]){
+        if(u != par)
+            dfs(u , v);
     }
-    return ret;
+    out[v] = timer++;
 }
-void solve() {
-    cin >> s >> t;
-    n = s.size() , m = t.size();
-    memo = vector<vector<int>>(m + 1 , vector<int>(m + 1));
-    vis = vector<vector<bool>>(m + 1 , vector<bool>(m + 1));
-    last_idx = vector<vector<int>>(n , vector<int>(26 , -1));
-    last_idx[0][s[0] - 'a'] = 0;
-    for (int i = 1; i < n; ++i) {
-        last_idx[i] = last_idx[i - 1];
-        last_idx[i][s[i] - 'a'] = i;
+struct Fenwick {
+    int n;
+    vector<ll> tree;
+    Fenwick(int _n){
+        n = _n;
+        tree.assign(n + 1 , 0);
     }
-    for(int len = m; len >= 0; len--) {
-        if(calc(0, len) >= 0) {
-            cout << len << nl;
-            return;
+    void update(int idx, int val) {
+        while (idx < n) {
+            tree[idx] += val;
+            idx += idx & -idx;
+        }
+    }
+    int query(int idx) {
+        int ret = 0;
+        while (idx > 0) {
+            ret += tree[idx];
+            idx -= idx & -idx;
+        }
+        return ret;
+    }
+    int query_range(int l , int r){
+        return query(r) - query(l - 1);
+    }
+};
+
+void TC() {
+    cin >> n >> q;
+    for (int i = 1; i <= n; ++i) {
+        cin >> s[i];
+    }
+    for (int i = 1; i < n; ++i) {
+        int a , b;
+        cin >> a >> b;
+        adj[a].emplace_back(b);
+        adj[b].emplace_back(a);
+    }
+    dfs(1 , -1);
+    Fenwick tree(n * 2);
+    for(int i = 1 ; i <= n ; i++){
+        tree.update(in[i] , s[i]);
+        tree.update(out[i] , -s[i]);
+    }
+
+    while(q--){
+        int op , a , b;
+        cin >> op;
+        if(op == 1){
+            cin >> a >> b;
+            tree.update(in[a] , b - s[a]);
+            tree.update(out[a] , s[a] - b);
+            s[a] = b;
+        }else{
+            cin >> a;
+            cout << tree.query(in[a]) << nl;
         }
     }
 }
@@ -67,10 +104,10 @@ signed main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll tc = 1;
-     cin >> tc;
+//     cin >> tc;
     while (tc--)
     {
-        solve();
+        TC();
     }
 
     return 0;

@@ -1,7 +1,10 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://vjudge.net/problem/QOJ-7332
+// LINK : https://codeforces.com/group/Rilx5irOux/contest/627262/problem/M
+#pragma GCC optimize("Ofast")
+#pragma GCC target("avx,avx2,fma")
+#pragma GCC optimize("unroll-loops")
 #include <bits/stdc++.h>
 #define ll long long
 #define int ll
@@ -17,40 +20,21 @@ using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-string s , t;
-int n , m;
-vector<vector<int>>last_idx , memo;
-vector<vector<bool>>vis;
-int calc(int i , int len){
-    if(len == 0) return n;
-    if(i == m) return -1;
-    int &ret = memo[i][len];
-    if(vis[i][len]) return ret;
-    vis[i][len] = true;
-    ret = calc(i + 1, len);
-    int mxIndex = calc(i + 1, len - 1);
-    if(mxIndex > 0 && last_idx[mxIndex - 1][t[i] - 'a'] != -1) {
-        ret = max(ret, last_idx[mxIndex - 1][t[i] - 'a']);
+
+
+void TC() {
+    int x , k;
+    cin >> x >> k;
+    int freqK = x / k;
+    int rem = x % k;
+    int c1 = rem , c2 = freqK - rem;
+    if(c2 < 0) return void(cout << "-1 -1" << nl);
+    if(c2 > k){
+        int div = c2 / (k + 1);
+        c1 += div * k;
+        c2 -= div * (k + 1);
     }
-    return ret;
-}
-void solve() {
-    cin >> s >> t;
-    n = s.size() , m = t.size();
-    memo = vector<vector<int>>(m + 1 , vector<int>(m + 1));
-    vis = vector<vector<bool>>(m + 1 , vector<bool>(m + 1));
-    last_idx = vector<vector<int>>(n , vector<int>(26 , -1));
-    last_idx[0][s[0] - 'a'] = 0;
-    for (int i = 1; i < n; ++i) {
-        last_idx[i] = last_idx[i - 1];
-        last_idx[i][s[i] - 'a'] = i;
-    }
-    for(int len = m; len >= 0; len--) {
-        if(calc(0, len) >= 0) {
-            cout << len << nl;
-            return;
-        }
-    }
+    cout << c1 << sp << c2 << nl;
 }
 void file()
 {
@@ -70,7 +54,7 @@ signed main() {
      cin >> tc;
     while (tc--)
     {
-        solve();
+        TC();
     }
 
     return 0;
