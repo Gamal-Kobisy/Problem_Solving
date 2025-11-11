@@ -1,0 +1,112 @@
+// "ولا تقولن لشيء إني فاعل ذلك غدا"
+// "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
+
+// LINK : https://codeforces.com/contest/2164/problem/C
+#pragma GCC optimize("O3")
+#pragma GCC optimize ("unroll-loops")
+#pragma GCC optimize ("Ofast")
+#include <bits/stdc++.h>
+#pragma GCC target("avx2")
+using namespace std;
+#define ll long long
+#define ld long double
+#define pii pair<int,int>
+#define pll pair<ll,ll>
+#define PI acos(-1)
+#define Ones(n) __builtin_popcountll(n)
+#define mem(arrr, xx) memset(arrr,xx,sizeof arrr)
+#define fi first
+#define se second
+#define pb push_back
+#define all(a) a.begin(),a.end()
+#define allr(a) a.rbegin(),a.rend()
+#define no cout<<"NO\n"
+#define yes cout<<"YES\n"
+#define imp cout<<"IMPOSSIBLE\n"
+#define nl '\n'
+#define sp ' '
+#define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
+using namespace std;
+// ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
+ll infLL = 0x3f3f3f3f3f3f3f3f;
+
+void TC() {
+    int n, m;
+    cin >> n >> m;
+
+    vector<int> a(n);
+    for (int i = 0; i < n; ++i) cin >> a[i];
+
+    vector<int> b(m), c(m);
+    for (int i = 0; i < m; ++i) cin >> b[i];
+    for (int i = 0; i < m; ++i) cin >> c[i];
+
+    vector<pii> stage1, stage2;
+    for (int i = 0; i < m; ++i) {
+        if (c[i] > 0) stage1.pb({b[i], c[i]});
+        else stage2.pb({b[i], c[i]});
+    }
+
+    sort(all(stage1));
+    priority_queue<int, vector<int>, greater<int>> pq;
+    for (int x : a) pq.push(x);
+
+    int ans = 0;
+    vector<int> deferred;
+
+    for (auto &mon : stage1) {
+        int life = mon.fi;
+        int gain = mon.se;
+        while (!pq.empty() && pq.top() < life) {
+            deferred.pb(pq.top());
+            pq.pop();
+        }
+        if (pq.empty()) break;
+        int cur = pq.top(); pq.pop();
+        pq.push(max(cur, gain));
+        ans++;
+    }
+
+    vector<int> swords;
+    while (!pq.empty()) {
+        swords.pb(pq.top());
+        pq.pop();
+    }
+    for (int x : deferred) swords.pb(x);
+    sort(all(swords));
+
+    sort(all(stage2));
+    int j = 0;
+    for (auto &mon : stage2) {
+        int life = mon.fi;
+        while (j <swords.size() && swords[j] < life) j++;
+        if (j == swords.size()) break;
+        ans++;
+        j++;
+    }
+
+    cout << ans << nl;
+}
+
+void file()
+{
+#ifndef ONLINE_JUDGE
+    freopen("Input.txt", "r", stdin);
+    freopen("Output.txt", "w", stdout);
+    freopen("Error.txt", "w", stderr);
+#endif
+}
+
+int main() {
+    file();
+    ENG_GAMAL
+    ll tc = 1;
+    cin >> tc;
+    while (tc--)
+    {
+        TC();
+    }
+
+    return 0;
+}

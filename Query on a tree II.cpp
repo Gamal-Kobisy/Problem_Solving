@@ -139,6 +139,7 @@ void TC() {
         adj[i].clear();
     }
 }
+
 void file()
 {
 #ifndef ONLINE_JUDGE
