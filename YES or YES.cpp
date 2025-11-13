@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/1328/A
+// LINK : https://codeforces.com/problemset/problem/1703/A
 #pragma GCC optimize("O3")
 #pragma GCC optimize ("unroll-loops")
 #pragma GCC optimize ("Ofast")
@@ -32,13 +32,11 @@ const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
 void TC() {
-    ll n, k;
-    cin >> n >> k;
-    ll rem = n % k;
-    ll ans = (rem == 0) ? 0 : (k - rem);
-    cout << ans << nl;
+    string s; cin >> s;
+    for (auto &c : s) c = toupper(c);
+    if (s == "YES") cout << "YES" << nl;
+    else cout << "NO" << nl;
 }
-
 void file()
 {
 #ifndef ONLINE_JUDGE

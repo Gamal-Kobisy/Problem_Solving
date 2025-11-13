@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/1328/A
+// LINK : https://codeforces.com/problemset/problem/785/A
 #pragma GCC optimize("O3")
 #pragma GCC optimize ("unroll-loops")
 #pragma GCC optimize ("Ofast")
@@ -32,13 +32,20 @@ const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
 void TC() {
-    ll n, k;
-    cin >> n >> k;
-    ll rem = n % k;
-    ll ans = (rem == 0) ? 0 : (k - rem);
-    cout << ans << nl;
+    int n;
+    cin >> n;
+    ll sum = 0;
+    for (int i = 0; i < n; ++i) {
+        string s;
+        cin >> s;
+        if (s == "Tetrahedron") sum += 4;
+        else if (s == "Cube") sum += 6;
+        else if (s == "Octahedron") sum += 8;
+        else if (s == "Dodecahedron") sum += 12;
+        else if (s == "Icosahedron") sum += 20;
+    }
+    cout << sum << nl;
 }
-
 void file()
 {
 #ifndef ONLINE_JUDGE
@@ -51,14 +58,10 @@ void file()
 int main() {
     file();
     ENG_GAMAL
-// test-independent code ——————————————————————
-// ————————————————————————————————————————————
     ll tc = 1;
-     cin >> tc;
     while (tc--)
     {
         TC();
     }
-
     return 0;
 }

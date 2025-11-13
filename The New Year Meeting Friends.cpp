@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/1328/A
+// LINK : https://codeforces.com/problemset/problem/723/A
 #pragma GCC optimize("O3")
 #pragma GCC optimize ("unroll-loops")
 #pragma GCC optimize ("Ofast")
@@ -32,11 +32,11 @@ const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
 void TC() {
-    ll n, k;
-    cin >> n >> k;
-    ll rem = n % k;
-    ll ans = (rem == 0) ? 0 : (k - rem);
-    cout << ans << nl;
+    int x1, x2, x3;
+    cin >> x1 >> x2 >> x3;
+    int mx = max({x1, x2, x3});
+    int mn = min({x1, x2, x3});
+    cout << mx - mn << nl;
 }
 
 void file()
@@ -51,14 +51,10 @@ void file()
 int main() {
     file();
     ENG_GAMAL
-// test-independent code ——————————————————————
-// ————————————————————————————————————————————
     ll tc = 1;
-     cin >> tc;
     while (tc--)
     {
         TC();
     }
-
     return 0;
 }

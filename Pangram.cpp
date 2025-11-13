@@ -32,19 +32,14 @@ const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
 void TC() {
+    int n;
     string s;
-    getline(cin, s);
-    if (s.size() == 0) getline(cin, s);
-    set<char> letters;
-    for (char c : s) {
-        if (isalpha(static_cast<unsigned char>(c))) {
-            letters.insert(char(tolower(static_cast<unsigned char>(c))));
-        }
-    }
-    if ((int)letters.size() == 26) yes;
+    cin >> n >> s;
+    for (auto &c : s) c = tolower(c);
+    set<char> st(all(s));
+    if (st.size() == 26) yes;
     else no;
 }
-
 void file()
 {
 #ifndef ONLINE_JUDGE
@@ -57,14 +52,10 @@ void file()
 int main() {
     file();
     ENG_GAMAL
-// test-independent code ——————————————————————
-// ————————————————————————————————————————————
     ll tc = 1;
-//     cin >> tc;
     while (tc--)
     {
         TC();
     }
-
     return 0;
 }
