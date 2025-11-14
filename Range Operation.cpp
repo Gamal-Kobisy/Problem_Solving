@@ -1,12 +1,12 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/1886/C
-//#pragma GCC optimize("O3")
-//#pragma GCC optimize ("unroll-loops")
-//#pragma GCC optimize ("Ofast")
+// LINK : https://codeforces.com/contest/2169/problem/C
+#pragma GCC optimize("O3")
+#pragma GCC optimize ("unroll-loops")
+#pragma GCC optimize ("Ofast")
 #include <bits/stdc++.h>
-//#pragma GCC target("avx2")
+#pragma GCC target("avx2")
 using namespace std;
 #define ll long long
 #define ld long double
@@ -31,40 +31,41 @@ using namespace std;
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
-ll calc(int n , int mid){
-    int sum1 = n * (n + 1) / 2;
-    int sum2 = (n - mid) * (n - mid + 1) / 2;
-    return sum1 - sum2;
-}
-
 void TC() {
-    string s;
-    ll pos , n;
-    cin >> s >> pos;
-    n = s.size();
-    s.pb('A');
-    vector<int> nxtSmall(n + 1, -1);
-    vector<int> st;
+    int n;
+    cin >> n;
 
-    for (int i = 0; i <= n; ++i) {
-        while (!st.empty() && s[i] < s[st.back()]) {
-            nxtSmall[st.back()] = i;
-            st.pop_back();
-        }
-        st.pb(i);
+    vector<ll> a(n + 1);
+    vector<ll> pre(n + 1, 0);
+    ll sum = 0;
+
+    for (int i = 1; i <= n; ++i) {
+        cin >> a[i];
+        sum += a[i];
+        pre[i] = pre[i - 1] + a[i];
     }
 
-    int lo = 1 , hi = n , idx = 1;
-    while(lo <= hi){
-        int mid = (lo + hi) >> 1;
-        if(calc(n , mid) <= pos){
-            idx = mid;
-            lo = mid + 1;
-        }else{
-            hi = mid - 1;
-        }
+    ll ans = sum;
+
+    vector<ll> calcLeft(n + 1);
+    calcLeft[0] = -infLL;
+
+    for (ll l = 1; l <= n; ++l) {
+        ll f_l = -l * l + l + pre[l - 1];
+        calcLeft[l] = max(calcLeft[l - 1], f_l);
     }
-    cout << idx << nl;
+
+    for (ll r = 1; r <= n; ++r) {
+        ll calcRight = r * r + r - pre[r];
+
+        ll diff = calcRight + calcLeft[r];
+
+        ll cand = sum + diff;
+
+        ans = max(ans, cand);
+    }
+
+    cout << ans << nl;
 }
 void file()
 {
@@ -81,7 +82,7 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll tc = 1;
-     cin >> tc;
+    cin >> tc;
     while (tc--)
     {
         TC();

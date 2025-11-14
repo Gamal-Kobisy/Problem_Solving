@@ -1,12 +1,12 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/1886/C
-//#pragma GCC optimize("O3")
-//#pragma GCC optimize ("unroll-loops")
-//#pragma GCC optimize ("Ofast")
+// LINK : https://codeforces.com/contest/2169/problem/D1
+#pragma GCC optimize("O3")
+#pragma GCC optimize ("unroll-loops")
+#pragma GCC optimize ("Ofast")
 #include <bits/stdc++.h>
-//#pragma GCC target("avx2")
+#pragma GCC target("avx2")
 using namespace std;
 #define ll long long
 #define ld long double
@@ -31,40 +31,29 @@ using namespace std;
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
-ll calc(int n , int mid){
-    int sum1 = n * (n + 1) / 2;
-    int sum2 = (n - mid) * (n - mid + 1) / 2;
-    return sum1 - sum2;
-}
-
 void TC() {
-    string s;
-    ll pos , n;
-    cin >> s >> pos;
-    n = s.size();
-    s.pb('A');
-    vector<int> nxtSmall(n + 1, -1);
-    vector<int> st;
+    ll x , y , k;
+    cin >> x >> y >> k;
 
-    for (int i = 0; i <= n; ++i) {
-        while (!st.empty() && s[i] < s[st.back()]) {
-            nxtSmall[st.back()] = i;
-            st.pop_back();
-        }
-        st.pb(i);
+    if (y == 1) return void(cout << -1 << nl);
+
+    ll n = 1e12;
+    for (ll i = 0; i < x; ++i) {
+        ll removed = n / y;
+        n = n - removed;
+        if (n == 0) break;
     }
 
-    int lo = 1 , hi = n , idx = 1;
-    while(lo <= hi){
-        int mid = (lo + hi) >> 1;
-        if(calc(n , mid) <= pos){
-            idx = mid;
-            lo = mid + 1;
-        }else{
-            hi = mid - 1;
-        }
+    if (k > n) return void(cout << -1 << nl);
+
+    ll copy = k;
+    for (ll i = 0; i < x; ++i) {
+        ll add = (copy - 1) / (y - 1);
+        if (copy > 1e12 - add) return void(cout << -1 << nl);
+        copy = copy + add;
     }
-    cout << idx << nl;
+
+    cout << copy << nl;
 }
 void file()
 {
@@ -81,7 +70,7 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll tc = 1;
-     cin >> tc;
+    cin >> tc;
     while (tc--)
     {
         TC();
