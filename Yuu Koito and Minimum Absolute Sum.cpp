@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/1886/C
+// LINK : https://codeforces.com/contest/2171/problem/B
 #pragma GCC optimize("O3")
 #pragma GCC optimize ("unroll-loops")
 #pragma GCC optimize ("Ofast")
@@ -31,34 +31,20 @@ using namespace std;
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
-ll calc(int n , int mid){
-    int sum1 = n * (n + 1) / 2;
-    int sum2 = (n - mid) * (n - mid - 1) / 2;
-    return sum1 - sum2;
-}
-
 void TC() {
-    string s;
-    long long pos;
-    cin >> s >> pos;
-    --pos;
-
-    int curLen = s.size();
-    vector <char> st;
-    bool ok = pos < curLen;
-    s += '$';
-    for (auto c : s) {
-        while (!ok && st.size() > 0 && st.back() > c) {
-            pos -= curLen;
-            --curLen;
-            st.pop_back();
-            if(pos < curLen)
-                ok = true;
-        }
-        st.push_back(c);
+    int n;
+    cin >> n;
+    vector<int>a(n);
+    for (int i = 0; i < n; ++i) {
+        cin >> a[i];
     }
-
-    cout << st[pos];
+    if(a.front() == -1) a.front() = a.back();
+    if(a.back() == -1) a.back() = a.front();
+    cout << abs(a.front() - a.back()) << nl;
+    for (int i = 0; i < n; ++i) {
+        cout << max(0 , a[i]) << sp;
+    }
+    cout << nl;
 }
 void file()
 {

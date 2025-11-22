@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/1886/C
+// LINK : https://codeforces.com/problemset/problem/1843/E
 #pragma GCC optimize("O3")
 #pragma GCC optimize ("unroll-loops")
 #pragma GCC optimize ("Ofast")
@@ -31,34 +31,49 @@ using namespace std;
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
-ll calc(int n , int mid){
-    int sum1 = n * (n + 1) / 2;
-    int sum2 = (n - mid) * (n - mid - 1) / 2;
-    return sum1 - sum2;
-}
-
 void TC() {
-    string s;
-    long long pos;
-    cin >> s >> pos;
-    --pos;
-
-    int curLen = s.size();
-    vector <char> st;
-    bool ok = pos < curLen;
-    s += '$';
-    for (auto c : s) {
-        while (!ok && st.size() > 0 && st.back() > c) {
-            pos -= curLen;
-            --curLen;
-            st.pop_back();
-            if(pos < curLen)
-                ok = true;
-        }
-        st.push_back(c);
+    int n , m;
+    cin >> n >> m;
+    vector<pii>a(m);
+    for (int i = 0; i < m; ++i) {
+        int l , r;
+        cin >> l >> r;
+        a[i] = {l , r};
+    }
+    sort(all(a));
+    int q;
+    cin >> q;
+    vector<int>x(q + 1);
+    for (int i = 0; i < q; ++i) {
+        cin >> x[i + 1];
     }
 
-    cout << st[pos];
+    int lo = 1 , hi = q , ans = -1;
+    while(lo <= hi){
+        int mid = (lo + hi) >> 1;
+        vector<int>pre(n + 1);
+        for (int i = 1; i <= mid; ++i) {
+            pre[x[i]]++;
+        }
+        for (int i = 1; i <= n; ++i) {
+            pre[i] += pre[i - 1];
+        }
+        bool ok = false;
+        for (int i = 0; i < m; ++i) {
+            int l = a[i].fi , r = a[i].se;
+            if(pre[r] - pre[l - 1] > (r - l + 1) / 2){
+                ok = true;
+                break;
+            }
+        }
+        if(ok){
+            ans = mid;
+            hi = mid - 1;
+        }else{
+            lo = mid + 1;
+        }
+    }
+    cout << ans << nl;
 }
 void file()
 {

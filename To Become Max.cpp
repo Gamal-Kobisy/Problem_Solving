@@ -1,12 +1,12 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/1886/C
-#pragma GCC optimize("O3")
-#pragma GCC optimize ("unroll-loops")
-#pragma GCC optimize ("Ofast")
+// LINK : https://codeforces.com/problemset/problem/1856/C
+//#pragma GCC optimize("O3")
+//#pragma GCC optimize ("unroll-loops")
+//#pragma GCC optimize ("Ofast")
 #include <bits/stdc++.h>
-#pragma GCC target("avx2")
+//#pragma GCC target("avx2")
 using namespace std;
 #define ll long long
 #define ld long double
@@ -31,34 +31,48 @@ using namespace std;
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
-ll calc(int n , int mid){
-    int sum1 = n * (n + 1) / 2;
-    int sum2 = (n - mid) * (n - mid - 1) / 2;
-    return sum1 - sum2;
-}
+
 
 void TC() {
-    string s;
-    long long pos;
-    cin >> s >> pos;
-    --pos;
-
-    int curLen = s.size();
-    vector <char> st;
-    bool ok = pos < curLen;
-    s += '$';
-    for (auto c : s) {
-        while (!ok && st.size() > 0 && st.back() > c) {
-            pos -= curLen;
-            --curLen;
-            st.pop_back();
-            if(pos < curLen)
-                ok = true;
-        }
-        st.push_back(c);
+    int n , k;
+    cin >> n >> k;
+    vector<int>a(n);
+    for (int i = 0; i < n; ++i) {
+        cin >> a[i];
     }
-
-    cout << st[pos];
+    int lo = 2 , hi = 2e8 , ans = 2;
+    while(lo <= hi){
+        int mid = (lo + hi) >> 1;
+        bool ok = false;
+        for(int i = 0 ; i < n; i++){
+            if(a[i] >= mid){
+                ok = true;
+                break;
+            }
+            ll cost = mid - a[i];
+            bool found = false;
+            for (int j = i + 1; j < n; ++j) {
+                int dif = j - i;
+                int target = mid - dif;
+                if(a[j] >= target){
+                    found = true;
+                    break;
+                }
+                cost += target - a[j];
+            }
+            if(found and cost <= k){
+                ok = true;
+                break;
+            }
+        }
+        if(ok){
+            ans = mid;
+            lo = mid + 1;
+        }else{
+            hi = mid - 1;
+        }
+    }
+    cout << ans << nl;
 }
 void file()
 {
