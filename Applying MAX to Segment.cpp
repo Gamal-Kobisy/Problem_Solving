@@ -28,7 +28,7 @@ private:
     }
     void update(int l, int r, int node, int lq, int rq, ll val)
     {
-        if(r<lq|| l > rq)
+        if(r<lq || l > rq)
         {
             return;
         }

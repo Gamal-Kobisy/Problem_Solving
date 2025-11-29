@@ -2,16 +2,29 @@
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
 // LINK : https://codeforces.com/problemset/problem/1472/E
+#pragma GCC optimize("O3")
+#pragma GCC optimize ("unroll-loops")
+#pragma GCC optimize ("Ofast")
 #include <bits/stdc++.h>
+#pragma GCC target("avx2")
+using namespace std;
 #define ll long long
-#define int ll
-#define nl '\n'
-#define sp ' '
+#define ld long double
+#define pii pair<int,int>
+#define pll pair<ll,ll>
+#define PI acos(-1)
+#define Ones(n) __builtin_popcountll(n)
+#define mem(arrr, xx) memset(arrr,xx,sizeof arrr)
+#define fi first
+#define se second
+#define pb push_back
 #define all(a) a.begin(),a.end()
 #define allr(a) a.rbegin(),a.rend()
 #define no cout<<"NO\n"
 #define yes cout<<"YES\n"
 #define imp cout<<"IMPOSSIBLE\n"
+#define nl '\n'
+#define sp ' '
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -80,75 +93,56 @@ struct SPT {
     }
 };
 
-void solve() {
+void TC() {
     int n;
     cin >> n;
-    vector<pair<int , int>>v(n);
-    vector<pair<pair<int , int> , int>>sorted(n);
+    vector<array<int  , 3>>a(n);
     for (int i = 0; i < n; ++i) {
-        int a , b;
-        cin >> a >> b;
-        v[i] = {a , b};
-        sorted[i] = {{a, b} , i};
+        cin >> a[i][0] >> a[i][1];
+        if(a[i][0] > a[i][1]) swap(a[i][0] , a[i][1]);
+        a[i][2] = i;
     }
-    sort(all(sorted));
-    vector<int>temp(n);
-    iota(all(temp) , 0);
-    auto merge = [sorted](int a , int b){
-        if(sorted[a].first.second < sorted[b].first.second)
-            return a;
-        else
-            return b;
+    sort(all(a));
+    auto merge = [](const array<int,3>& x, const array<int,3>& y) -> array<int,3> {
+        if (x[2] == -1) return y;
+        if (y[2] == -1) return x;
+        if (x[1] != y[1]) return (x[1] < y[1] ? x : y);
+        if (x[0] != y[0]) return (x[0] < y[0] ? x : y);
+        return (x[2] < y[2] ? x : y);
     };
-    SPT<int , decltype(merge)>min_height(temp , merge , infLL , true);
 
-    vector<pair<pair<int , int> , int>>sorted2 = sorted;
-    for (int i = 0; i < n; ++i) sorted2[i] = {{v[i].second , v[i].first} , i};
-    sort(all(sorted2));
+    array<int,3> neutral = {INT_MAX, INT_MAX, -1};
 
-    vector<int>temp2(n);
-    iota(all(temp2) , 0);
-    auto merge2 = [sorted2](int a , int b){
-        if(sorted2[a].first.second < sorted2[b].first.second)
-            return a;
-        else
-            return b;
+    SPT<array<int,3>, decltype(merge)> spt(a, merge, neutral, true);
+
+    auto good = [&](int i , int j){
+        return a[i][0] < a[j][0] and a[i][1] < a[j][1];
     };
-    SPT<int , decltype(merge2)>min_width(temp2 , merge2 , infLL , true);
+    vector<int> ans(n, -1);
+    for (int i = 0; i < n; ++i) {
+        int pos = lower_bound(a.begin(), a.end(), a[i][0],
+                              [](const array<int,3>& arr, int val){ return arr[0] < val; })
+                  - a.begin();
+
+        if (pos == 0) {
+            ans[a[i][2]] = -1;
+        } else {
+            array<int,3> best = spt.query(0, pos - 1);
+            if (best[2] == -1) {
+                ans[a[i][2]] = -1;
+            } else if (best[1] < a[i][1]) {
+                ans[a[i][2]] = best[2] + 1;
+            } else {
+                ans[a[i][2]] = -1;
+            }
+        }
+    }
 
     for (int i = 0; i < n; ++i) {
-        int right = lower_bound(all(sorted) , make_pair(v[i] , i)) - sorted.begin();
-        right--;
-        int right2 = lower_bound(all(sorted2) , make_pair(make_pair(v[i].second , v[i].first) , i)) - sorted2.begin();
-        right2--;
-
-        int ans = -1;
-
-        if(right >= 0){
-            int idx = min_height.query(0 , right);
-            int cand_width = sorted[idx].first.first;
-            int cand_height = sorted[idx].first.second;
-            if(cand_width < v[i].first and cand_height < v[i].second)
-                ans = sorted[idx].second + 1;
-            else if(cand_width < v[i].second and cand_height < v[i].first)
-                ans = sorted[idx].second + 1;
-        }
-
-        if(ans == -1 && right2 >= 0){
-            int idx2 = min_width.query(0 , right2);
-            int cand_width = sorted2[idx2].first.first;
-            int cand_height = sorted2[idx2].first.second;
-            if(cand_width < v[i].first and cand_height < v[i].second)
-                ans = sorted2[idx2].second + 1;
-            else if(cand_width < v[i].second and cand_height < v[i].first)
-                ans = sorted2[idx2].second + 1;
-        }
-
-        cout << ans << sp;
+        cout << ans[i] << sp;
     }
     cout << nl;
 }
-
 void file()
 {
 #ifndef ONLINE_JUDGE
@@ -158,16 +152,16 @@ void file()
 #endif
 }
 
-signed main() {
+int main() {
     file();
     ENG_GAMAL
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
-    ll t = 1;
-     cin >> t;
-    while (t--)
+    ll tc = 1;
+     cin >> tc;
+    while (tc--)
     {
-        solve();
+        TC();
     }
 
     return 0;

@@ -21,54 +21,57 @@ using namespace std;
 const int N = 3000 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 int n , vis[N][N];
-string grid[N] , memo[N][N];
-string di[] = {"D", "L", "R", "U", "DR", "DL", "UR", "UL"};
-int dx[] = {1, 0, 0, -1, 1, -1, 1, -1};
-int dy[] = {0, -1, 1, 0, 1, -1, -1, 1};
-int knightx[] = {2, 2, -2, -2, 1, 1, -1, -1};
-int knighty[] = {1, -1, 1, -1, 2, -2, 2, -2};
-string solve(int i, int j) {
-    if (vis[i][j]) return memo[i][j];
-    if (i == n && j == n) return "";
+string grid[N] ;
 
-    string best;
-    bool have = false;
+unordered_map<long long, string> memo;
+long long key(int i, int j){
+    return ( (long long)i << 32 ) ^ (unsigned long long) j;
+}
 
-    if (j < n) {
-        string right = string(1, grid[i][j + 1]) + solve(i, j + 1);
-        if (!have || right < best) {
-            best = right;
-            have = true;
+string solve(int i , int j){
+    if(i == n && j == n) return string("");
+    if(i > n || j > n) return string( (2*n)+5, 'z');
+
+    long long k = key(i,j);
+    auto it = memo.find(k);
+    if(it != memo.end()) return it->second;
+
+    char down = (i + 1 <= n ? grid[i + 1][j] : char(127));
+    char right = (j + 1 <= n ? grid[i][j + 1] : char(127));
+
+    string ret;
+    if(j == n){
+        ret = down + solve(i + 1, j);
+    } else if(i == n){
+        ret = right + solve(i, j + 1);
+    } else {
+        if(right < down){
+            ret = right + solve(i, j + 1);
+        } else if(down < right){
+            ret = down + solve(i + 1, j);
+        } else {
+            string a = right + solve(i, j + 1);
+            string b = down + solve(i + 1, j);
+            if(a <= b) ret = std::move(a);
+            else ret = std::move(b);
         }
     }
-    if (i < n) {
-        string down = string(1, grid[i + 1][j]) + solve(i + 1, j);
-        if (!have || down < best) {
-            best = down;
-            have = true;
-        }
-    }
 
-    // store and return
-    vis[i][j] = true;
-    memo[i][j] = best;
-    return memo[i][j];
+    memo.emplace(k, ret);
+    return memo[k];
 }
 
 void TC() {
     cin >> n;
     for (int i = 1; i <= n; ++i) {
         cin >> grid[i];
-        grid[i] = "z" + grid[i];
+        grid[i] = " " + grid[i];
     }
-    for(int i : {0ll , n + 1}){
-        for (int j = 1; j <= n; ++j) {
-            grid[i][j] = 'z';
-        }
-    }
-    memset(vis , 0 , sizeof vis);
-    cout << grid[1][1] + solve(1 , 1) << nl;
+
+    string ans = grid[1][1] + solve(1,1);
+    cout << ans << nl;
 }
+
 void file()
 {
 #ifndef ONLINE_JUDGE
@@ -81,14 +84,11 @@ void file()
 signed main() {
     file();
     ENG_GAMAL
-// test-independent code ——————————————————————
-// ————————————————————————————————————————————
     ll tc = 1;
-//     cin >> tc;
+    // cin >> tc;
     while (tc--)
     {
         TC();
     }
-
     return 0;
 }

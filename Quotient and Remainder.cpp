@@ -1,31 +1,67 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://cses.fi/problemset/task/3314
+// LINK : https://codeforces.com/contest/2170/problem/C
+#pragma GCC optimize("O3")
+#pragma GCC optimize ("unroll-loops")
+#pragma GCC optimize ("Ofast")
 #include <bits/stdc++.h>
+#pragma GCC target("avx2")
+using namespace std;
 #define ll long long
-#define nl '\n'
-#define sp ' '
+#define ld long double
+#define pii pair<int,int>
+#define pll pair<ll,ll>
+#define PI acos(-1)
+#define Ones(n) __builtin_popcountll(n)
+#define mem(arrr, xx) memset(arrr,xx,sizeof arrr)
+#define fi first
+#define se second
+#define pb push_back
 #define all(a) a.begin(),a.end()
 #define allr(a) a.rbegin(),a.rend()
 #define no cout<<"NO\n"
 #define yes cout<<"YES\n"
 #define imp cout<<"IMPOSSIBLE\n"
+#define nl '\n'
+#define sp ' '
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-int n , a[N] , memo[];
 
+void TC() {
+    ll n ,  k;
+    cin >> n >> k;
+    vector<ll> q(n) , r(n);
+    for (int i = 0; i < n; ++i) cin >> q[i];
+    for (int i = 0; i < n; ++i) cin >> r[i];
 
+    vector<ll> limits;
+    for (ll val : q) {
+        if (val >= k) {
+            limits.push_back(0);
+        } else {
+            limits.push_back((k - val) / (val + 1));
+        }
+    }
+    sort(all(limits));
+    sort(all(r));
 
-void solve() {
-    cin >> n;
-    for(int i = 1 ; i <= n ; i++){
-        cin >> a[i];
+    int ans = 0;
+    int idx_r = 0;
+
+    for (int i = 0; i < n; ++i) {
+        if (idx_r >= n) break;
+
+        if (limits[i] >= r[idx_r]) {
+            ans++;
+            idx_r++;
+        }
     }
 
+    cout << ans << nl;
 }
 void file()
 {
@@ -41,11 +77,11 @@ int main() {
     ENG_GAMAL
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
-    ll t = 1;
-     cin >> t;
-    while (t--)
+    ll tc = 1;
+    cin >> tc;
+    while (tc--)
     {
-        solve();
+        TC();
     }
 
     return 0;
