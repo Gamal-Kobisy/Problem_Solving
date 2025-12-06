@@ -1,12 +1,12 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/1833/E
-//#pragma GCC optimize("O3")
-//#pragma GCC optimize ("unroll-loops")
-//#pragma GCC optimize ("Ofast")
+// LINK : https://codeforces.com/problemset/problem/2006/A
+#pragma GCC optimize("O3")
+#pragma GCC optimize ("unroll-loops")
+#pragma GCC optimize ("Ofast")
 #include <bits/stdc++.h>
-//#pragma GCC target("avx2")
+#pragma GCC target("avx2")
 using namespace std;
 #define ll long long
 #define ld long double
@@ -14,6 +14,8 @@ using namespace std;
 #define pll pair<ll,ll>
 #define PI acos(-1)
 #define Ones(n) __builtin_popcountll(n)
+#define MSB(n) (63 - __builtin_clzll(n))
+#define LSB(n) (__builtin_ctzll(n))
 #define mem(arrr, xx) memset(arrr,xx,sizeof arrr)
 #define fi first
 #define se second
@@ -26,49 +28,54 @@ using namespace std;
 #define nl '\n'
 #define sp ' '
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
-using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-vector<set<int>>adj(N);
-vector<bool>vis(N , false);
-bool open;
-void dfs(int v){
-    vis[v] = true;
-    if(adj[v].size() < 2)
-        open = true;
-    for(int u : adj[v]){
-        if(not vis[u]) dfs(u);
-    }
-}
 
 void TC() {
     int n;
     cin >> n;
-    for (int i = 0; i <= n; ++i) {
-        vis[i] = false;
-        adj[i].clear();
+    vector<int> deg(n+1,0);
+    for (int i = 0; i < n-1; ++i) {
+        int u,v;
+        cin >> u >> v;
+        deg[u]++; deg[v]++;
     }
-    vector<int>a(n + 1);
+    string s;
+    cin >> s;
+    int cnt0 = 0, cnt1 = 0, cntq = 0;
+    int inner_q = 0;
     for (int i = 1; i <= n; ++i) {
-        cin >> a[i];
-        adj[i].insert(a[i]);
-        adj[a[i]].insert(i);
-    }
-
-
-    int cnt1 = 0 , cnt2 = 0;
-    for (int i = 1; i <= n; ++i) {
-        if(not vis[i]){
-            open = false;
-            dfs(i);
-            cnt1++;
-            cnt2 += open;
+        bool isLeaf = (i != 1 && deg[i] == 1);
+        char c = s[i-1];
+        if (isLeaf) {
+            if (c == '0') cnt0++;
+            else if (c == '1') cnt1++;
+            else cntq++;
+        } else {
+            if (i == 1) continue;
+            if (c == '?') inner_q++;
         }
     }
-    cout << min(cnt1 - cnt2 + 1 , cnt1) << sp << cnt1 << nl;
-
+    char root = s[0];
+    int ans = 0;
+    if (root == '0' || root == '1') {
+        int inv = (root == '0') ? cnt1 : cnt0;
+        ans = inv + (cntq + 1) / 2;
+    } else {
+        if (cnt0 > cnt1) {
+            ans = cnt0 + (cntq / 2);
+        }
+        else if (cnt1 > cnt0) {
+            ans = cnt1 + (cntq / 2);
+        }
+        else {
+            ans = cnt0 + (cntq + (inner_q % 2)) / 2;
+        }
+    }
+    cout << ans << nl;
 }
+
 void file()
 {
 #ifndef ONLINE_JUDGE
@@ -84,7 +91,7 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll tc = 1;
-     cin >> tc;
+    cin >> tc;
     while (tc--)
     {
         TC();

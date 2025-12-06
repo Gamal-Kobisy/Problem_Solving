@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/1833/E
+// LINK : https://codeforces.com/problemset/problem/1775/C
 //#pragma GCC optimize("O3")
 //#pragma GCC optimize ("unroll-loops")
 //#pragma GCC optimize ("Ofast")
@@ -14,6 +14,8 @@ using namespace std;
 #define pll pair<ll,ll>
 #define PI acos(-1)
 #define Ones(n) __builtin_popcountll(n)
+#define MSB(n) (63 - __builtin_clzll(n))
+#define LSB(n) (__builtin_ctzll(n))
 #define mem(arrr, xx) memset(arrr,xx,sizeof arrr)
 #define fi first
 #define se second
@@ -30,44 +32,43 @@ using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-vector<set<int>>adj(N);
-vector<bool>vis(N , false);
-bool open;
-void dfs(int v){
-    vis[v] = true;
-    if(adj[v].size() < 2)
-        open = true;
-    for(int u : adj[v]){
-        if(not vis[u]) dfs(u);
+
+ll range_and(ll n, ll m) {
+    ll res = 0;
+    for (int i = 62; i >= 0; i--) {
+        ll bit = (1LL << i);
+        if ((n & bit) == (m & bit)) {
+            res |= (n & bit);
+        } else {
+            break;
+        }
     }
+    return res;
 }
 
 void TC() {
-    int n;
-    cin >> n;
-    for (int i = 0; i <= n; ++i) {
-        vis[i] = false;
-        adj[i].clear();
-    }
-    vector<int>a(n + 1);
-    for (int i = 1; i <= n; ++i) {
-        cin >> a[i];
-        adj[i].insert(a[i]);
-        adj[a[i]].insert(i);
-    }
+    ll n , x;
+    cin >> n >> x;
+    if((n & x) != x) return void(cout << -1 << nl);
+    if(n == x) return void(cout << n << nl);
 
+    ll lo = n, hi = 5e18;
+    ll ans = -1;
 
-    int cnt1 = 0 , cnt2 = 0;
-    for (int i = 1; i <= n; ++i) {
-        if(not vis[i]){
-            open = false;
-            dfs(i);
-            cnt1++;
-            cnt2 += open;
+    while (lo <= hi) {
+        ll mid = lo + (hi - lo) / 2;
+        ll val = range_and(n, mid);
+
+        if (val > x) {
+            lo = mid + 1;
+        } else if (val < x) {
+            hi = mid - 1;
+        } else {
+            ans = mid;
+            hi = mid - 1;
         }
     }
-    cout << min(cnt1 - cnt2 + 1 , cnt1) << sp << cnt1 << nl;
-
+    cout << ans << nl;
 }
 void file()
 {
@@ -84,7 +85,7 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll tc = 1;
-     cin >> tc;
+    cin >> tc;
     while (tc--)
     {
         TC();

@@ -1,12 +1,12 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/1833/E
-//#pragma GCC optimize("O3")
-//#pragma GCC optimize ("unroll-loops")
-//#pragma GCC optimize ("Ofast")
+// LINK : https://codeforces.com/contest/1795/problem/D
+#pragma GCC optimize("O3")
+#pragma GCC optimize ("unroll-loops")
+#pragma GCC optimize ("Ofast")
 #include <bits/stdc++.h>
-//#pragma GCC target("avx2")
+#pragma GCC target("avx2")
 using namespace std;
 #define ll long long
 #define ld long double
@@ -30,44 +30,74 @@ using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-vector<set<int>>adj(N);
-vector<bool>vis(N , false);
-bool open;
-void dfs(int v){
-    vis[v] = true;
-    if(adj[v].size() < 2)
-        open = true;
-    for(int u : adj[v]){
-        if(not vis[u]) dfs(u);
+
+ll fact[N] , modinv[N];
+
+const ll MOD = 998244353;
+
+ll add(ll a, ll b)
+{
+    return ((a % MOD) + (b % MOD)) % MOD;
+}
+
+ll sub(ll a, ll b)
+{
+    return ((a % MOD) - (b % MOD) + MOD) % MOD;
+}
+
+ll mul(ll a, ll b)
+{
+    return ((a % MOD) * (b % MOD)) % MOD;
+}
+
+ll power(ll b, ll p) {
+    ll ans = 1;
+    while (p) {
+        if (p & 1)
+            ans = mul(ans , b);
+        b = mul(b , b);
+        p /= 2;
     }
+    return ans;
+}
+
+void pre(){
+    fact[0] = 1;
+    for (int i = 1; i < N; ++i) {
+        fact[i] = mul(fact[i - 1] , i);
+    }
+    modinv[N - 1] = power(fact[N - 1] , MOD - 2);
+    for (int i = N - 2; i >= 0 ; --i) {
+        modinv[i] = mul(i + 1  , modinv[i + 1]);
+    }
+}
+
+ll nCr(int n, int r) {
+    return mul(mul(fact[n], modinv[n - r]), modinv[r]);
+}
+
+ll nPr(int n, int r) {
+    return mul(fact[n], modinv[n - r]);
+}
+
+ll starsBars(int n , int k){
+    return nCr(n + k - 1 , k - 1);
 }
 
 void TC() {
     int n;
     cin >> n;
-    for (int i = 0; i <= n; ++i) {
-        vis[i] = false;
-        adj[i].clear();
+    int mx = 0;
+    ll ans = nCr(n/3 , n/6);
+    for (int i = 0; i < n / 3; ++i) {
+        int a , b , c;
+        cin >> a >> b >> c;
+        int mn = min({a , b , c});
+        mx += a + b + c - mn;
+        int cnt = (a == mn) + (b == mn) + (c == mn);
+        ans = mul(ans , cnt);
     }
-    vector<int>a(n + 1);
-    for (int i = 1; i <= n; ++i) {
-        cin >> a[i];
-        adj[i].insert(a[i]);
-        adj[a[i]].insert(i);
-    }
-
-
-    int cnt1 = 0 , cnt2 = 0;
-    for (int i = 1; i <= n; ++i) {
-        if(not vis[i]){
-            open = false;
-            dfs(i);
-            cnt1++;
-            cnt2 += open;
-        }
-    }
-    cout << min(cnt1 - cnt2 + 1 , cnt1) << sp << cnt1 << nl;
-
+    cout << ans << nl;
 }
 void file()
 {
@@ -82,9 +112,10 @@ int main() {
     file();
     ENG_GAMAL
 // test-independent code ——————————————————————
+    pre();
 // ————————————————————————————————————————————
     ll tc = 1;
-     cin >> tc;
+//     cin >> tc;
     while (tc--)
     {
         TC();

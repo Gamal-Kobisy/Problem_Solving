@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/contest/339/problem/D
+// LINK : https://codeforces.com/problemset/problem/1982/D
 #pragma GCC optimize("O3")
 #pragma GCC optimize ("unroll-loops")
 #pragma GCC optimize ("Ofast")
@@ -14,6 +14,8 @@ using namespace std;
 #define pll pair<ll,ll>
 #define PI acos(-1)
 #define Ones(n) __builtin_popcountll(n)
+#define MSB(n) (63 - __builtin_clzll(n))
+#define LSB(n) (__builtin_ctzll(n))
 #define mem(arrr, xx) memset(arrr,xx,sizeof arrr)
 #define fi first
 #define se second
@@ -31,78 +33,83 @@ using namespace std;
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
-struct segTree{
-#define LF 2*x+1
-#define RT 2*x+2
-#define mid (lx+rx)/2
-
-    int sz;
-    vector<ll>seg;
-
-    segTree(int n){
-        sz = n;
-        seg = vector<ll>(4 * sz + 1 , 0);
+ll gcd(ll a, ll b) {
+    while (b != 0) {
+        ll temp = b;
+        b = a % b;
+        a = temp;
     }
+    return a;
+}
 
-    void update(int i , int val , int x = 0 , int lx = 0 , int rx = -1){
-        if(rx == -1) rx = sz - 1;
-
-        if(lx == rx){
-            seg[x] = val;
-            return;
-        }
-        if(i <= mid){
-            update(i , val , LF , lx , mid);
-        }else{
-            update(i , val , RT , mid + 1 , rx);
-        }
-        int len = rx - lx + 1;
-        int h = log2(len);
-        if(h & 1){
-            seg[x] = min(seg[LF] , seg[RT]);
-        }else{
-            seg[x] = max(seg[LF] , seg[RT]);
+ll gcd_vector(const vector<ll>& vec) {
+    ll result = vec[0];
+    for (size_t i = 1; i < vec.size(); ++i) {
+        result = gcd(result, vec[i]);
+        if (result == 1) {
+            return 1;
         }
     }
-
-    ll query(int l , int r , int x = 0 , int lx = 0 , int rx = -1){
-        if(rx == -1) rx = sz - 1;
-        if(l > r or rx < l or lx > r) return 0;
-        if(lx >= l and rx <= r)
-            return seg[x];
-        int len = rx - lx + 1;
-        int h = log2(len);
-        if(h & 1){
-            return min(query(l , r , LF , lx , mid)
-                    , query(l , r , RT , mid + 1 , rx));
-        }else{
-            return max(query(l , r , LF , lx , mid)
-                    , query(l , r , RT , mid + 1 , rx));
-        }
-    }
-};
+    return result;
+}
 
 void TC() {
-    int n , q;
-    cin >> n >> q;
-    n = powl(2 , n);
-    segTree seg(n);
+    ll n , m , k;
+    cin >> n >> m >> k;
+    vector<vector<int>> a(n , vector<int>(m));
     for (int i = 0; i < n; ++i) {
-        int a;
-        cin >> a;
-        seg.update(i  ,a);
-    }
-    while(q--){
-        int t , l , r , i , val;
-        cin >> t;
-        if(t & 1){
-            cin >> i >> val;
-            seg.update(i , val);
-        }else{
-            cin >> l >> r;
-            cout << seg.query(l , r) << nl;
+        for (int j = 0; j < m; ++j) {
+            cin >> a[i][j];
         }
     }
+    vector<string> grid(n);
+    ll sum1 = 0 , sum2 = 0;
+    for (int i = 0; i < n; ++i) {
+        cin >> grid[i];
+        for (int j = 0; j < m; ++j) {
+            if (grid[i][j] == '1') sum1 += a[i][j];
+            else sum2 += a[i][j];
+        }
+    }
+
+    ll dif = sum2 - sum1;
+
+    vector<vector<int>> pre1(n + 1 , vector<int>(m + 1, 0));
+    for (int i = 1; i <= n; ++i) {
+        for (int j = 1; j <= m; ++j) {
+            pre1[i][j] = pre1[i-1][j] + pre1[i][j-1] - pre1[i-1][j-1] + (grid[i-1][j-1] == '1');
+        }
+    }
+
+    vector<ll> values;
+
+    for (int i = 1; i + k - 1 <= n; ++i) {
+        for (int j = 1; j + k - 1 <= m; ++j) {
+            int i2 = i + k - 1;
+            int j2 = j + k - 1;
+            int ones = pre1[i2][j2] - pre1[i-1][j2] - pre1[i2][j-1] + pre1[i-1][j-1];
+            ll di = k * k - 2 * ones;
+            values.pb(di);
+        }
+    }
+
+    bool allZero = true;
+    for (ll v : values) if (v != 0) { allZero = false; break; }
+
+    if (allZero) {
+        if (dif == 0) yes;
+        else no;
+        return;
+    }
+
+    ll g = gcd_vector(values);
+    if (g == 0) {
+        if (dif == 0) yes;
+        else no;
+        return;
+    }
+    if (abs(dif) % g == 0) yes;
+    else no;
 }
 void file()
 {
@@ -119,7 +126,7 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll tc = 1;
-//     cin >> tc;
+     cin >> tc;
     while (tc--)
     {
         TC();

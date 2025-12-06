@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/1833/E
+// LINK : https://codeforces.com/problemset/problem/1829/G
 //#pragma GCC optimize("O3")
 //#pragma GCC optimize ("unroll-loops")
 //#pragma GCC optimize ("Ofast")
@@ -28,46 +28,55 @@ using namespace std;
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
+const int N = 1e6 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-vector<set<int>>adj(N);
-vector<bool>vis(N , false);
-bool open;
-void dfs(int v){
-    vis[v] = true;
-    if(adj[v].size() < 2)
-        open = true;
-    for(int u : adj[v]){
-        if(not vis[u]) dfs(u);
+
+ll memo[N];
+
+int nearst_sum(int x){
+    int lo = 1 , hi = 2000 , ans = 1;
+    while (lo <= hi){
+        int mid = (lo + hi) >> 1;
+        ll sum = mid * (mid + 1) / 2;
+        if(x <= sum){
+            ans = mid;
+            hi = mid - 1;
+        }else{
+            lo = mid + 1;
+        }
     }
+    return ans;
+}
+
+ll calc(int i){
+    if (i <= 0) return 0;
+    if(i == 1) return 1;
+    ll &ret = memo[i];
+    if(ret != -1) return ret;
+
+    int r = nearst_sum(i);
+    int left = i - r;
+    int right = i - (r - 1);
+
+    long long sum = 1LL * i * i;
+    if (nearst_sum(i + 1) != r) {
+        sum += calc(left);
+    } else if (nearst_sum(i - 1) != r) {
+        sum += calc(right);
+    } else {
+        sum += calc(left) + calc(right);
+        int common = i - 2 * (r - 1);
+        if (common > 0) sum -= calc(common);
+    }
+
+    ret = sum;
+    return ret;
 }
 
 void TC() {
     int n;
     cin >> n;
-    for (int i = 0; i <= n; ++i) {
-        vis[i] = false;
-        adj[i].clear();
-    }
-    vector<int>a(n + 1);
-    for (int i = 1; i <= n; ++i) {
-        cin >> a[i];
-        adj[i].insert(a[i]);
-        adj[a[i]].insert(i);
-    }
-
-
-    int cnt1 = 0 , cnt2 = 0;
-    for (int i = 1; i <= n; ++i) {
-        if(not vis[i]){
-            open = false;
-            dfs(i);
-            cnt1++;
-            cnt2 += open;
-        }
-    }
-    cout << min(cnt1 - cnt2 + 1 , cnt1) << sp << cnt1 << nl;
-
+    cout << calc(n) << nl;
 }
 void file()
 {
@@ -82,6 +91,7 @@ int main() {
     file();
     ENG_GAMAL
 // test-independent code ——————————————————————
+    mem(memo , -1);
 // ————————————————————————————————————————————
     ll tc = 1;
      cin >> tc;

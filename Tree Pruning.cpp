@@ -1,12 +1,12 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/1833/E
-//#pragma GCC optimize("O3")
-//#pragma GCC optimize ("unroll-loops")
-//#pragma GCC optimize ("Ofast")
+// LINK : https://codeforces.com/problemset/problem/2018/C
+#pragma GCC optimize("O3")
+#pragma GCC optimize ("unroll-loops")
+#pragma GCC optimize ("Ofast")
 #include <bits/stdc++.h>
-//#pragma GCC target("avx2")
+#pragma GCC target("avx2")
 using namespace std;
 #define ll long long
 #define ld long double
@@ -14,6 +14,8 @@ using namespace std;
 #define pll pair<ll,ll>
 #define PI acos(-1)
 #define Ones(n) __builtin_popcountll(n)
+#define MSB(n) (63 - __builtin_clzll(n))
+#define LSB(n) (__builtin_ctzll(n))
 #define mem(arrr, xx) memset(arrr,xx,sizeof arrr)
 #define fi first
 #define se second
@@ -28,46 +30,52 @@ using namespace std;
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
+const int N = 5e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-vector<set<int>>adj(N);
-vector<bool>vis(N , false);
-bool open;
-void dfs(int v){
-    vis[v] = true;
-    if(adj[v].size() < 2)
-        open = true;
-    for(int u : adj[v]){
-        if(not vis[u]) dfs(u);
-    }
+int n;
+vector<int>adj[N] , depth(N) , max_depth(N);
+vector<bool>vis(N);
+
+int dfs(int v , int d){
+   vis[v] = true;
+   depth[v] = d;
+   int mx_d = d;
+   for(int u : adj[v]){
+       if(vis[u]) continue;
+       mx_d = max(mx_d , dfs(u , d + 1));
+   }
+   max_depth[v] = mx_d;
+   return mx_d;
 }
 
 void TC() {
-    int n;
     cin >> n;
-    for (int i = 0; i <= n; ++i) {
-        vis[i] = false;
+    for (int i = 1; i <= n; ++i) {
         adj[i].clear();
+        vis[i] = false;
+        depth[i] = max_depth[i] = 0;
     }
-    vector<int>a(n + 1);
+    for (int i = 0; i < n - 1; ++i) {
+        int a , b;
+        cin >> a >> b;
+        adj[a].pb(b);
+        adj[b].pb(a);
+    }
+    dfs(1 , 1);
+    vector<int> count(n + 2, 0);
     for (int i = 1; i <= n; ++i) {
-        cin >> a[i];
-        adj[i].insert(a[i]);
-        adj[a[i]].insert(i);
+        count[depth[i]]++;
+        count[max_depth[i] + 1]--;
     }
 
+    int keep = 0 , cur = 0;
 
-    int cnt1 = 0 , cnt2 = 0;
-    for (int i = 1; i <= n; ++i) {
-        if(not vis[i]){
-            open = false;
-            dfs(i);
-            cnt1++;
-            cnt2 += open;
-        }
+    for (int d = 1; d <= n; ++d) {
+        cur += count[d];
+        keep = max(keep, cur);
     }
-    cout << min(cnt1 - cnt2 + 1 , cnt1) << sp << cnt1 << nl;
 
+    cout << n - keep << nl;
 }
 void file()
 {

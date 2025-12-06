@@ -1,12 +1,12 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/1833/E
-//#pragma GCC optimize("O3")
-//#pragma GCC optimize ("unroll-loops")
-//#pragma GCC optimize ("Ofast")
+// LINK : https://codeforces.com/problemset/problem/1798/D
+#pragma GCC optimize("O3")
+#pragma GCC optimize ("unroll-loops")
+#pragma GCC optimize ("Ofast")
 #include <bits/stdc++.h>
-//#pragma GCC target("avx2")
+#pragma GCC target("avx2")
 using namespace std;
 #define ll long long
 #define ld long double
@@ -30,44 +30,36 @@ using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-vector<set<int>>adj(N);
-vector<bool>vis(N , false);
-bool open;
-void dfs(int v){
-    vis[v] = true;
-    if(adj[v].size() < 2)
-        open = true;
-    for(int u : adj[v]){
-        if(not vis[u]) dfs(u);
-    }
-}
 
 void TC() {
     int n;
     cin >> n;
-    for (int i = 0; i <= n; ++i) {
-        vis[i] = false;
-        adj[i].clear();
+    vector<int>pos , neg;
+    int mx = -inf , mn = inf;
+    for (int i = 0; i < n; ++i) {
+        int a;
+        cin >> a;
+        mn = min(mn , a);
+        mx = max(mx , a);
+        if(a >= 0) pos.pb(a);
+        else neg.pb(a);
     }
-    vector<int>a(n + 1);
-    for (int i = 1; i <= n; ++i) {
-        cin >> a[i];
-        adj[i].insert(a[i]);
-        adj[a[i]].insert(i);
-    }
-
-
-    int cnt1 = 0 , cnt2 = 0;
-    for (int i = 1; i <= n; ++i) {
-        if(not vis[i]){
-            open = false;
-            dfs(i);
-            cnt1++;
-            cnt2 += open;
+    if(mx - mn == 0) return void(no);
+    yes;
+    int thr = mx - mn;
+    int sum = 0;
+    for (int i = 0; i < n; ++i) {
+        if(sum <= 0){
+            cout << pos.back() << sp;
+            sum += pos.back();
+            pos.pop_back();
+        }else{
+            cout << neg.back() << sp;
+            sum += neg.back();
+            neg.pop_back();
         }
     }
-    cout << min(cnt1 - cnt2 + 1 , cnt1) << sp << cnt1 << nl;
-
+    cout << nl;
 }
 void file()
 {

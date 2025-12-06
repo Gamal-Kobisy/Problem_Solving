@@ -1,12 +1,12 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/1833/E
-//#pragma GCC optimize("O3")
-//#pragma GCC optimize ("unroll-loops")
-//#pragma GCC optimize ("Ofast")
+// LINK : https://codeforces.com/problemset/problem/1983/D
+#pragma GCC optimize("O3")
+#pragma GCC optimize ("unroll-loops")
+#pragma GCC optimize ("Ofast")
 #include <bits/stdc++.h>
-//#pragma GCC target("avx2")
+#pragma GCC target("avx2")
 using namespace std;
 #define ll long long
 #define ld long double
@@ -14,6 +14,8 @@ using namespace std;
 #define pll pair<ll,ll>
 #define PI acos(-1)
 #define Ones(n) __builtin_popcountll(n)
+#define MSB(n) (63 - __builtin_clzll(n))
+#define LSB(n) (__builtin_ctzll(n))
 #define mem(arrr, xx) memset(arrr,xx,sizeof arrr)
 #define fi first
 #define se second
@@ -30,44 +32,63 @@ using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-vector<set<int>>adj(N);
-vector<bool>vis(N , false);
-bool open;
-void dfs(int v){
-    vis[v] = true;
-    if(adj[v].size() < 2)
-        open = true;
-    for(int u : adj[v]){
-        if(not vis[u]) dfs(u);
-    }
-}
 
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
+struct un_ordered
+{
+    bool operator()(const long long &a, const long long &b) const
+    {
+        return true;
+    }
+};
+template <class T, class C = less_equal<T>>
+using ordered_set = tree<T, null_type, C, rb_tree_tag, tree_order_statistics_node_update>;
+
+ll inversions(vector<int>& arr, int l, int r) {
+    if (l >= r) return 0;
+
+    int mid = (l + r) / 2;
+    ll inv = inversions(arr, l, mid) + inversions(arr, mid + 1, r);
+
+    vector<int> temp(r - l + 1);
+    int i = l, j = mid + 1, k = 0;
+
+    while (i <= mid && j <= r) {
+        if (arr[i] <= arr[j]) {
+            temp[k++] = arr[i++];
+        } else {
+            temp[k++] = arr[j++];
+            inv += mid - i + 1; // all remaining in left are greater
+        }
+    }
+
+    while (i <= mid) temp[k++] = arr[i++];
+    while (j <= r) temp[k++] = arr[j++];
+
+    for (i = l, k = 0; i <= r; ++i, ++k) arr[i] = temp[k];
+
+    return inv;
+}
 void TC() {
     int n;
     cin >> n;
-    for (int i = 0; i <= n; ++i) {
-        vis[i] = false;
-        adj[i].clear();
-    }
-    vector<int>a(n + 1);
-    for (int i = 1; i <= n; ++i) {
+    vector<int>a(n) , b(n);
+    map<int , int>freq1 , freq2;
+    for (int i = 0; i < n; ++i) {
         cin >> a[i];
-        adj[i].insert(a[i]);
-        adj[a[i]].insert(i);
+        freq1[a[i]]++;
     }
-
-
-    int cnt1 = 0 , cnt2 = 0;
-    for (int i = 1; i <= n; ++i) {
-        if(not vis[i]){
-            open = false;
-            dfs(i);
-            cnt1++;
-            cnt2 += open;
-        }
+    for (int i = 0; i < n; ++i) {
+        cin >> b[i];
+        freq2[b[i]]++;
     }
-    cout << min(cnt1 - cnt2 + 1 , cnt1) << sp << cnt1 << nl;
-
+    for (int i = 0; i < n; ++i) {
+        if(freq1[a[i]] != freq2[a[i]]) return void(no);
+    }
+    if((inversions(a , 0 , n - 1) & 1) == (inversions(b , 0 , n - 1) & 1)) yes;
+    else no;
 }
 void file()
 {
