@@ -1,40 +1,87 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/edu/course/2/lesson/5/2/practice/contest/279653/problem/C
+// LINK : https://codeforces.com/problemset/problem/242/E
+#pragma GCC optimize("O3")
+#pragma GCC optimize ("unroll-loops")
+#pragma GCC optimize ("Ofast")
 #include <bits/stdc++.h>
+#pragma GCC target("avx2")
+using namespace std;
 #define ll long long
-#define nl '\n'
-#define sp ' '
+#define ld long double
+#define pii pair<int,int>
+#define pll pair<ll,ll>
+#define PI acos(-1)
+#define Ones(n) __builtin_popcountll(n)
+#define MSB(n) (63 - __builtin_clzll(n))
+#define LSB(n) (__builtin_ctzll(n))
+#define mem(arrr, xx) memset(arrr,xx,sizeof arrr)
+#define fi first
+#define se second
+#define pb push_back
 #define all(a) a.begin(),a.end()
 #define allr(a) a.rbegin(),a.rend()
 #define no cout<<"NO\n"
 #define yes cout<<"YES\n"
+#define imp cout<<"IMPOSSIBLE\n"
+#define nl '\n'
+#define sp ' '
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
+
 struct SegTree {
 #define LF (x*2+1)
 #define RT (x*2+2)
 #define md ((lx+rx) >> 1)
-    vector<int> seg, lazy;
+
+    struct Node{
+        ll ans;
+        array<int , 20>freq;
+        Node(int num) : ans(num) {
+            freq.fill(0);
+            for (int i = 0; i < 20; ++i)
+                if ((1 << i) & num) freq[i] = 1;
+        }
+    };
+
+    vector<Node> seg;
+    vector<int> lazy;
     int sz;
 
     SegTree(int n) {
         sz = n;
-        seg.assign(4 * n, 0);
+        seg.assign(4 * n, Node(0));
         lazy.assign(4 * n, 0);
+    }
+
+    Node merge(Node lf , Node rt){
+        Node res = Node(0);
+        res.ans = lf.ans + rt.ans;
+        for (int i = 0; i < 20; ++i) {
+            res.freq[i] = lf.freq[i] + rt.freq[i];
+        }
+        return res;
     }
 
     void propegate(int x, int lx, int rx) {
         if (!lazy[x])return;
         if (lx != rx) {
-            lazy[LF] |= lazy[x];
-            lazy[RT] |= lazy[x];
+            lazy[LF] ^= lazy[x];
+            lazy[RT] ^= lazy[x];
         }
-        seg[x] |= lazy[x];
+        int len = rx - lx + 1;
+        for (int i = 0; i < 20; ++i) {
+            if((1 << i) & lazy[x])
+                seg[x].freq[i] = len - seg[x].freq[i];
+        }
+        seg[x].ans = 0;
+        for (int i = 0; i < 20; ++i) {
+            seg[x].ans += seg[x].freq[i] * (1ll << i);
+        }
         lazy[x] = 0;
     }
 
@@ -49,42 +96,45 @@ struct SegTree {
         }
         update(l, r, val, LF, lx, md);
         update(l, r, val, RT, md + 1, rx);
-        seg[x] = (seg[LF] & seg[RT]);
+        seg[x] = merge(seg[LF] , seg[RT]);
     }
 
 
-    int query(int l, int r, int x = 0, int lx = 0, int rx = -1) {
+    Node query(int l, int r, int x = 0, int lx = 0, int rx = -1) {
         if (rx == -1)rx = sz - 1;
         propegate(x, lx, rx);
-        if (r < lx or rx < l) return -1;
+        if (r < lx or rx < l) return Node(0);
         if (l <= lx and rx <= r) return seg[x];
-        return (query(l, r, LF, lx, md) & query(l, r, RT, md + 1, rx));
+        return merge(query(l, r, LF, lx, md) , query(l, r, RT, md + 1, rx));
     }
+
 
 #undef md
 #undef LF
 #undef RT
 };
 
-void solve() {
-    int n , m;
-    cin >> n >> m;
-    SegTree tree(n);
-    while(m--)
-    {
-        int op ;
-        cin >> op;
-        if(op == 1)
-        {
-            ll l , r , val;
-            cin >> l >> r >> val;
-            tree.update(l , r - 1 , val);
-        }
-        else
-        {
-            int l , r;
+void TC() {
+    int n;
+    cin >> n;
+    SegTree seg(n);
+    for (int i = 0; i < n; ++i) {
+        int a; cin >> a;
+        seg.update(i , i , a);
+    }
+    int q;
+    cin >> q;
+    while(q--){
+        int t , l , r , val;
+        cin >> t;
+        if(t & 1){
             cin >> l >> r;
-            cout << tree.query(l , r - 1) << nl;
+            --l, --r;
+            cout << seg.query(l , r).ans << nl;
+        }else{
+            cin >> l >> r >> val;
+            --l, --r;
+            seg.update(l , r , val);
         }
     }
 }
@@ -102,11 +152,11 @@ int main() {
     ENG_GAMAL
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
-    ll t = 1;
-//     cin >> t;
-    while (t--)
+    ll tc = 1;
+//     cin >> tc;
+    while (tc--)
     {
-        solve();
+        TC();
     }
 
     return 0;
