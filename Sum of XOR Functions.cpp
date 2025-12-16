@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/contest/1610/problem/C
+// LINK : https://codeforces.com/problemset/problem/1879/D
 #pragma GCC optimize("O3")
 #pragma GCC optimize ("unroll-loops")
 #pragma GCC optimize ("Ofast")
@@ -33,31 +33,64 @@ using namespace std;
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
+const ll MOD = 998244353;
+
+ll add(ll a, ll b)
+{
+    return ((a % MOD) + (b % MOD)) % MOD;
+}
+
+ll sub(ll a, ll b)
+{
+    return ((a % MOD) - (b % MOD) + MOD) % MOD;
+}
+
+ll mul(ll a, ll b)
+{
+    return ((a % MOD) * (b % MOD)) % MOD;
+}
+
 void TC() {
     int n;
     cin >> n;
-    vector<int>a(n) , b(n);
-    int mxA = 0 , mxB = 0;
+    vector<int>a(n);
     for (int i = 0; i < n; ++i) {
-        cin >> a[i] >> b[i];
-        mxA = max(mxA , min(a[i] , n - 1 - i));
-        mxB = max(mxB , min(b[i] , i));
+        cin >> a[i];
     }
-    int lo = 1 , hi = min(mxA , mxB) + 1 , ans = 1;
-    while(lo <= hi){
-        int md = (lo + hi) >> 1;
-        int take = 0;
-        for (int i = 0; i < n; ++i) {
-            if(b[i] >= take and a[i] >= md - take - 1)
-                take++;
+    vector<int>on(32);
+    vector<int>off(32);
+    vector<ll>onSum(32);
+    vector<ll>offSum(32);
+    int XOR = 0;
+    ll ans = 0;
+    for (int j = 0; j < 32; ++j) {
+        off[j] = 1;
+        offSum[j] = 0;
+    }
+    for (int i = 0; i < n; ++i) {
+        XOR ^= a[i];
+        ll idx = i + 1;
+        for (int j = 0; j < 32; ++j) {
+            ll bit = (1ll << j);
+            if ((XOR >> j) & 1) {
+                ll cur = sub(mul(idx , off[j]) , offSum[j]);
+                ans = add(ans , mul(cur ,  bit));
+            } else {
+                ll cur = sub(mul(idx , on[j]) , onSum[j]);
+                ans = add(ans , mul(cur ,  bit));
+            }
         }
-        if(take >= md){
-            ans = md;
-            lo = md + 1;
-        }else{
-            hi = md - 1;
+        for (int j = 0; j < 32; ++j) {
+            if ((XOR >> j) & 1) {
+                on[j]++;
+                onSum[j] += idx;
+            } else {
+                off[j]++;
+                offSum[j] += idx;
+            }
         }
     }
+
     cout << ans << nl;
 }
 void file()
@@ -75,7 +108,7 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll tc = 1;
-     cin >> tc;
+//     cin >> tc;
     while (tc--)
     {
         TC();

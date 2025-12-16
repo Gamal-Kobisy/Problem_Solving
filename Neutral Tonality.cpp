@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/contest/1610/problem/C
+// LINK : https://codeforces.com/problemset/problem/1893/B
 #pragma GCC optimize("O3")
 #pragma GCC optimize ("unroll-loops")
 #pragma GCC optimize ("Ofast")
@@ -34,31 +34,37 @@ const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
 void TC() {
-    int n;
-    cin >> n;
-    vector<int>a(n) , b(n);
-    int mxA = 0 , mxB = 0;
+    int n , m;
+    cin >> n >> m;
+    vector<int> b(m) , a(n);
+    vector<pii>v;
     for (int i = 0; i < n; ++i) {
-        cin >> a[i] >> b[i];
-        mxA = max(mxA , min(a[i] , n - 1 - i));
-        mxB = max(mxB , min(b[i] , i));
+        cin >> a[i];
+        v.pb({a[i] , -i});
     }
-    int lo = 1 , hi = min(mxA , mxB) + 1 , ans = 1;
-    while(lo <= hi){
-        int md = (lo + hi) >> 1;
-        int take = 0;
-        for (int i = 0; i < n; ++i) {
-            if(b[i] >= take and a[i] >= md - take - 1)
-                take++;
-        }
-        if(take >= md){
-            ans = md;
-            lo = md + 1;
-        }else{
-            hi = md - 1;
-        }
+    sort(all(v));
+    vector<int>put[n + 1];
+    for (int i = 0; i < m; ++i) {
+        cin >> b[i];
     }
-    cout << ans << nl;
+    sort(allr(b));
+    vector<int>greater;
+    for (int i = 0; i < m; ++i) {
+        auto it = lower_bound(all(v) , make_pair(b[i] , -inf));
+        if(it == v.end())
+            greater.pb(b[i]);
+        else{
+            int idx = -it->second;
+            put[idx].pb(b[i]);
+        }
+
+    }
+    for(int i : greater) cout << i << sp;
+    for (int i = 0; i < n; ++i) {
+        cout << a[i] << sp;
+        for(int j : put[i]) cout << j << sp;
+    }
+    cout << nl;
 }
 void file()
 {

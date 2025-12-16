@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK :
+// LINK : https://codeforces.com/contest/1931/problem/F
 #pragma GCC optimize("O3")
 #pragma GCC optimize ("unroll-loops")
 #pragma GCC optimize ("Ofast")
@@ -32,36 +32,47 @@ using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
+vector<int>adj[N] , chain;
+vector<bool>vis(N) , ancs(N);
+bool cycle;
+void dfs(int v){
+    vis[v] = true;
+    ancs[v] = true;
+    for(int u : adj[v]){
+        if(ancs[u]){
+            cycle = true;
+            return;
+        }
+        if(not vis[u])
+            dfs(u);
+    }
+    chain.pb(v);
+    ancs[v] = false;
+}
 
 void TC() {
     int n , k;
     cin >> n >> k;
-    vector<int> pos(n + 1);
-    vector<int> base;
-    bool valid = true;
-
+    for (int i = 0; i <= n; ++i) {
+        adj[i].clear();
+        vis[i] = ancs[i] = false;
+    }
+    cycle = false;
     for (int i = 0; i < k; ++i) {
         vector<int> screen(n);
         for (int j = 0; j < n; ++j) {
             cin >> screen[j];
         }
-
-        if(i == 0){
-            base = screen;
-            for(int j = 0; j < n; j++){
-                pos[screen[j]] = j;
-            }
-        }else{
-            int shift = pos[screen[0]];
-            for(int j = 0; j < n; j++){
-                if(screen[j] != base[(shift + j) % n]){
-                    valid = false;
-                    break;
-                }
-            }
+        for (int j = 1; j < n - 1; ++j) {
+            adj[screen[j]].pb(screen[j + 1]);
         }
     }
-    valid ? yes : no;
+
+    for (int i = 1; i <= n and not cycle; ++i) {
+        if(not vis[i])
+            dfs(i);
+    }
+    cycle ? no : yes;
 }
 void file()
 {
