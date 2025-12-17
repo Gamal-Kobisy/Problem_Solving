@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/1833/F
+// LINK : https://codeforces.com/problemset/problem/1829/H
 #pragma GCC optimize("O3")
 #pragma GCC optimize ("unroll-loops")
 #pragma GCC optimize ("Ofast")
@@ -32,9 +32,6 @@ using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-
-ll fact[N] , modinv[N];
-
 const ll MOD = 1e9 + 7;
 
 ll add(ll a, ll b)
@@ -51,93 +48,33 @@ ll mul(ll a, ll b)
 {
     return ((a % MOD) * (b % MOD)) % MOD;
 }
+int n , k , a[N];
+vector<vector<int>>memo;
 
-ll power(ll b, ll p) {
-    ll ans = 1;
-    while (p) {
-        if (p & 1)
-            ans = mul(ans , b);
-        b = mul(b , b);
-        p /= 2;
+int solve(int idx , int And){
+    if(idx == n) {
+        if(And == 64) return 0;
+        return Ones(And) == k;
     }
-    return ans;
+    int &ret = memo[idx][And];
+    if(~ret)
+        return ret;
+    int skip = solve(idx + 1, And);
+    int take;
+    if (And == 64) take = solve(idx + 1, a[idx]);
+    else take = solve(idx + 1, And & a[idx]);
+
+    ret = add(take, skip);
+    return ret;
 }
-
-void pre(){
-    fact[0] = 1;
-    for (int i = 1; i < N; ++i) {
-        fact[i] = mul(fact[i - 1] , i);
-    }
-    modinv[N - 1] = power(fact[N - 1] , MOD - 2);
-    for (int i = N - 2; i >= 0 ; --i) {
-        modinv[i] = mul(i + 1  , modinv[i + 1]);
-    }
-}
-
-ll nCr(int n, int r) {
-    return mul(mul(fact[n], modinv[n - r]), modinv[r]);
-}
-
-ll nPr(int n, int r) {
-    return mul(fact[n], modinv[n - r]);
-}
-
-struct custom_hash {
-    static uint64_t splitmix64(uint64_t x) {
-        // http://xorshift.di.unimi.it/splitmix64.c
-        x += 0x9e3779b97f4a7c15;
-        x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
-        x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
-        return x ^ (x >> 31);
-    }
-
-    size_t operator()(uint64_t x) const {
-        static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
-        return splitmix64(x + FIXED_RANDOM);
-    }
-};
 
 void TC() {
-    int n , m;
-    cin >> n >> m;
-
-    unordered_map<int , int , custom_hash> freq;
-    vector<int>a(n);
+    cin >> n >> k;
     for (int i = 0; i < n; ++i) {
         cin >> a[i];
-        freq[a[i]] ++;
     }
-
-    sort(all(a));
-    vector<int> values;
-    for(int i = 0; i < n; i++){
-        if(i == 0 || a[i] != a[i-1])
-            values.pb(a[i]);
-    }
-
-    int sz = values.size();
-    if(m > sz){
-        cout << 0 << nl;
-        return;
-    }
-
-    ll multi = 1;
-    int ans = 0;
-    for(int i = 0; i < m; i++)
-        multi = mul(multi, freq[values[i]]);
-
-    if(values[m - 1] - values[0] == m - 1)
-        ans = add(ans, multi);
-
-    for(int i = m; i < sz; i++){
-        multi = mul(multi, freq[values[i]]);
-        multi = mul(multi, power(freq[values[i - m]], MOD - 2));
-
-        if(values[i] - values[i - m + 1] == m - 1)
-            ans = add(ans, multi);
-    }
-
-    cout << ans << nl;
+    memo = vector<vector<int>>(n , vector<int>(65 , -1));
+    cout << solve(0 , 64) << nl;
 }
 void file()
 {
@@ -154,7 +91,7 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll tc = 1;
-    cin >> tc;
+     cin >> tc;
     while (tc--)
     {
         TC();

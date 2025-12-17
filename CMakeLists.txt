@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 14)
 include_directories(.)
 
 add_executable(Problem_Solving
-        "Magic Triples (Easy Version).cpp"
+        "Fixed Prefix Permutations.cpp"
         #        Queries.cpp
         #        "Polynomial Queries.cpp"
         #        "Copy String.cpp"
