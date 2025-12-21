@@ -6,13 +6,14 @@ set(CMAKE_CXX_STANDARD 14)
 include_directories(.)
 
 add_executable(Problem_Solving
-        "Fixed Prefix Permutations.cpp"
+        "Minimize The Integer.cpp"
+        "Shortest_Routes_I.cpp"
         #        Queries.cpp
         #        "Polynomial Queries.cpp"
         #        "Copy String.cpp"
         #        "Query on a tree II.cpp"
         #        "Minimal Grid Path.cpp"
         #        "Breach of Faith.cpp"
-        #         Pearls.cpp
+                 Pearls.cpp
         #         Cubes.cpp
 )
