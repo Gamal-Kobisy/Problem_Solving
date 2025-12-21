@@ -15,5 +15,13 @@ add_executable(Problem_Solving
         #        "Minimal Grid Path.cpp"
         #        "Breach of Faith.cpp"
                  Pearls.cpp
+        "The Three Olive Trees.cpp"
+        "MTI or MIT.cpp"
+        maxA.cpp
+        "String Ordering.cpp"
+        "Olive Harvest.cpp"
+        "Ayman and Elnaggar in the Escape Room.cpp"
+        "Mundo Game.cpp"
+        gcdq.cpp
         #         Cubes.cpp
 )
