@@ -1,0 +1,1 @@
+Number of subarrays containing index i = i * (n - i + 1)
