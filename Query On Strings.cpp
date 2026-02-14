@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/1692/H
+// LINK : https://vjudge.net/problem/CodeChef-NPLFLF
 #pragma GCC optimize("O3")
 #pragma GCC optimize ("unroll-loops")
 #pragma GCC optimize ("Ofast")
@@ -48,109 +48,97 @@ struct custom_hash {
     }
 };
 
-struct range{
-    ll sum;
-    int l , r;
-    range(ll s = -infLL, int L = -1, int R = -1) : sum(s), l(L), r(R) {}
-    bool operator<(const range& other) const{
-        return sum < other.sum;
+struct Node{
+    unordered_map<char , int>adj;
+    int sz = 0;
+    int &operator[](char x){
+        return adj[x];
     }
 };
 
-struct segTree{
-#define LF 2*x+1
-#define RT 2*x+2
-#define mid (lx+rx)/2
+struct Trie {
+    vector<Node>trie;
+    unordered_map<int , multiset<int> , custom_hash>level;
+    int newNode(){
+        trie.emplace_back();
+        return trie.size() - 1;
+    }
 
+    void init(){
+        trie.clear();
+        newNode();
+    }
 
+    int sz(int u){
+        return trie[u].sz;
+    }
 
-    struct Node{
-        ll sum;
-        range ans , pre , suf;
-        Node(): sum(0), ans(range()), pre(range()), suf(range()) {}
-        Node(ll a, int pos) {
-            sum = a;
-            ans = pre = suf = range(a, pos, pos);
+    Trie(){
+        init();
+    }
+
+    void update(string &s, int op) {
+        int u = 0;
+        for (int l = 0; l < s.size(); ++l) {
+            char ch = s[l];
+            if (!trie[u][ch]) {
+                trie[u][ch] = newNode();
+            }
+            u = trie[u][ch];
+            if(sz(u)) level[l + 1].erase(level[l + 1].find(sz(u)));
+            trie[u].sz += op;
+            level[l + 1].insert(sz(u));
         }
-    };
-    int sz;
-    vector<Node>seg;
-
-
-    Node merge(Node lf, Node rt) {
-        Node ret;
-        ret.sum = lf.sum + rt.sum;
-
-        range candPre = range(lf.sum + rt.pre.sum, lf.pre.l, rt.pre.r);
-        ret.pre = max(lf.pre, candPre);
-
-        range candSuf = range(rt.sum + lf.suf.sum, lf.suf.l, rt.suf.r);
-        ret.suf = max(rt.suf, candSuf);
-
-        range cross = range(lf.suf.sum + rt.pre.sum, lf.suf.l, rt.pre.r);
-        ret.ans = max({lf.ans, rt.ans, cross});
-
-        return ret;
     }
 
-    segTree(int n){
-        sz = n;
-        seg = vector<Node>(4 * sz + 1);
+    bool ask(int k , int l){
+        if(level[l].empty()) return false;
+        else return *level[l].rbegin() >= k;
     }
 
-    void update(int i , int val , int x = 0 , int lx = 0 , int rx = -1){
-        if(rx == -1) rx = sz - 1;
-
-        if(lx == rx){
-            seg[x] = Node(val , i);
-            return;
+    ll query(string &s) {
+        int u = 0;
+        ll lcp_sum = 0;
+        for (char ch : s) {
+            if (!trie[u][ch]) break;
+            u = trie[u][ch];
+            lcp_sum += sz(u);
         }
-
-        if(i <= mid){
-            update(i , val , LF , lx , mid);
-        }else{
-            update(i , val , RT , mid + 1 , rx);
-        }
-        seg[x] = merge(seg[LF] , seg[RT]);
+        return lcp_sum;
     }
-
-    Node query(int l , int r , int x = 0 , int lx = 0 , int rx = -1){
-        if(rx == -1) rx = sz - 1;
-        if(rx < l or lx > r) return Node();
-        if(lx >= l and rx <= r) return seg[x];
-        return merge(query(l , r , LF , lx , mid) ,
-                     query(l , r , RT , mid + 1 , rx));
-    }
-
-
 };
-
 
 void TC() {
     int n;
     cin >> n;
-    vector<int>v(n);
-    unordered_map<int , vector<int> , custom_hash>pos;
+    vector<string>a(n);
+    Trie trie;
+    int ty , k , l , x;
+    string s;
+    vector<bool> active(n);
     for (int i = 0; i < n; ++i) {
-        cin >> v[i];
-        pos[v[i]].pb(i);
-    }
-    segTree seg(n);
-    for (int i = 0; i < n; ++i) {
-        seg.update(i , -1);
-    }
-    ll ans;
-    range ran;
-    for(auto [x , arr] : pos){
-        for(auto i : arr) seg.update(i , 1);
-        range cand = seg.query(0 , n - 1).ans;
-        if(ran < cand){
-            ans = x;
-            ran = cand;
+        cin >> ty;
+        if(ty == 1){
+            cin >> s;
+            a[i] = s;
+            active[i] = true;
+            reverse(all(s));
+            trie.update(s , 1);
+        }else if(ty == 2){
+            cin >> k >> l;
+            trie.ask(k , l) ? yes : no;
+        }else{
+            cin >> x;
+            --x;
+            s = a[x];
+            if(active[x]){
+                active[x] = false;
+                s = a[x];
+                reverse(all(s));
+                trie.update(s , -1);
+            }
         }
-        for(auto i : arr) seg.update(i , -1);
     }
-    cout << ans << sp << ran.l + 1 << sp << ran.r + 1 << nl;
 }
 void file()
 {
@@ -167,7 +155,7 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll tc = 1;
-    cin >> tc;
+//     cin >> tc;
     while (tc--)
     {
         TC();
