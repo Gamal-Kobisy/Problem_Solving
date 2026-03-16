@@ -40,6 +40,7 @@ struct SegTree {
 
 
     vector<ll> seg , a;
+    // lazy saves {start, end, step}
     vector<array<ll , 3>> lazy;
     int sz;
 
@@ -66,26 +67,34 @@ struct SegTree {
         return lf + rt;
     }
 
-    ll sum(ll a , ll b , ll c){
-        ll terms = (b - a) / c + 1;
-        ll sum = (terms * (a + b)) / 2;
-        return sum;
+    ll sum(ll st, ll en, ll step) {
+        ll len = ((en - st) / step) + 1;
+        return len * (st + en) / 2;
     }
 
     void propegate(int x, int lx, int rx) {
-        if (lazy[x] == array<ll , 3>{0 , 0 , 0}) return;
+        if (lazy[x][0] == 0 and lazy[x][1] == 0 && lazy[x][2] == 0) return;
+
+        seg[x] += sum(lazy[x][0], lazy[x][1], lazy[x][2]);
+
         if (lx != rx) {
-            int len = (rx - lx);
-            lazy[LF][0] += lazy[x][0];
-            lazy[LF][1] += lazy[x][0] + len / 2;
+            ll left_len = md - lx + 1;
 
-            lazy[RT][0] += lazy[x][0] + len / 2 + 1;
-            lazy[RT][1] += lazy[x][1];
+            ll st = lazy[x][0];
+            ll en = lazy[x][1];
+            ll step = lazy[x][2];
 
-            lazy[LF][2] += lazy[x][2];
-            lazy[RT][2] += lazy[x][2];
+            ll left_end = st + step * (left_len - 1);
+            ll right_start = st + step * left_len;
+
+            lazy[LF][0] += st;
+            lazy[LF][1] += left_end;
+            lazy[LF][2] += step;
+
+            lazy[RT][0] += right_start;
+            lazy[RT][1] += en;
+            lazy[RT][2] += step;
         }
-        seg[x] += sum(lazy[x][0] , lazy[x][1] , lazy[x][2]);
         lazy[x] = {0 , 0 , 0};
     }
 
@@ -94,9 +103,9 @@ struct SegTree {
         propegate(x, lx, rx);
         if (r < lx or rx < l)return;
         if (l <= lx and rx <= r) {
-            int lf = lx - l + 1;
-            int rt = rx - l + 1;
-            lazy[x] = {lf , rt , 1};
+            lazy[x][0] += (lx - l + 1);
+            lazy[x][1] += (rx - l + 1);
+            lazy[x][2] += 1;
             propegate(x, lx, rx);
             return;
         }
