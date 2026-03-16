@@ -29,8 +29,21 @@ using namespace std;
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
-void TC() {
+random_device rd;
+mt19937  mt(rd());
+int rnd(int l , int r){
+    return uniform_int_distribution<int>(l, r)(mt);
+}
 
+void TC() {
+    int n;
+    cin >> n;
+    vector<string>a(n);
+    map<string , int>hash;
+    for (int i = 0; i < n; ++i) {
+        cin >> a[i];
+        hash[a[i]] = rnd(1 ,1e8);
+    }
 }
 void file()
 {

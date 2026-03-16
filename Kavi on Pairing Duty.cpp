@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK :
+// LINK : https://codeforces.com/problemset/problem/1528/B
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -29,8 +29,40 @@ using namespace std;
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
-void TC() {
+const ll MOD = 998244353;
 
+ll add(ll a, ll b)
+{
+    return ((a % MOD) + (b % MOD)) % MOD;
+}
+
+ll sub(ll a, ll b)
+{
+    return ((a % MOD) - (b % MOD) + MOD) % MOD;
+}
+
+ll mul(ll a, ll b)
+{
+    return ((a % MOD) * (b % MOD)) % MOD;
+}
+
+void TC() {
+    int n;
+    cin >> n;
+    vector<int>divs(n + 1) , f(n + 1);
+    for (int i = 1; i <= n; ++i) {
+        for (int j = i; j <= n; j += i) {
+            divs[j]++;
+        }
+    }
+
+    int current_sum = 0;
+    for (int i = 1; i <= n; ++i) {
+        f[i] = add(current_sum , divs[i]);
+        current_sum = add(current_sum , f[i]);
+    }
+
+    cout << f[n] << nl;
 }
 void file()
 {

@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK :
+// LINK : https://codeforces.com/problemset/problem/1598/D
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -29,8 +29,43 @@ using namespace std;
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
-void TC() {
+ll fact(int n) {
+    ll res = 1;
+    for (int i = 2; i <= n; i++) {
+        res *= i;
+    }
+    return res;
+}
 
+ll nCr(int n, int r) {
+    if (r > n || r < 0) return 0;
+    return fact(n)/ (fact(r) * fact(n - r));
+}
+
+ll nPr(int n, int r) {
+    if (r > n || r < 0) return 0;
+    return fact(n) / fact(n - r);
+}
+
+ll starsBars(int n , int k){
+    return nCr(n + k - 1 , k - 1);
+}
+
+void TC() {
+    int n;
+    cin >> n;
+    map<int , int>freq1 , freq2;
+    vector<pii>a(n);
+    for (int i = 0; i < n; ++i) {
+        cin >> a[i].fr >> a[i].sc;
+        freq1[a[i].fr]++;
+        freq2[a[i].sc]++;
+    }
+    ll ans = 1ll * n * (n - 1) * (n - 2) / 6;
+    for(auto [t , d] : a){
+        ans -= 1ll * (freq1[t] - 1) * (freq2[d] - 1);
+    }
+    cout << ans << nl;
 }
 void file()
 {
@@ -47,7 +82,7 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll tc = 1;
-//     cin >> tc;
+     cin >> tc;
     while (tc--)
     {
         TC();

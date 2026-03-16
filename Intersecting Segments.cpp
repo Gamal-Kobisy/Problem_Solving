@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/edu/course/2/lesson/4/3/practice/contest/274545/problem/E
+// LINK : https://codeforces.com/edu/course/2/lesson/4/3/practice/contest/274545/problem/D
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -82,30 +82,41 @@ struct segTree {
         build(v , 0 , 0 , n - 1);
     }
 
-    void update(int l , int r , ll val , int x , int lx , int rx){
-        if(lx > r or rx < l) return;
-        if(lx >= l and rx <= r){
-            seg[x].sum += val;
+    void update(int i , ll val , int x , int lx , int rx){
+
+        if(lx == rx){
+            seg[x] = SEG(val);
             return;
         }
-        update(l , r , val , LF , lx , md);
-        update(l , r , val , RT ,md + 1 , rx);
+
+        if(i <= md)
+            update(i , val , LF , lx , md);
+        else
+            update(i , val , RT , md + 1 , rx);
+
+        seg[x] = merge(seg[LF] , seg[RT]);
     }
 
-    void update(int l , int r , ll val){
-        update(l , r , val , 0 , 0 , n - 1);
+    void update(int i , ll val){
+        update(i , val , 0 , 0 , n - 1);
     }
 
-    SEG query(int i , int x , int lx , int rx){
-        if(lx == rx) return seg[x];
-        if(i <= md){
-            return merge(seg[x] , query(i , LF , lx , md));
-        }
-        return merge(seg[x] , query(i , RT , md + 1 , rx));
+    SEG query(int l , int r , int x , int lx , int rx){
+
+        if(l <= lx && rx <= r)
+            return seg[x];
+
+        if(rx < l || lx > r)
+            return SEG();
+
+        return merge(
+                query(l , r , LF , lx , md),
+                query(l , r , RT , md + 1 , rx)
+        );
     }
 
-    SEG query(int i){
-        return query(i , 0 , 0 , n - 1);
+    SEG query(int l , int r){
+        return query(l , r , 0 , 0 , n - 1);
     }
 
 #undef LF
@@ -114,19 +125,37 @@ struct segTree {
 };
 
 void TC() {
-    int n , q;
-    cin >> n >> q;
-    segTree seg(n);
-    while(q--){
-        int ty , l , r , val , idx;
-        cin >> ty;
-        if(ty&1){
-            cin >> l >> r >> val;
-            seg.update(l , --r , val);
+    int n;
+    cin >> n;
+    vector<int>L(n + 1 , -1), ans(n + 1);
+    segTree seg(2 * n);
+    vector<int>a(2 * n);
+    for (int i = 0; i < 2 * n; ++i) {
+        cin >> a[i];
+        int x = a[i];
+        if(~L[x]){
+            seg.update(L[x] , 0);
+            ans[x] = seg.query(L[x] , i).sum;
         }else{
-            cin >> idx;
-            cout << seg.query(idx).sum << nl;
+            L[x] = i;
+            seg.update(i , 1);
         }
+    }
+    for(int i = 0 ; i < 2 * n ; i++) seg.update(i , 0);
+    L = vector<int>(n + 1 , -1);
+    reverse(all(a));
+    for (int i = 0; i < 2 * n; ++i) {
+        int x = a[i];
+        if(~L[x]){
+            seg.update(L[x] , 0);
+            ans[x] += seg.query(L[x] , i).sum;
+        }else{
+            L[x] = i;
+            seg.update(i , 1);
+        }
+    }
+    for (int i = 1; i <= n; ++i) {
+        cout << ans[i] << sp;
     }
 }
 void file()

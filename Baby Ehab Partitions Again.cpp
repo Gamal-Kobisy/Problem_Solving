@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/edu/course/2/lesson/4/3/practice/contest/274545/problem/E
+// LINK : https://codeforces.com/problemset/problem/1516/C
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -29,103 +29,56 @@ using namespace std;
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
-struct SEG {
-    ll sum = 0;
+int n , total_sum;
+vector<ll>a(N);
+char memo[101][N];
+const int add = 2e5;
+int solve(int idx , int sum){
+    if(idx == n) return sum == (total_sum / 2);
+    char &ret = memo[idx][sum];
+    if(~ret) return ret;
+    ret = solve(idx + 1 , sum)
+          | solve(idx + 1 , sum + a[idx]);
+    return ret;
+}
 
-    SEG() {}
-
-    SEG(ll x){
-        sum = x;
+ll gcd(ll a, ll b) {
+    while (b != 0) {
+        ll temp = b;
+        b = a % b;
+        a = temp;
     }
-};
+    return a;
+}
 
-struct segTree {
-
-#define LF 2*x+1
-#define RT 2*x+2
-#define md (lx+rx)/2
-
-    int n;
-    int sz = 1;
-    vector<SEG> seg;
-
-    segTree(int n){
-        this->n = n;
-
-        while(sz < n)
-            sz *= 2;
-
-        seg.assign(2 * sz , SEG());
-    }
-
-    SEG merge(SEG a , SEG b){
-        SEG ret;
-        ret.sum = a.sum + b.sum;
-        return ret;
-    }
-
-    void build(vector<int> &v , int x , int lx , int rx){
-
-        if(lx == rx){
-            if(lx < n)
-                seg[x] = SEG(v[lx]);
-            return;
+ll gcd_vector(const vector<ll>& vec) {
+    ll result = vec[0];
+    for (size_t i = 1; i < vec.size(); ++i) {
+        result = gcd(result, vec[i]);
+        if (result == 1) {
+            return 1;
         }
-
-        build(v , LF , lx , md);
-        build(v , RT , md + 1 , rx);
-
-        seg[x] = merge(seg[LF] , seg[RT]);
     }
-
-    void build(vector<int> &v){
-        build(v , 0 , 0 , n - 1);
-    }
-
-    void update(int l , int r , ll val , int x , int lx , int rx){
-        if(lx > r or rx < l) return;
-        if(lx >= l and rx <= r){
-            seg[x].sum += val;
-            return;
-        }
-        update(l , r , val , LF , lx , md);
-        update(l , r , val , RT ,md + 1 , rx);
-    }
-
-    void update(int l , int r , ll val){
-        update(l , r , val , 0 , 0 , n - 1);
-    }
-
-    SEG query(int i , int x , int lx , int rx){
-        if(lx == rx) return seg[x];
-        if(i <= md){
-            return merge(seg[x] , query(i , LF , lx , md));
-        }
-        return merge(seg[x] , query(i , RT , md + 1 , rx));
-    }
-
-    SEG query(int i){
-        return query(i , 0 , 0 , n - 1);
-    }
-
-#undef LF
-#undef RT
-#undef md
-};
+    return result;
+}
 
 void TC() {
-    int n , q;
-    cin >> n >> q;
-    segTree seg(n);
-    while(q--){
-        int ty , l , r , val , idx;
-        cin >> ty;
-        if(ty&1){
-            cin >> l >> r >> val;
-            seg.update(l , --r , val);
-        }else{
-            cin >> idx;
-            cout << seg.query(idx).sum << nl;
+    cin >> n;
+    for (int i = 0; i < n; ++i) {
+        cin >> a[i];
+        total_sum += a[i];
+    }
+    mem(memo , -1);
+    if(total_sum&1 or not solve(0 , 0))return void(cout << 0 << nl);
+    int g = gcd_vector(a);
+    for (int i = 0; i < n; ++i) {
+        a[i] /= g;
+    }
+    cout << 1 << nl;
+    for (int i = 0; i < n; ++i) {
+        if(a[i] & 1){
+            cout << i + 1 << nl;
+            return;
         }
     }
 }

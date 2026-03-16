@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK :
+// LINK : https://codeforces.com/gym/101653
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -29,8 +29,31 @@ using namespace std;
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
-void TC() {
+string n;
+ll memo[81][2][11];
 
+ll solve(int i , bool sm , int lastDigit){
+    if(i == n.size()) return 1;
+    ll &ret = memo[i][sm][lastDigit];
+    if(~ret) return ret;
+    ret = 0;
+    int lower = lastDigit == 10 ? 0 : lastDigit;
+    int upper = sm ? 9 : n[i];
+    for (int d = lower; d <= upper ; ++d) {
+        ret += solve(i + 1 ,
+                     sm or d < n[i],
+                     d);
+    }
+    return ret;
+}
+
+void TC() {
+    mem(memo , -1);
+    cin >> n;
+    for(char &x : n) x -= '0';
+    string s = n;
+    sort(all(s));
+    cout << (n == s ? solve(0 , 0 , 10) - 1 : -1) << nl;
 }
 void file()
 {
@@ -47,7 +70,7 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll tc = 1;
-//     cin >> tc;
+     cin >> tc;
     while (tc--)
     {
         TC();

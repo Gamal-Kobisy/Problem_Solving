@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/edu/course/2/lesson/4/3/practice/contest/274545/problem/E
+// LINK :
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -29,105 +29,96 @@ using namespace std;
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
-struct SEG {
-    ll sum = 0;
+int X , k;
+ll memo[19][2][165];
+int memoSum[19][2][165];
+int pw[20];
+string s;
 
-    SEG() {}
+const ll MOD = 1e9 + 7;
 
-    SEG(ll x){
-        sum = x;
+ll add(ll a, ll b)
+{
+    return ((a % MOD) + (b % MOD)) % MOD;
+}
+
+ll sub(ll a, ll b)
+{
+    return ((a % MOD) - (b % MOD) + MOD) % MOD;
+}
+
+ll mul(ll a, ll b)
+{
+    return ((a % MOD) * (b % MOD)) % MOD;
+}
+
+ll dpCount(int i ,int sm , int sum){
+    if(i == s.size()) return sum == X;
+    ll &ret = memo[i][sm][sum];
+    if(~ret) return ret;
+    ret = 0;
+    int limit = sm ? 9 : s[i];
+    for (int d = 0; d <= limit; ++d) {
+        ret += dpCount(
+                i + 1,
+                sm or d < s[i],
+                (sum + d)
+                );
     }
-};
+    return ret;
+}
 
-struct segTree {
-
-#define LF 2*x+1
-#define RT 2*x+2
-#define md (lx+rx)/2
-
-    int n;
-    int sz = 1;
-    vector<SEG> seg;
-
-    segTree(int n){
-        this->n = n;
-
-        while(sz < n)
-            sz *= 2;
-
-        seg.assign(2 * sz , SEG());
+int dpSum(int i ,int sm , int sum){
+    if(i == s.size()) return 0;
+    int &ret = memoSum[i][sm][sum];
+    if(~ret) return ret;
+    ret = 0;
+    int limit = sm ? 9 : s[i];
+    for (int d = 0; d <= limit; ++d) {
+        ret = add(ret ,
+                  dpSum(
+                i + 1,
+                sm or d < s[i],
+                (sum + d)
+        ));
+        int cnt = dpCount(
+                i + 1,
+                sm or d < s[i],
+                (sum + d)
+                );
+        int val = d * pw[(s.size() - i - 1)];
+        ret = add(ret , val * cnt);
     }
+    return ret;
+}
+ll solve(ll mid){
+    s = to_string(mid);
+    mem(memo , -1);
+    for(char&x :s) x -= '0';
+    return dpCount(0 , 0 , 0);
+}
 
-    SEG merge(SEG a , SEG b){
-        SEG ret;
-        ret.sum = a.sum + b.sum;
-        return ret;
-    }
-
-    void build(vector<int> &v , int x , int lx , int rx){
-
-        if(lx == rx){
-            if(lx < n)
-                seg[x] = SEG(v[lx]);
-            return;
-        }
-
-        build(v , LF , lx , md);
-        build(v , RT , md + 1 , rx);
-
-        seg[x] = merge(seg[LF] , seg[RT]);
-    }
-
-    void build(vector<int> &v){
-        build(v , 0 , 0 , n - 1);
-    }
-
-    void update(int l , int r , ll val , int x , int lx , int rx){
-        if(lx > r or rx < l) return;
-        if(lx >= l and rx <= r){
-            seg[x].sum += val;
-            return;
-        }
-        update(l , r , val , LF , lx , md);
-        update(l , r , val , RT ,md + 1 , rx);
-    }
-
-    void update(int l , int r , ll val){
-        update(l , r , val , 0 , 0 , n - 1);
-    }
-
-    SEG query(int i , int x , int lx , int rx){
-        if(lx == rx) return seg[x];
-        if(i <= md){
-            return merge(seg[x] , query(i , LF , lx , md));
-        }
-        return merge(seg[x] , query(i , RT , md + 1 , rx));
-    }
-
-    SEG query(int i){
-        return query(i , 0 , 0 , n - 1);
-    }
-
-#undef LF
-#undef RT
-#undef md
-};
+int solveSum(ll ans){
+    s = to_string(ans);
+    for(char&x : s) x -= '0';
+    mem(memoSum , -1);
+    mem(memo , -1);
+    return dpSum(0 , 0 , 0);
+}
 
 void TC() {
-    int n , q;
-    cin >> n >> q;
-    segTree seg(n);
-    while(q--){
-        int ty , l , r , val , idx;
-        cin >> ty;
-        if(ty&1){
-            cin >> l >> r >> val;
-            seg.update(l , --r , val);
+    cin >> X >> k;
+    ll lo = 0 , hi = 1e18 , ans = -1;
+    while(lo <= hi){
+        ll mid = (lo + hi) / 2;
+        if(solve(mid) >= k){
+            ans = mid;
+            hi = mid - 1;
         }else{
-            cin >> idx;
-            cout << seg.query(idx).sum << nl;
+            lo = mid + 1;
         }
     }
+    cout << solveSum(ans) << nl;
 }
 void file()
 {
@@ -142,9 +133,13 @@ int main() {
     file();
     ENG_GAMAL
 // test-independent code ——————————————————————
+    pw[0] = 1;
+    for (int i = 1; i < 20; ++i) {
+        pw[i] = mul(pw[i - 1] , 10);
+    }
 // ————————————————————————————————————————————
     ll tc = 1;
-//     cin >> tc;
+     cin >> tc;
     while (tc--)
     {
         TC();

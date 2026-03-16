@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK :
+// LINK :  https://atcoder.jp/contests/abc367/tasks/abc367_f?lang=en
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -18,8 +18,8 @@ using namespace std;
 #define pb push_back
 #define all(a) a.begin(),a.end()
 #define allr(a) a.rbegin(),a.rend()
-#define no cout<<"NO\n"
-#define yes cout<<"YES\n"
+#define no cout<<"No\n"
+#define yes cout<<"Yes\n"
 #define imp cout<<"IMPOSSIBLE\n"
 #define nl '\n'
 #define sp ' '
@@ -29,8 +29,35 @@ using namespace std;
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
-void TC() {
+random_device rd;
+mt19937  mt(rd());
+ll rnd(ll l , ll r){
+    return uniform_int_distribution<ll>(l, r)(mt);
+}
 
+void TC() {
+    int n , q;
+    cin >> n >> q;
+    vector<int>replace(N);
+    vector<int>a(n) , b(n);
+    for (int i = 0; i < n; ++i) {
+        cin >> a[i];
+        replace[a[i]] = rnd(1 , 1e12);
+    }
+    for (int i = 0; i < n; ++i) {
+        cin >> b[i];
+        replace[b[i]] = rnd(1 , 1e12);
+    }
+    vector<ll>preA(n + 1) , preB(n + 1);
+    for (int i = 1; i <= n; ++i) {
+        preA[i] = preA[i - 1] + replace[a[i - 1]];
+        preB[i] = preB[i - 1] + replace[b[i - 1]];
+    }
+    while(q--){
+        int l1 , r1 , l2 , r2;
+        cin >> l1 >> r1 >> l2 >> r2;
+        ((preA[r1] - preA[l1 - 1]) == (preB[r2] - preB[l2 - 1])) ? yes : no;
+    }
 }
 void file()
 {

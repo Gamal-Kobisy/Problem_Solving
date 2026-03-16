@@ -2,11 +2,11 @@
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
 // LINK : https://codeforces.com/problemset/problem/1980/G
-#pragma GCC optimize("O3")
-#pragma GCC optimize ("unroll-loops")
-#pragma GCC optimize ("Ofast")
+//#pragma GCC optimize("O3")
+//#pragma GCC optimize ("unroll-loops")
+//#pragma GCC optimize ("Ofast")
 #include <bits/stdc++.h>
-#pragma GCC target("avx2")
+//#pragma GCC target("avx2")
 using namespace std;
 #define ll long long
 #define ld long double
@@ -63,28 +63,33 @@ struct Trie {
         return trie[u].sz;
     }
 
-    void update(int x , int op , int bit = LOG, int u = 0){
-        if(bit < 0) return;
-        int ch = (x >> bit) & 1;
-        if(!trie[u][ch]){
-            trie[u][ch] = newNode();
-        }
-        u = trie[u][ch];
+    void update(int val, int op) {
+        int u = 0;
         trie[u].sz += op;
-        update(x , op , bit - 1 , u);
+
+        for (int i = LOG; i >= 0; --i) {
+            int bit = (val >> i) & 1;
+            if (!trie[u].adj[bit]) {
+                trie[u].adj[bit] = newNode();
+            }
+            u = trie[u].adj[bit];
+            trie[u].sz += op;
+        }
     }
 
 
-    int maxXor(int x){
+    int maxXor(int x) {
         int u = 0;
         int ret = 0;
+        int target = rev ^ x;
         for (int i = LOG; i >= 0; --i) {
-            int bit = ((rev >> i) ^ (x >> i)) & 1;
-            if(sz(trie[u][!bit])){
+            int bit = (target >> i) & 1;
+            int desired = !bit;
+            if (trie[u].adj[desired] && trie[trie[u].adj[desired]].sz > 0) {
                 ret |= (1 << i);
-                u = trie[u][!bit];
-            }else{
-                u = trie[u][bit];
+                u = trie[u].adj[desired];
+            } else {
+                u = trie[u].adj[!desired];
             }
         }
         return ret;
@@ -93,14 +98,16 @@ struct Trie {
 };
 
 vector<pii>adj[N];
-vector<int>val(N);
-Trie trie;
-void dfs(int u , int par , int curXor){
+vector<int>val(N) , depth(N);
+Trie trieOdd , trieEven;
+void dfs(int u , int par , int d , int curXor){
     val[u] = curXor;
-    trie.update(val[u] , 1);
+    depth[u] = d;
+    if(d & 1) trieOdd.update(curXor , 1);
+    else trieEven.update(curXor , 1);
     for(auto [v , w] : adj[u]){
         if(v == par) continue;
-        dfs(v , u , curXor ^ w);
+        dfs(v , u , d + 1 , curXor ^ w);
     }
 }
 
@@ -110,25 +117,45 @@ void TC() {
     for (int i = 0; i <= n; ++i) {
         adj[i].clear();
         val[i] = 0;
+        depth[i] = 0;
     }
-    trie.init();
+    trieOdd.init();
+    trieEven.init();
     for (int i = 0; i < n - 1; ++i) {
         int u , v , w;
         cin >> u >> v >> w;
         adj[u].pb({v , w});
         adj[v].pb({u , w});
     }
-    dfs(1 , -1 , 0);
+    dfs(1 , -1 , 0 , 0);
     while(q--){
         char ty;
         int y , u , x;
         cin >> ty;
         if(ty == '^'){
             cin >> y;
-            trie.rev ^= y;
+            trieOdd.rev ^= y;
         }else{
             cin >> u >> x;
-            cout << trie.maxXor(x ^ val[u]) << sp;
+            int ans = 0;
+            if(depth[u] & 1){
+                int currentVal = val[u] ^ trieOdd.rev;
+                int target = currentVal ^ x;
+                trieOdd.update(val[u], -1);
+                if(trieOdd.trie[0].sz > 0) ans = max(ans, trieOdd.maxXor(target));
+                if(trieEven.trie[0].sz > 0) ans = max(ans, trieEven.maxXor(target));
+                cout << ans << sp;
+                trieOdd.update(val[u], 1);
+            }
+            else{
+                int currentVal = val[u];
+                int target = currentVal ^ x;
+                trieEven.update(val[u], -1);
+                if(trieOdd.trie[0].sz > 0) ans = max(ans, trieOdd.maxXor(target));
+                if(trieEven.trie[0].sz > 0) ans = max(ans, trieEven.maxXor(target));
+                cout << ans << sp;
+                trieEven.update(val[u], 1);
+            }
         }
     }
     cout << nl;

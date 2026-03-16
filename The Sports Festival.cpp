@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK :
+// LINK : https://codeforces.com/problemset/problem/1509/C
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -29,8 +29,25 @@ using namespace std;
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
-void TC() {
+int n , a[2001];
+ll memo[2001][2001];
 
+ll solve(int l ,  int r){
+    if(l == r) return 0;
+    ll &res = memo[l][r];
+    if(~res) return res;
+    res = min(solve(l + 1 , r) , solve(l , r - 1)) + a[r] - a[l];
+    return res;
+}
+
+void TC() {
+    cin >> n;
+    for (int i = 0; i < n; ++i) {
+        cin >> a[i];
+    }
+    sort(a , a + n);
+    mem(memo , -1);
+    cout << solve(0 , n - 1) << nl;
 }
 void file()
 {

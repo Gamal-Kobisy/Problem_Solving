@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK :
+// LINK : https://codeforces.com/problemset/problem/1466/E
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -29,8 +29,85 @@ using namespace std;
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
-void TC() {
+ll fact[N] , modinv[N];
 
+const ll MOD = 1e9 + 7;
+
+ll add(ll a, ll b)
+{
+    return ((a % MOD) + (b % MOD)) % MOD;
+}
+
+ll sub(ll a, ll b)
+{
+    return ((a % MOD) - (b % MOD) + MOD) % MOD;
+}
+
+ll mul(ll a, ll b)
+{
+    return ((a % MOD) * (b % MOD)) % MOD;
+}
+
+ll power(ll b, ll p) {
+    ll ans = 1;
+    while (p) {
+        if (p & 1)
+            ans = mul(ans , b);
+        b = mul(b , b);
+        p /= 2;
+    }
+    return ans;
+}
+
+void pre(){
+    fact[0] = 1;
+    for (int i = 1; i < N; ++i) {
+        fact[i] = mul(fact[i - 1] , i);
+    }
+    modinv[N - 1] = power(fact[N - 1] , MOD - 2);
+    for (int i = N - 2; i >= 0 ; --i) {
+        modinv[i] = mul(i + 1  , modinv[i + 1]);
+    }
+}
+
+ll nCr(int n, int r) {
+    return mul(mul(fact[n], modinv[n - r]), modinv[r]);
+}
+
+ll nPr(int n, int r) {
+    return mul(fact[n], modinv[n - r]);
+}
+
+
+void TC() {
+    int n;
+    cin >> n;
+    vector<ll>a(n);
+    vector<int>freqBits(60);
+    for (int i = 0; i < n; ++i) {
+        cin >> a[i];
+        for (int j = 0; j < 60; ++j) {
+            if((1ll << j) & a[i]){
+                freqBits[j]++;
+            }
+        }
+    }
+    ll ans = 0;
+    for (int i = 0; i < n; ++i) {
+        ll And = 0, Or = 0;
+        for (int j = 0; j < 60; ++j) {
+            ll bit = power(2, j);
+            if ((a[i] >> j) & 1) {
+                And = add(And, mul(bit, freqBits[j]));
+                Or = add(Or, mul(bit, n));
+            }
+            else {
+                Or = add(Or, mul(bit, freqBits[j]));
+            }
+        }
+        ans = add(ans, mul(And, Or));
+    }
+    cout << ans << nl;
 }
 void file()
 {
@@ -45,9 +122,10 @@ int main() {
     file();
     ENG_GAMAL
 // test-independent code ——————————————————————
+//    pre();
 // ————————————————————————————————————————————
     ll tc = 1;
-//     cin >> tc;
+     cin >> tc;
     while (tc--)
     {
         TC();

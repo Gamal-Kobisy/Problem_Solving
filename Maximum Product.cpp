@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/edu/course/2/lesson/4/3/practice/contest/274545/problem/E
+// LINK : https://codeforces.com/gym/100886/problem/G
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -28,106 +28,77 @@ using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
+int target;
+ll memo[20][2][2][2];
+string L , R;
 
-struct SEG {
-    ll sum = 0;
-
-    SEG() {}
-
-    SEG(ll x){
-        sum = x;
+ll calc(int i , bool sm , bool lr , bool st){
+    if(i == R.size()) return st;
+    ll &ret = memo[i][sm][lr][st];
+    if(~ret) return ret;
+    int lower = lr ? 0 : L[i];
+    int upper = sm ? 9 : R[i];
+    for (int d = lower; d <= upper; ++d) {
+        ll mult = (!st && d == 0) ? 1 : d;
+        ret = max(ret , mult * calc(
+                i + 1,
+                sm or d < R[i],
+                lr or d > L[i],
+                st or d > 0
+        ));
     }
-};
+    return ret;
+}
 
-struct segTree {
-
-#define LF 2*x+1
-#define RT 2*x+2
-#define md (lx+rx)/2
-
-    int n;
-    int sz = 1;
-    vector<SEG> seg;
-
-    segTree(int n){
-        this->n = n;
-
-        while(sz < n)
-            sz *= 2;
-
-        seg.assign(2 * sz , SEG());
-    }
-
-    SEG merge(SEG a , SEG b){
-        SEG ret;
-        ret.sum = a.sum + b.sum;
-        return ret;
-    }
-
-    void build(vector<int> &v , int x , int lx , int rx){
-
-        if(lx == rx){
-            if(lx < n)
-                seg[x] = SEG(v[lx]);
+void build(int i , bool sm , bool lr , bool st , ll prod){
+    if(i == R.size()) return;
+    int lower = lr ? 0 : L[i];
+    int upper = sm ? 9 : R[i];
+    for (int d = lower; d <= upper; ++d) {
+        ll mult = (!st && d == 0) ? 1 : d;
+        ll val =  calc(
+                i + 1,
+                sm or d < R[i],
+                lr or d > L[i],
+                st or d > 0
+        );
+        if(mult * val == prod){
+            if(st or d > 0) cout << d;
+            build(i + 1,
+                    sm or d < R[i],
+                    lr or d > L[i],
+                    st or d > 0,
+                    val
+                    );
             return;
         }
-
-        build(v , LF , lx , md);
-        build(v , RT , md + 1 , rx);
-
-        seg[x] = merge(seg[LF] , seg[RT]);
     }
+}
 
-    void build(vector<int> &v){
-        build(v , 0 , 0 , n - 1);
-    }
-
-    void update(int l , int r , ll val , int x , int lx , int rx){
-        if(lx > r or rx < l) return;
-        if(lx >= l and rx <= r){
-            seg[x].sum += val;
-            return;
-        }
-        update(l , r , val , LF , lx , md);
-        update(l , r , val , RT ,md + 1 , rx);
-    }
-
-    void update(int l , int r , ll val){
-        update(l , r , val , 0 , 0 , n - 1);
-    }
-
-    SEG query(int i , int x , int lx , int rx){
-        if(lx == rx) return seg[x];
-        if(i <= md){
-            return merge(seg[x] , query(i , LF , lx , md));
-        }
-        return merge(seg[x] , query(i , RT , md + 1 , rx));
-    }
-
-    SEG query(int i){
-        return query(i , 0 , 0 , n - 1);
-    }
-
-#undef LF
-#undef RT
-#undef md
-};
+ll solve(int i){
+    target = i;
+    mem(memo , -1);
+    ll mx = calc(0 , 0 , 0 , 0);
+    return  mx;
+}
 
 void TC() {
-    int n , q;
-    cin >> n >> q;
-    segTree seg(n);
-    while(q--){
-        int ty , l , r , val , idx;
-        cin >> ty;
-        if(ty&1){
-            cin >> l >> r >> val;
-            seg.update(l , --r , val);
-        }else{
-            cin >> idx;
-            cout << seg.query(idx).sum << nl;
+    cin >> L >> R;
+    while(L.size() < R.size()) L = '0' + L;
+    for(char&x : L) x -= '0';
+    for(char&x : R) x -= '0';
+    ll ans = -1;
+    int best_sum = 0;
+    for (int i = 1; i < 165; ++i) {
+        ll current_prod = solve(i);
+        if(current_prod > ans) {
+            ans = current_prod;
+            best_sum = i;
         }
     }
+    mem(memo , -1);
+    target = best_sum;
+    build(0 , 0 , 0 , 0 , ans);
 }
 void file()
 {

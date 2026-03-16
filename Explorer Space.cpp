@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/edu/course/2/lesson/4/3/practice/contest/274545/problem/E
+// LINK : https://codeforces.com/problemset/problem/1517/D
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -21,6 +21,7 @@ using namespace std;
 #define no cout<<"NO\n"
 #define yes cout<<"YES\n"
 #define imp cout<<"IMPOSSIBLE\n"
+#define rv(a) return(void(a))
 #define nl '\n'
 #define sp ' '
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
@@ -28,105 +29,53 @@ using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
+int n, m , k, adjH[501][501], adjV[501][501];
+ll memo[501][501][21];
 
-struct SEG {
-    ll sum = 0;
-
-    SEG() {}
-
-    SEG(ll x){
-        sum = x;
-    }
-};
-
-struct segTree {
-
-#define LF 2*x+1
-#define RT 2*x+2
-#define md (lx+rx)/2
-
-    int n;
-    int sz = 1;
-    vector<SEG> seg;
-
-    segTree(int n){
-        this->n = n;
-
-        while(sz < n)
-            sz *= 2;
-
-        seg.assign(2 * sz , SEG());
-    }
-
-    SEG merge(SEG a , SEG b){
-        SEG ret;
-        ret.sum = a.sum + b.sum;
-        return ret;
-    }
-
-    void build(vector<int> &v , int x , int lx , int rx){
-
-        if(lx == rx){
-            if(lx < n)
-                seg[x] = SEG(v[lx]);
-            return;
-        }
-
-        build(v , LF , lx , md);
-        build(v , RT , md + 1 , rx);
-
-        seg[x] = merge(seg[LF] , seg[RT]);
-    }
-
-    void build(vector<int> &v){
-        build(v , 0 , 0 , n - 1);
-    }
-
-    void update(int l , int r , ll val , int x , int lx , int rx){
-        if(lx > r or rx < l) return;
-        if(lx >= l and rx <= r){
-            seg[x].sum += val;
-            return;
-        }
-        update(l , r , val , LF , lx , md);
-        update(l , r , val , RT ,md + 1 , rx);
-    }
-
-    void update(int l , int r , ll val){
-        update(l , r , val , 0 , 0 , n - 1);
-    }
-
-    SEG query(int i , int x , int lx , int rx){
-        if(lx == rx) return seg[x];
-        if(i <= md){
-            return merge(seg[x] , query(i , LF , lx , md));
-        }
-        return merge(seg[x] , query(i , RT , md + 1 , rx));
-    }
-
-    SEG query(int i){
-        return query(i , 0 , 0 , n - 1);
-    }
-
-#undef LF
-#undef RT
-#undef md
-};
+ll solve(int x , int y , int rem){
+    if(rem == 0)
+        return 0;
+    ll &res = memo[x][y][rem];
+    if(res != infLL) return res;
+    if(y > 1)
+        res = min(res , solve(x , y - 1 , rem - 1) + adjH[x - 1][y - 2]);
+    if(y < m)
+        res = min(res , solve(x , y + 1 , rem - 1) + adjH[x - 1][y - 1]);
+    if(x > 1)
+        res = min(res , solve(x - 1 , y , rem - 1) + adjV[x - 2][y - 1]);
+    if(x < n)
+        res = min(res , solve(x + 1 , y , rem - 1) + adjV[x - 1][y - 1]);
+    return res;
+}
 
 void TC() {
-    int n , q;
-    cin >> n >> q;
-    segTree seg(n);
-    while(q--){
-        int ty , l , r , val , idx;
-        cin >> ty;
-        if(ty&1){
-            cin >> l >> r >> val;
-            seg.update(l , --r , val);
-        }else{
-            cin >> idx;
-            cout << seg.query(idx).sum << nl;
+    cin >> n >> m >> k;
+    if(k&1){
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < m; ++j) {
+                cout << -1 << sp;
+            }
+            cout << nl;
         }
+        return;
+    }
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < m - 1; ++j) {
+            cin >> adjH[i][j];
+        }
+    }
+    for (int i = 0; i < n - 1; ++i) {
+        for (int j = 0; j < m; ++j) {
+            cin >> adjV[i][j];
+        }
+    }
+    mem(memo , infLL);
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < m; ++j) {
+            ll ans = solve(i + 1 , j + 1 , k / 2);
+            cout << ans * 2 << sp;
+        }
+        cout << nl;
     }
 }
 void file()

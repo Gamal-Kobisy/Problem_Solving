@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK :
+// LINK : https://codeforces.com/problemset/problem/1955/E
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -30,7 +30,29 @@ const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
 void TC() {
+    int n;
+    string s;
+    cin >> n >> s;
+    for(int k = n ; k >= 2 ; k--){
+        queue<int> q;
+        bool ok = true;
+        for (int i = 0; i < n; ++i) {
+            if (!q.empty() && q.front() == i) {
+                q.pop();
+            }
+            if((s[i] - '0' + q.size()) % 2 == 0){
+                if(i + k > n) {
+                    ok = false;
+                    break;
+                }
+                q.push(i + k);
+            }
+        }
 
+        if(ok)
+            return void(cout << k << nl);
+    }
+    cout << 1 << nl;
 }
 void file()
 {
@@ -47,7 +69,7 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll tc = 1;
-//     cin >> tc;
+     cin >> tc;
     while (tc--)
     {
         TC();
