@@ -1,0 +1,13 @@
+# Build folders
+.vscode/
+cmake-build-*/
+build/
+
+# Compiled files
+*.exe
+*.out
+*.o
+*.obj
+
+# Logs
+*.log
