@@ -81,30 +81,24 @@ struct ParityDSU
 void TC(int t) {
     int n, m;
     cin >> n >> m;
-
-    // Bugs are 1-indexed (1 to n), so we initialize n + 1
     dsu.init(n + 1);
-
-    bool suspicious = false;
-
+    bool ok = true;
     for (int i = 0; i < m; i++) {
         int u, v;
         cin >> u >> v;
 
-        // If we haven't found a contradiction yet, check this edge.
-        // We pass p = 1 because interacting bugs must be of DIFFERENT genders.
-        if (!suspicious) {
+        if (ok) {
             if (dsu.addEdge(u, v, 1) == -1) {
-                suspicious = true;
+                ok = false;
             }
         }
     }
 
     cout << "Scenario #" << t << ":" << nl;
-    if (suspicious) {
-        cout << "Suspicious bugs found!" << nl;
-    } else {
+    if (ok) {
         cout << "No suspicious bugs found!" << nl;
+    } else {
+        cout << "Suspicious bugs found!" << nl;
     }
 }
 

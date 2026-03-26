@@ -12,28 +12,6 @@ Some problem depend on that the operation described will acur few number of time
 so always when you see a new operation check its limits
 
 
-given and array a of length 2^n calculate a value v as follows:
-Take pairs of adjacent elements and replace them with their minimum.
-On the next step, take pairs of the new sequence and replace them with their maximum.
-Repeat alternating min and max until only one number remains. That number is v.
-You are given m queries.
-1 index value -> a[index] = value
-2 left right -> value
-Constraints:
-
-1 ≤ n ≤ 17 (sequence length is 2^n)
-
-0 ≤ a[i], b ≤ 10^9
-
-1 ≤ m ≤ 10^5
-
-1 ≤ p ≤ 2^n
 
 
 
-given string s of length n and q queries of three types
-1 l r flip all brackets in range [l , r]
-2 i flib the bracket at index i
-3 l r what is the length of the maximum correct bracket subsequence in range [l , r]
-
-1 <= n , q <= 1e6

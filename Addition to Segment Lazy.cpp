@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/edu/course/2/lesson/5/1/practice/contest/279634/problem/C
+// LINK : https://codeforces.com/edu/course/2/lesson/5/1/practice/contest/279634/problem/A
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -39,7 +39,7 @@ struct SEG {
 };
 
 struct LAZY {
-    ll ass = -1;
+    ll ass = 0;
 
     LAZY() {}
     LAZY(ll val){
@@ -75,13 +75,13 @@ struct segTree {
     }
 
     void propagate(int x, int lx, int rx) {
-        if (lazy[x].ass == -1) return;
+        if (lazy[x].ass == 0) return;
 
-        seg[x].sum = lazy[x].ass * (rx - lx + 1);
+        seg[x].sum += lazy[x].ass * (rx - lx + 1);
 
         if (lx != rx) {
-            lazy[LF].ass = lazy[x].ass;
-            lazy[RT].ass = lazy[x].ass;
+            lazy[LF].ass += lazy[x].ass;
+            lazy[RT].ass += lazy[x].ass;
         }
         lazy[x] = LAZY();
     }
@@ -111,7 +111,8 @@ struct segTree {
             return;
 
         if(l <= lx && rx <= r){
-            lazy[x].ass = val;
+            lazy[x].ass += val;
+
             propagate(x, lx, rx);
             return;
         }

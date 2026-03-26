@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/edu/course/2/lesson/5/1/practice/contest/279634/problem/C
+// LINK : https://codeforces.com/edu/course/2/lesson/5/3/practice/contest/280799/problem/C
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -30,20 +30,20 @@ const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
 struct SEG {
-    ll sum = 0;
+    ll mx = 0;
 
     SEG() {}
     SEG(ll x){
-        sum = x;
+        mx = x;
     }
 };
 
 struct LAZY {
-    ll ass = -1;
+    ll add = 0;
 
     LAZY() {}
     LAZY(ll val){
-        ass = val;
+        add = val;
     }
 };
 
@@ -70,18 +70,18 @@ struct segTree {
 
     SEG merge(SEG lf , SEG rt){
         SEG ret;
-        ret.sum = lf.sum + rt.sum;
+        ret.mx = max(lf.mx , rt.mx);
         return ret;
     }
 
     void propagate(int x, int lx, int rx) {
-        if (lazy[x].ass == -1) return;
+        if (lazy[x].add == 0) return;
 
-        seg[x].sum = lazy[x].ass * (rx - lx + 1);
+        seg[x].mx += lazy[x].add;
 
         if (lx != rx) {
-            lazy[LF].ass = lazy[x].ass;
-            lazy[RT].ass = lazy[x].ass;
+            lazy[LF].add += lazy[x].add;
+            lazy[RT].add += lazy[x].add;
         }
         lazy[x] = LAZY();
     }
@@ -111,7 +111,8 @@ struct segTree {
             return;
 
         if(l <= lx && rx <= r){
-            lazy[x].ass = val;
+            lazy[x].add += val;
+
             propagate(x, lx, rx);
             return;
         }
@@ -144,29 +145,45 @@ struct segTree {
         return query(l , r , 0 , 0 , sz - 1);
     }
 
+    int FirstAtLest(int l , int r , int t , int x , int lx , int rx){
+        propagate(x , lx , rx);
+
+        if(rx < l || lx > r || seg[x].mx < t)
+            return -1;
+
+        if(lx == rx)
+            return lx;
+
+        int res = FirstAtLest(l, r, t, LF, lx, md);
+
+        if(res != -1)
+            return res;
+
+        return FirstAtLest(l, r, t, RT, md + 1, rx);
+    }
+
+    int FirstAtLest(int l , int r , int t){
+        return FirstAtLest(l, r, t, 0, 0, sz - 1);
+    }
+
 #undef LF
 #undef RT
 #undef md
 };
 
 void TC() {
-    int n , m;
-    cin >> n >> m;
-//    vector<int>a(n);
-//    for (int i = 0; i < n; ++i) {
-//        cin >> a[i];
-//    }
+    int n , q;
+    cin >> n >> q;
     segTree seg(n);
-//    seg.build(a);
-    while(m--){
-        int ty , l , r , val, idx;
+    while(q--){
+        int ty , l , r , val , t;
         cin >> ty;
         if(ty&1){
             cin >> l >> r >> val;
             seg.update(l , --r , val);
         }else{
-            cin >> idx;
-            cout << seg.query(idx , idx).sum << nl;
+            cin >> t >> l;
+            cout << seg.FirstAtLest(l , n - 1 , t) << nl;
         }
     }
 }

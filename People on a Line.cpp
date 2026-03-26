@@ -1,12 +1,8 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/271/D
-#pragma GCC optimize("O3")
-#pragma GCC optimize ("unroll-loops")
-#pragma GCC optimize ("Ofast")
+// LINK : https://atcoder.jp/contests/abc087/tasks/arc090_b
 #include <bits/stdc++.h>
-#pragma GCC target("avx2")
 using namespace std;
 #define ll long long
 #define ld long double
@@ -17,13 +13,13 @@ using namespace std;
 #define MSB(n) (63 - __builtin_clzll(n))
 #define LSB(n) (__builtin_ctzll(n))
 #define mem(arrr, xx) memset(arrr,xx,sizeof arrr)
-#define fi first
-#define se second
+#define fr first
+#define sc second
 #define pb push_back
 #define all(a) a.begin(),a.end()
 #define allr(a) a.rbegin(),a.rend()
-#define no cout<<"NO\n"
-#define yes cout<<"YES\n"
+#define no cout<<"No\n"
+#define yes cout<<"Yes\n"
 #define imp cout<<"IMPOSSIBLE\n"
 #define nl '\n'
 #define sp ' '
@@ -33,58 +29,64 @@ using namespace std;
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
-vector<bool>bad(26);
-string s , t;
-int k;
+struct WeightedDSU
+{
+    int par[N];
+    long long w[N]; // w[u] = value[u] - value[root]
 
-struct Node {
-    unordered_map<char, int> nxt;
-    int isEnd = 0, sz = 0;//subTree size
-    int &operator[](char x) {
-        return nxt[x];
-    }
-};
-
-struct Trie {
-    vector<Node> tr;
-
-    int newNode() {
-        tr.emplace_back();
-        return tr.size() - 1;
+    void init(int n)
+    {
+        memset(par, -1, n * sizeof(par[0]));
+        memset(w, 0, n * sizeof(w[0]));
     }
 
-    Trie() { tr.clear(), newNode(); }
+    pair<int, long long> find(int u)
+    {
+        if (par[u] < 0)
+            return {u, 0}; // par[u]<0 means u is root
+        auto [root, wr] = find(par[u]);
+        par[u] = root;
+        w[u] += wr; // path compression: accumulate weight
+        return {root, w[u]};
+    }
 
-    void insert(const string &s , int l) {
-        int u = 0;
-        int cnt = 0;
-        for(int i = l ; i < s.size() ; i++){
-            char c = s[i];
-            cnt += bad[c - 'a'];
-            if(cnt > k) return;
-            if(not tr[u][c])
-                tr[u][c] = newNode();
-            tr[u].sz++;
-            u = tr[u][c];
+    // Constraint: value[v] - value[u] = d
+    // Returns false if contradiction
+    bool join(int u, int v, long long d)
+    {
+        auto [ru, wu] = find(u); // wu = value[u] - value[ru]
+        auto [rv, wv] = find(v); // wv = value[v] - value[rv]
+        if (ru == rv)
+        {
+            return (wv - wu) == d; // check: value[v]-value[u] = wv-wu
         }
-        tr[u].sz++;
-        tr[u].isEnd++;
+        par[rv] = ru;
+        w[rv] = wu - wv + d; // so that value[v]-value[u] = d holds
+        return true;
     }
 
-};
-
+    // Query: value[v] - value[u] (must be in same component)
+    long long query(int u, int v)
+    {
+        auto [ru, wu] = find(u);
+        auto [rv, wv] = find(v);
+        if (ru != rv)
+            return -infLL; // not connected
+        return wv - wu;
+    }
+} dsu;
 
 void TC() {
-    cin >> s >> t >> k;
-    for (int i = 0; i < 26; ++i) {
-        if(t[i] == '0') bad[i] = true;
+    int n , m;
+    cin >> n >> m;
+    dsu.init(n + 1);
+    bool ok = true;
+    while(m--){
+        int l , r , d;
+        cin >> l >> r >> d;
+        ok &= dsu.join(l , r , d);
     }
-    Trie trie;
-    for (int l = 0; l < s.size(); ++l) {
-        trie.insert(s , l);
-    }
-    ll ans = trie.tr.size() - 1;
-    cout << ans << nl;
+    ok ? yes : no;
 }
 void file()
 {

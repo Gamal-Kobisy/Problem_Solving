@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/edu/course/2/lesson/5/1/practice/contest/279634/problem/C
+// LINK : https://codeforces.com/edu/course/2/lesson/5/3/practice/contest/280799/problem/A
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -30,16 +30,16 @@ const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
 struct SEG {
-    ll sum = 0;
-
+    ll sum = 0 , pre = 0 , suf = 0 , ans = 0;
     SEG() {}
     SEG(ll x){
         sum = x;
+        ans = pre = suf = max(0ll , x);
     }
 };
 
 struct LAZY {
-    ll ass = -1;
+    ll ass = infLL;
 
     LAZY() {}
     LAZY(ll val){
@@ -71,13 +71,17 @@ struct segTree {
     SEG merge(SEG lf , SEG rt){
         SEG ret;
         ret.sum = lf.sum + rt.sum;
+        ret.ans = max({lf.ans , rt.ans , lf.suf + rt.pre});
+        ret.pre = max(lf.pre , lf.sum + rt.pre);
+        ret.suf = max(rt.suf , rt.sum + lf.suf);
         return ret;
     }
 
     void propagate(int x, int lx, int rx) {
-        if (lazy[x].ass == -1) return;
+        if (lazy[x].ass == infLL) return;
 
         seg[x].sum = lazy[x].ass * (rx - lx + 1);
+        seg[x].ans = seg[x].pre = seg[x].suf = max(0ll , seg[x].sum);
 
         if (lx != rx) {
             lazy[LF].ass = lazy[x].ass;
@@ -112,6 +116,7 @@ struct segTree {
 
         if(l <= lx && rx <= r){
             lazy[x].ass = val;
+
             propagate(x, lx, rx);
             return;
         }
@@ -150,24 +155,14 @@ struct segTree {
 };
 
 void TC() {
-    int n , m;
-    cin >> n >> m;
-//    vector<int>a(n);
-//    for (int i = 0; i < n; ++i) {
-//        cin >> a[i];
-//    }
+    int n , q;
+    cin >> n >> q;
     segTree seg(n);
-//    seg.build(a);
-    while(m--){
-        int ty , l , r , val, idx;
-        cin >> ty;
-        if(ty&1){
-            cin >> l >> r >> val;
-            seg.update(l , --r , val);
-        }else{
-            cin >> idx;
-            cout << seg.query(idx , idx).sum << nl;
-        }
+    while(q--){
+        int l , r , val;
+        cin >> l >> r >> val;
+        seg.update(l , --r , val);
+        cout << seg.query(0 , n - 1).ans << nl;
     }
 }
 void file()

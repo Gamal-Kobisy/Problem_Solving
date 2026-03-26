@@ -1,12 +1,8 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/271/D
-#pragma GCC optimize("O3")
-#pragma GCC optimize ("unroll-loops")
-#pragma GCC optimize ("Ofast")
+// LINK : https://cses.fi/problemset/task/1693
 #include <bits/stdc++.h>
-#pragma GCC target("avx2")
 using namespace std;
 #define ll long long
 #define ld long double
@@ -17,8 +13,8 @@ using namespace std;
 #define MSB(n) (63 - __builtin_clzll(n))
 #define LSB(n) (__builtin_ctzll(n))
 #define mem(arrr, xx) memset(arrr,xx,sizeof arrr)
-#define fi first
-#define se second
+#define fr first
+#define sc second
 #define pb push_back
 #define all(a) a.begin(),a.end()
 #define allr(a) a.rbegin(),a.rend()
@@ -30,61 +26,77 @@ using namespace std;
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
-ll infLL = 0x3f3f3f3f3f3f3f3f;
+const int N = 200000 + 5;
+const int M = 400000 + 5;
+int head[N], to[M], nxt[M], inDeg[N], outDeg[N], ne, n;
 
-vector<bool>bad(26);
-string s , t;
-int k;
+int ans[M], sz;
 
-struct Node {
-    unordered_map<char, int> nxt;
-    int isEnd = 0, sz = 0;//subTree size
-    int &operator[](char x) {
-        return nxt[x];
+void init()
+{
+    memset(head, -1, (n+1) * sizeof(head[0]));
+    memset(inDeg, 0, (n+1) * sizeof(inDeg[0]));
+    memset(outDeg, 0, (n+1) * sizeof(outDeg[0]));
+    ne = 0;
+}
+
+void addEdge(int u, int v)
+{
+    to[ne] = v;
+    nxt[ne] = head[u];
+    head[u] = ne++;
+    outDeg[u]++;
+    inDeg[v]++;
+}
+
+void euler(int u)
+{
+    for (int &e = head[u]; ~e;)
+    {
+        int ee = e;
+        e = nxt[e]; // Move head pointer to the next edge
+        euler(to[ee]);
+        ans[sz++] = ee;
     }
-};
+}
 
-struct Trie {
-    vector<Node> tr;
-
-    int newNode() {
-        tr.emplace_back();
-        return tr.size() - 1;
-    }
-
-    Trie() { tr.clear(), newNode(); }
-
-    void insert(const string &s , int l) {
-        int u = 0;
-        int cnt = 0;
-        for(int i = l ; i < s.size() ; i++){
-            char c = s[i];
-            cnt += bad[c - 'a'];
-            if(cnt > k) return;
-            if(not tr[u][c])
-                tr[u][c] = newNode();
-            tr[u].sz++;
-            u = tr[u][c];
+// Returns true if Euler path/circuit exists.
+// Sets 'st' = valid start node.
+// 'm' is the total number of DIRECTED edges.
+bool buildEulerDirected(int m)
+{
+    if(outDeg[1] - inDeg[1] != 1) return false;
+    if(inDeg[n] - outDeg[n] != 1) return false;
+    for (int i = 2; i < n; i++) {
+        if (inDeg[i] != outDeg[i]) {
+            return false;
         }
-        tr[u].sz++;
-        tr[u].isEnd++;
     }
-
-};
-
+    sz = 0;
+    euler(1);
+    if (sz != m)
+        return false;
+    reverse(ans, ans + sz);
+    return true;
+}
 
 void TC() {
-    cin >> s >> t >> k;
-    for (int i = 0; i < 26; ++i) {
-        if(t[i] == '0') bad[i] = true;
+    int m;
+    cin >> n >> m;
+    init();
+    for (int i = 0; i < m; ++i) {
+        int a , b;
+        cin >> a >> b;
+        addEdge(a , b);
     }
-    Trie trie;
-    for (int l = 0; l < s.size(); ++l) {
-        trie.insert(s , l);
+    bool ok = buildEulerDirected(m);
+
+    if(not ok) return void(imp);
+    cout << 1 << sp;
+    for(int i = 0; i < sz; i++) {
+        cout << to[ans[i]] << sp;
     }
-    ll ans = trie.tr.size() - 1;
-    cout << ans << nl;
+    cout << nl;
 }
 void file()
 {

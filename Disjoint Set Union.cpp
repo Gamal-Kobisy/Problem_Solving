@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/271/D
+// LINK : https://atcoder.jp/contests/practice2/tasks/practice2_a
 #pragma GCC optimize("O3")
 #pragma GCC optimize ("unroll-loops")
 #pragma GCC optimize ("Ofast")
@@ -33,58 +33,42 @@ using namespace std;
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
-vector<bool>bad(26);
-string s , t;
-int k;
+struct DSU{
+    vector<int>par , sz;
 
-struct Node {
-    unordered_map<char, int> nxt;
-    int isEnd = 0, sz = 0;//subTree size
-    int &operator[](char x) {
-        return nxt[x];
+    DSU(int n) : par(n) , sz(n , 1) {iota(all(par) , 0);}
+
+    int find(int x){
+        if(x == par[x]) return x;
+        else return par[x] = find(par[x]);
+    }
+
+    bool same(int x , int y){
+        return find(x) == find(y);
+    }
+
+
+    bool merge(int x , int y){
+        x = find(x);
+        y = find(y);
+        if(same(x , y)) return false;
+        if(sz[x] > sz[y]) swap(x , y);
+        sz[y] += sz[x];
+        par[x] = y;
+        return true;
     }
 };
-
-struct Trie {
-    vector<Node> tr;
-
-    int newNode() {
-        tr.emplace_back();
-        return tr.size() - 1;
-    }
-
-    Trie() { tr.clear(), newNode(); }
-
-    void insert(const string &s , int l) {
-        int u = 0;
-        int cnt = 0;
-        for(int i = l ; i < s.size() ; i++){
-            char c = s[i];
-            cnt += bad[c - 'a'];
-            if(cnt > k) return;
-            if(not tr[u][c])
-                tr[u][c] = newNode();
-            tr[u].sz++;
-            u = tr[u][c];
-        }
-        tr[u].sz++;
-        tr[u].isEnd++;
-    }
-
-};
-
 
 void TC() {
-    cin >> s >> t >> k;
-    for (int i = 0; i < 26; ++i) {
-        if(t[i] == '0') bad[i] = true;
+    int n , q;
+    cin >> n >> q;
+    DSU dsu(n);
+    while(q--){
+        int t , u , v;
+        cin >> t >> u >> v;
+        if(t&1) cout << dsu.same(u , v) << nl;
+        else dsu.merge(u , v);
     }
-    Trie trie;
-    for (int l = 0; l < s.size(); ++l) {
-        trie.insert(s , l);
-    }
-    ll ans = trie.tr.size() - 1;
-    cout << ans << nl;
 }
 void file()
 {

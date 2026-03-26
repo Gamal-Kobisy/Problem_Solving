@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/edu/course/2/lesson/5/1/practice/contest/279634/problem/C
+// LINK : https://codeforces.com/edu/course/2/lesson/4/4/practice/contest/274684/problem/E
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -30,20 +30,12 @@ const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
 struct SEG {
-    ll sum = 0;
+    int mn = inf;
 
     SEG() {}
+
     SEG(ll x){
-        sum = x;
-    }
-};
-
-struct LAZY {
-    ll ass = -1;
-
-    LAZY() {}
-    LAZY(ll val){
-        ass = val;
+        mn = x;
     }
 };
 
@@ -56,7 +48,6 @@ struct segTree {
     int n;
     int sz = 1;
     vector<SEG> seg;
-    vector<LAZY> lazy;
 
     segTree(int n){
         this->n = n;
@@ -65,25 +56,12 @@ struct segTree {
             sz *= 2;
 
         seg.assign(2 * sz , SEG());
-        lazy.assign(2 * sz , LAZY());
     }
 
     SEG merge(SEG lf , SEG rt){
         SEG ret;
-        ret.sum = lf.sum + rt.sum;
+        ret.mn = min(lf.mn , rt.mn);
         return ret;
-    }
-
-    void propagate(int x, int lx, int rx) {
-        if (lazy[x].ass == -1) return;
-
-        seg[x].sum = lazy[x].ass * (rx - lx + 1);
-
-        if (lx != rx) {
-            lazy[LF].ass = lazy[x].ass;
-            lazy[RT].ass = lazy[x].ass;
-        }
-        lazy[x] = LAZY();
     }
 
     void build(vector<int> &v , int x , int lx , int rx){
@@ -104,44 +82,40 @@ struct segTree {
         build(v , 0 , 0 , sz - 1);
     }
 
-    void update(int l, int r, ll val, int x, int lx, int rx){
-        propagate(x, lx, rx);
+    void update(int i , ll val , int x , int lx , int rx){
 
-        if(rx < l || lx > r)
-            return;
-
-        if(l <= lx && rx <= r){
-            lazy[x].ass = val;
-            propagate(x, lx, rx);
+        if(lx == rx){
+            seg[x] = SEG(val);
             return;
         }
-        update(l , r , val , LF , lx , md);
-        update(l , r , val , RT , md + 1 , rx);
+
+        if(i <= md)
+            update(i , val , LF , lx , md);
+        else
+            update(i , val , RT , md + 1 , rx);
 
         seg[x] = merge(seg[LF] , seg[RT]);
     }
 
-    void update(int l , int r , ll val){
-        update(l , r , val , 0 , 0 , sz - 1);
+    void update(int i , ll val){
+        update(i , val , 0 , 0 , sz - 1);
     }
 
-    SEG query(int l , int r , int x , int lx , int rx){
-        propagate(x, lx, rx);
-
-        if(rx < l || lx > r)
-            return SEG();
-
-        if(l <= lx && rx <= r)
-            return seg[x];
-
-        return merge(
-                query(l , r , LF , lx , md),
-                query(l , r , RT , md + 1 , rx)
-        );
+    int query(int l , int r , int p , int x , int lx , int rx){
+        if(lx > r or rx < l or seg[x].mn > p)
+            return 0;
+        if(lx == rx){
+            seg[x].mn = inf;
+            return 1;
+        }
+        int res = query(l , r , p , LF , lx , md)
+                  + query(l , r , p , RT , md + 1 , rx);
+        seg[x] = merge(seg[LF] , seg[RT]);
+        return res;
     }
 
-    SEG query(int l , int r){
-        return query(l , r , 0 , 0 , sz - 1);
+    int query(int l , int r , int p){
+        return query(l , r , p , 0 , 0 , sz - 1);
     }
 
 #undef LF
@@ -150,23 +124,23 @@ struct segTree {
 };
 
 void TC() {
-    int n , m;
-    cin >> n >> m;
+    int n , q;
+    cin >> n >> q;
 //    vector<int>a(n);
 //    for (int i = 0; i < n; ++i) {
 //        cin >> a[i];
 //    }
     segTree seg(n);
 //    seg.build(a);
-    while(m--){
-        int ty , l , r , val, idx;
+    while(q--){
+        int ty , idx , val , l , r , p;
         cin >> ty;
         if(ty&1){
-            cin >> l >> r >> val;
-            seg.update(l , --r , val);
+            cin >> idx >> val;
+            seg.update(idx , val);
         }else{
-            cin >> idx;
-            cout << seg.query(idx , idx).sum << nl;
+            cin >> l >> r >> p;
+            cout << seg.query(l , --r , p) << nl;
         }
     }
 }

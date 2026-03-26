@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://www.spoj.com/problems/BUGLIFE/
+// LINK : https://www.spoj.com/problems/CHAIN/
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -29,12 +29,14 @@ using namespace std;
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
-struct ParityDSU
+struct ModuloDSU
 {
-    int par[N], dist[N]; // dist[u] = XOR parity to root
+    int par[N], dist[N];
+    int k; // The modulo / number of groups
 
-    void init(int n)
+    void init(int n, int mod)
     {
+        k = mod;
         memset(par, -1, n * sizeof(par[0]));
         memset(dist, 0, n * sizeof(dist[0]));
     }
@@ -43,71 +45,79 @@ struct ParityDSU
     pair<int, int> find(int u)
     {
         if (par[u] < 0)
-            return {u, 0}; // par[u]<0 means u is root
+            return {u, 0};
         auto [root, d] = find(par[u]);
-        dist[u] ^= dist[par[u]]; // path compression + parity
+
+        // Path compression + modular addition
+        dist[u] = (dist[u] + dist[par[u]]) % k;
         par[u] = root;
+
         return {root, dist[u]};
     }
 
-    // p=0: u and v same group, p=1: different group
+    // Adds relationship: (val(u) - val(v)) % k == p
     // Returns: -1=conflict, 0=new edge ok, 1=redundant ok
     int addEdge(int u, int v, int p)
     {
+        p = (p % k + k) % k; // Ensure p is positive
         auto [ru, du] = find(u);
         auto [rv, dv] = find(v);
 
         if (ru == rv)
         {
-            return (du ^ dv) == p ? 1 : -1; // check consistency
+            // Check consistency safely handling negative modulo
+            return (((du - dv - p) % k + k) % k == 0) ? 1 : -1;
         }
 
         // Union by size: par holds negative sizes.
-        // More negative means a larger tree.
         if (par[rv] < par[ru])
         {
             swap(ru, rv);
-            swap(du, dv); // Must swap distances to match the swapped roots
+            swap(du, dv);
+            p = (k - p) % k; // CRITICAL: Reverse relationship direction for modulo
         }
 
-        par[ru] += par[rv];     // Update the size of the larger root's tree
-        par[rv] = ru;           // Attach the smaller tree's root to the larger one
-        dist[rv] = du ^ dv ^ p; // Set parity so dist[v] is correct
+        par[ru] += par[rv]; // Update size of the larger root's tree
+        par[rv] = ru;       // Attach smaller tree to larger tree
+
+        // Set new distance for rv relative to ru
+        dist[rv] = ((du - dv - p) % k + k) % k;
 
         return 0;
     }
+
+    // Query relationship between u and v
+    // Returns: -1 if not connected, otherwise (val(u) - val(v)) % k
+    int query(int u, int v)
+    {
+        auto [ru, du] = find(u);
+        auto [rv, dv] = find(v);
+
+        if (ru != rv)
+            return -1; // Not connected
+
+        return ((du - dv) % k + k) % k;
+    }
 } dsu;
 
-void TC(int t) {
-    int n, m;
-    cin >> n >> m;
-
-    // Bugs are 1-indexed (1 to n), so we initialize n + 1
-    dsu.init(n + 1);
-
-    bool suspicious = false;
-
-    for (int i = 0; i < m; i++) {
-        int u, v;
-        cin >> u >> v;
-
-        // If we haven't found a contradiction yet, check this edge.
-        // We pass p = 1 because interacting bugs must be of DIFFERENT genders.
-        if (!suspicious) {
-            if (dsu.addEdge(u, v, 1) == -1) {
-                suspicious = true;
+void TC() {
+    int n , k;
+    cin >> n >> k;
+    dsu.init(n + 1 , 3);
+    int cnt = 0;
+    while(k--){
+        int t , x , y;
+        cin >> t >> x >> y;
+        if(x > n or y > n) cnt++;
+        else if(t == 2 and x == y) cnt++;
+        else{
+            if (dsu.addEdge(x, y, (t == 1) ? 0 : 1) == -1) {
+                cnt++;
             }
         }
     }
-
-    cout << "Scenario #" << t << ":" << nl;
-    if (suspicious) {
-        cout << "Suspicious bugs found!" << nl;
-    } else {
-        cout << "No suspicious bugs found!" << nl;
-    }
+    cout << cnt << nl;
 }
-
 void file()
 {
 #ifndef ONLINE_JUDGE
@@ -123,10 +133,10 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll tc = 1;
-    cin >> tc;
-    for (int t = 1; t <= tc; t++)
+     cin >> tc;
+    while (tc--)
     {
-        TC(t);
+        TC();
     }
 
     return 0;

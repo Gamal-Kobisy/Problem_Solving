@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/edu/course/2/lesson/5/1/practice/contest/279634/problem/C
+// LINK : https://codeforces.com/edu/course/2/lesson/5/4/practice/contest/280801/problem/B
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -39,12 +39,10 @@ struct SEG {
 };
 
 struct LAZY {
-    ll ass = -1;
+    ll start = 0 , end = 0 , step = 0;
 
     LAZY() {}
-    LAZY(ll val){
-        ass = val;
-    }
+
 };
 
 struct segTree {
@@ -74,14 +72,28 @@ struct segTree {
         return ret;
     }
 
-    void propagate(int x, int lx, int rx) {
-        if (lazy[x].ass == -1) return;
+    ll sum(ll start , ll end , ll step){
+        ll len = (end - start) / step + 1;
+        return len * (start + end) / 2;
+    }
 
-        seg[x].sum = lazy[x].ass * (rx - lx + 1);
+    void propagate(int x, int lx, int rx) {
+        if (lazy[x].start == 0) return;
+
+        seg[x].sum += sum(lazy[x].start , lazy[x].end , lazy[x].step);
 
         if (lx != rx) {
-            lazy[LF].ass = lazy[x].ass;
-            lazy[RT].ass = lazy[x].ass;
+            ll left_len = md - lx + 1;
+            ll left_end = lazy[x].start + (left_len - 1) * lazy[x].step;
+            ll right_start = left_end + lazy[x].step;
+
+            lazy[LF].start += lazy[x].start;
+            lazy[LF].end += left_end;
+            lazy[LF].step += lazy[x].step;
+
+            lazy[RT].start += right_start;
+            lazy[RT].end += lazy[x].end;
+            lazy[RT].step += lazy[x].step;
         }
         lazy[x] = LAZY();
     }
@@ -104,25 +116,27 @@ struct segTree {
         build(v , 0 , 0 , sz - 1);
     }
 
-    void update(int l, int r, ll val, int x, int lx, int rx){
+    void update(int l, int r, ll a , ll d , int x, int lx, int rx){
         propagate(x, lx, rx);
 
         if(rx < l || lx > r)
             return;
 
         if(l <= lx && rx <= r){
-            lazy[x].ass = val;
+            lazy[x].start += a + (lx - l) * d;
+            lazy[x].end += a + (rx - l) * d;
+            lazy[x].step += d;
             propagate(x, lx, rx);
             return;
         }
-        update(l , r , val , LF , lx , md);
-        update(l , r , val , RT , md + 1 , rx);
+        update(l , r , a , d , LF , lx , md);
+        update(l , r , a , d , RT , md + 1 , rx);
 
         seg[x] = merge(seg[LF] , seg[RT]);
     }
 
-    void update(int l , int r , ll val){
-        update(l , r , val , 0 , 0 , sz - 1);
+    void update(int l , int r , ll a , ll d){
+        update(l , r , a , d , 0 , 0 , sz - 1);
     }
 
     SEG query(int l , int r , int x , int lx , int rx){
@@ -150,22 +164,18 @@ struct segTree {
 };
 
 void TC() {
-    int n , m;
-    cin >> n >> m;
-//    vector<int>a(n);
-//    for (int i = 0; i < n; ++i) {
-//        cin >> a[i];
-//    }
+    int n , q;
+    cin >> n >> q;
     segTree seg(n);
-//    seg.build(a);
-    while(m--){
-        int ty , l , r , val, idx;
+    while(q--){
+        int ty , l , r , a , d , idx;
         cin >> ty;
         if(ty&1){
-            cin >> l >> r >> val;
-            seg.update(l , --r , val);
+            cin >> l >> r >> a >> d;
+            seg.update(--l , --r , a , d);
         }else{
             cin >> idx;
+            --idx;
             cout << seg.query(idx , idx).sum << nl;
         }
     }

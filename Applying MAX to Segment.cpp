@@ -3,93 +3,170 @@
 
 // LINK : https://codeforces.com/edu/course/2/lesson/5/1/practice/contest/279634/problem/B
 #include <bits/stdc++.h>
+using namespace std;
 #define ll long long
-#define nl '\n'
-#define sp ' '
+#define ld long double
+#define pii pair<int,int>
+#define pll pair<ll,ll>
+#define PI acos(-1)
+#define Ones(n) __builtin_popcountll(n)
+#define MSB(n) (63 - __builtin_clzll(n))
+#define LSB(n) (__builtin_ctzll(n))
+#define mem(arrr, xx) memset(arrr,xx,sizeof arrr)
+#define fr first
+#define sc second
+#define pb push_back
 #define all(a) a.begin(),a.end()
 #define allr(a) a.rbegin(),a.rend()
 #define no cout<<"NO\n"
 #define yes cout<<"YES\n"
+#define imp cout<<"IMPOSSIBLE\n"
+#define nl '\n'
+#define sp ' '
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
-struct SegmentTree{
-#define L node*2+1
-#define R node*2+2
-#define mid (l + r >> 1)
-private:
-    int sz;vector<ll>seg;
-    ll merge(ll a,ll b)
-    {
-        return max(a , b);
-    }
-    void update(int l, int r, int node, int lq, int rq, ll val)
-    {
-        if(r<lq || l > rq)
-        {
-            return;
-        }
-        if(l>=lq&& r <= rq)
-        {
-            seg[node]=merge(seg[node],val);
-            return;
-        }
-        update(l, mid,L, lq, rq, val);
-        update(mid+1, r,R, lq, rq, val);
-    }
+struct SEG {
+    ll mx = 0;
 
-    ll query(int l , int r , int node , int idx)
-    {
-        if(l == r)
-            return seg[node];
-        if(idx <= mid)
-        {
-            return merge(seg[node] , query(l , mid , L , idx));
-        }
-        return merge(seg[node] , query(mid + 1 , r , R , idx));
+    SEG() {}
+    SEG(ll x){
+        mx = x;
     }
-public:
-    SegmentTree(int n)
-    {
-        sz = 1;
-        while(sz < n) sz *= 2;
-        seg = vector<ll>(sz * 2);
-    }
-    void update(int l , int r , int val)
-    {
-        update(0 , sz - 1 , 0 , l , r , val);
-    }
-    ll query(int idx)
-    {
-        return query(0 , sz - 1 , 0 , idx);
-    }
-#undef L
-#undef R
-#undef mid
 };
 
-void solve() {
-    int n ,m;
-    cin >> n >> m;
-    SegmentTree tree(n);
-    while(m--)
-    {
-        int op;
-        cin >> op;
-        if(op == 1)
-        {
-            int l , r , val;
-            cin >> l >> r >> val;
-            tree.update(l , r - 1 , val);
+struct LAZY {
+    ll ass = -1;
+
+    LAZY() {}
+    LAZY(ll val){
+        ass = val;
+    }
+};
+
+struct segTree {
+
+#define LF 2*x+1
+#define RT 2*x+2
+#define md (lx+rx)/2
+
+    int n;
+    int sz = 1;
+    vector<SEG> seg;
+    vector<LAZY> lazy;
+
+    segTree(int n){
+        this->n = n;
+
+        while(sz < n)
+            sz *= 2;
+
+        seg.assign(2 * sz , SEG());
+        lazy.assign(2 * sz , LAZY());
+    }
+
+    SEG merge(SEG lf , SEG rt){
+        SEG ret;
+        ret.mx = max(lf.mx , rt.mx);
+        return ret;
+    }
+
+    void propagate(int x, int lx, int rx) {
+        if (lazy[x].ass == -1) return;
+
+        seg[x].mx = max(seg[x].mx , lazy[x].ass);
+
+        if (lx != rx) {
+            lazy[LF].ass = max(lazy[LF].ass, lazy[x].ass);
+            lazy[RT].ass = max(lazy[RT].ass, lazy[x].ass);
         }
-        else
-        {
-            int idx;
+        lazy[x] = LAZY();
+    }
+
+    void build(vector<int> &v , int x , int lx , int rx){
+
+        if(lx == rx){
+            if(lx < n)
+                seg[x] = SEG(v[lx]);
+            return;
+        }
+
+        build(v , LF , lx , md);
+        build(v , RT , md + 1 , rx);
+
+        seg[x] = merge(seg[LF] , seg[RT]);
+    }
+
+    void build(vector<int> &v){
+        build(v , 0 , 0 , sz - 1);
+    }
+
+    void update(int l, int r, ll val, int x, int lx, int rx){
+        propagate(x, lx, rx);
+
+        if(rx < l || lx > r)
+            return;
+
+        if(l <= lx && rx <= r){
+            lazy[x].ass = max(lazy[x].ass , val);
+            propagate(x, lx, rx);
+            return;
+        }
+        update(l , r , val , LF , lx , md);
+        update(l , r , val , RT , md + 1 , rx);
+
+        seg[x] = merge(seg[LF] , seg[RT]);
+    }
+
+    void update(int l , int r , ll val){
+        update(l , r , val , 0 , 0 , sz - 1);
+    }
+
+    SEG query(int l , int r , int x , int lx , int rx){
+        propagate(x, lx, rx);
+
+        if(rx < l || lx > r)
+            return SEG();
+
+        if(l <= lx && rx <= r)
+            return seg[x];
+
+        return merge(
+                query(l , r , LF , lx , md),
+                query(l , r , RT , md + 1 , rx)
+        );
+    }
+
+    SEG query(int l , int r){
+        return query(l , r , 0 , 0 , sz - 1);
+    }
+
+#undef LF
+#undef RT
+#undef md
+};
+
+void TC() {
+    int n , m;
+    cin >> n >> m;
+//    vector<int>a(n);
+//    for (int i = 0; i < n; ++i) {
+//        cin >> a[i];
+//    }
+    segTree seg(n);
+//    seg.build(a);
+    while(m--){
+        int ty , l , r , val, idx;
+        cin >> ty;
+        if(ty&1){
+            cin >> l >> r >> val;
+            seg.update(l , --r , val);
+        }else{
             cin >> idx;
-            cout << tree.query(idx) << nl;
+            cout << seg.query(idx , idx).mx << nl;
         }
     }
 }
@@ -107,11 +184,11 @@ int main() {
     ENG_GAMAL
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
-    ll t = 1;
-//     cin >> t;
-    while (t--)
+    ll tc = 1;
+//     cin >> tc;
+    while (tc--)
     {
-        solve();
+        TC();
     }
 
     return 0;

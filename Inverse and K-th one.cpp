@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/edu/course/2/lesson/5/1/practice/contest/279634/problem/C
+// LINK : https://codeforces.com/edu/course/2/lesson/5/3/practice/contest/280799/problem/B
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -30,21 +30,17 @@ const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
 struct SEG {
-    ll sum = 0;
+    ll mx = 0;
 
     SEG() {}
     SEG(ll x){
-        sum = x;
+        mx = x;
     }
 };
 
 struct LAZY {
-    ll ass = -1;
+    bool inv = false;
 
-    LAZY() {}
-    LAZY(ll val){
-        ass = val;
-    }
 };
 
 struct segTree {
@@ -70,18 +66,18 @@ struct segTree {
 
     SEG merge(SEG lf , SEG rt){
         SEG ret;
-        ret.sum = lf.sum + rt.sum;
+        ret.mx = lf.mx + rt.mx;
         return ret;
     }
 
     void propagate(int x, int lx, int rx) {
-        if (lazy[x].ass == -1) return;
+        if (not lazy[x].inv) return;
 
-        seg[x].sum = lazy[x].ass * (rx - lx + 1);
+        seg[x].mx = (rx - lx + 1) - seg[x].mx;
 
         if (lx != rx) {
-            lazy[LF].ass = lazy[x].ass;
-            lazy[RT].ass = lazy[x].ass;
+            lazy[LF].inv ^= true;
+            lazy[RT].inv ^= true;
         }
         lazy[x] = LAZY();
     }
@@ -104,25 +100,26 @@ struct segTree {
         build(v , 0 , 0 , sz - 1);
     }
 
-    void update(int l, int r, ll val, int x, int lx, int rx){
+    void update(int l, int r, int x, int lx, int rx){
         propagate(x, lx, rx);
 
         if(rx < l || lx > r)
             return;
 
         if(l <= lx && rx <= r){
-            lazy[x].ass = val;
+            lazy[x].inv ^= true;
+
             propagate(x, lx, rx);
             return;
         }
-        update(l , r , val , LF , lx , md);
-        update(l , r , val , RT , md + 1 , rx);
+        update(l , r , LF , lx , md);
+        update(l , r , RT , md + 1 , rx);
 
         seg[x] = merge(seg[LF] , seg[RT]);
     }
 
-    void update(int l , int r , ll val){
-        update(l , r , val , 0 , 0 , sz - 1);
+    void update(int l , int r){
+        update(l , r , 0 , 0 , sz - 1);
     }
 
     SEG query(int l , int r , int x , int lx , int rx){
@@ -144,29 +141,41 @@ struct segTree {
         return query(l , r , 0 , 0 , sz - 1);
     }
 
+    int FirstAtLest(int l , int r , int k , int x , int lx , int rx){
+        propagate(x , lx , rx);
+
+        if(lx == rx) return lx;
+
+        propagate(LF , lx , md);
+        propagate(RT , md+1 , rx);
+        if(seg[LF].mx > k){
+            return FirstAtLest(l, r, k, LF, lx, md);
+        }
+        return FirstAtLest(l, r, k - seg[LF].mx, RT, md + 1, rx);
+    }
+
+    int Kth(int l , int r , int k){
+        return FirstAtLest(l, r, k, 0, 0, sz - 1);
+    }
+
 #undef LF
 #undef RT
 #undef md
 };
 
 void TC() {
-    int n , m;
-    cin >> n >> m;
-//    vector<int>a(n);
-//    for (int i = 0; i < n; ++i) {
-//        cin >> a[i];
-//    }
+    int n , q;
+    cin >> n >> q;
     segTree seg(n);
-//    seg.build(a);
-    while(m--){
-        int ty , l , r , val, idx;
+    while(q--){
+        int ty , l , r , k;
         cin >> ty;
         if(ty&1){
-            cin >> l >> r >> val;
-            seg.update(l , --r , val);
+            cin >> l >> r;
+            seg.update(l , --r);
         }else{
-            cin >> idx;
-            cout << seg.query(idx , idx).sum << nl;
+            cin >> k;
+            cout << seg.Kth(0 , n-1 , k) << nl;
         }
     }
 }

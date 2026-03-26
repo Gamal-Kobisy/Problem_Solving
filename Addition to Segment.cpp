@@ -79,7 +79,7 @@ struct segTree {
     }
 
     void build(vector<int> &v){
-        build(v , 0 , 0 , n - 1);
+        build(v , 0 , 0 , sz - 1);
     }
 
     void update(int l , int r , ll val , int x , int lx , int rx){
@@ -93,7 +93,7 @@ struct segTree {
     }
 
     void update(int l , int r , ll val){
-        update(l , r , val , 0 , 0 , n - 1);
+        update(l , r , val , 0 , 0 , sz - 1);
     }
 
     SEG query(int i , int x , int lx , int rx){
@@ -105,7 +105,7 @@ struct segTree {
     }
 
     SEG query(int i){
-        return query(i , 0 , 0 , n - 1);
+        return query(i , 0 , 0 , sz - 1);
     }
 
 #undef LF

@@ -1,12 +1,8 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/271/D
-#pragma GCC optimize("O3")
-#pragma GCC optimize ("unroll-loops")
-#pragma GCC optimize ("Ofast")
+// LINK : https://codeforces.com/problemset/problem/1721/E
 #include <bits/stdc++.h>
-#pragma GCC target("avx2")
 using namespace std;
 #define ll long long
 #define ld long double
@@ -17,8 +13,8 @@ using namespace std;
 #define MSB(n) (63 - __builtin_clzll(n))
 #define LSB(n) (__builtin_ctzll(n))
 #define mem(arrr, xx) memset(arrr,xx,sizeof arrr)
-#define fi first
-#define se second
+#define fr first
+#define sc second
 #define pb push_back
 #define all(a) a.begin(),a.end()
 #define allr(a) a.rbegin(),a.rend()
@@ -33,58 +29,62 @@ using namespace std;
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
-vector<bool>bad(26);
-string s , t;
-int k;
+vector<int> kmp(const string &s) {
+  const int n = (int) s.length();
+  vector<int> fail(n);
+  int j = 0;
+  for (int i = 1; i < n; i++) {
+    while (j > 0 && s[i] != s[j]) j = fail[j - 1];
+    j += (s[j] == s[i]);
+    fail[i] = j;
+  }
+  return fail;
+}
 
-struct Node {
-    unordered_map<char, int> nxt;
-    int isEnd = 0, sz = 0;//subTree size
-    int &operator[](char x) {
-        return nxt[x];
+void compute_automaton(string s, vector<vector<int>> &aut) {
+  s += '#';
+  int n = s.size();
+  vector<int> pi = kmp(s);
+  aut.assign(n, vector<int>(26));
+  for (int i = 0; i < n; i++) {
+    for (int c = 0; c < 26; c++) {
+      if (i > 0 && 'a' + c != s[i]) {
+        aut[i][c] = aut[pi[i - 1]][c];
+      } else {
+        aut[i][c] = i + ('a' + c == s[i]);
+      }
     }
-};
-
-struct Trie {
-    vector<Node> tr;
-
-    int newNode() {
-        tr.emplace_back();
-        return tr.size() - 1;
-    }
-
-    Trie() { tr.clear(), newNode(); }
-
-    void insert(const string &s , int l) {
-        int u = 0;
-        int cnt = 0;
-        for(int i = l ; i < s.size() ; i++){
-            char c = s[i];
-            cnt += bad[c - 'a'];
-            if(cnt > k) return;
-            if(not tr[u][c])
-                tr[u][c] = newNode();
-            tr[u].sz++;
-            u = tr[u][c];
-        }
-        tr[u].sz++;
-        tr[u].isEnd++;
-    }
-
-};
-
+  }
+}
 
 void TC() {
-    cin >> s >> t >> k;
-    for (int i = 0; i < 26; ++i) {
-        if(t[i] == '0') bad[i] = true;
+    string s, pat;
+    int q;
+    cin >> pat >> q;
+
+    vector<int> pi = kmp(pat);
+    vector<vector<int>> aut;
+    compute_automaton(pat, aut);
+    int n = pat.size();
+
+    while(q--){
+        cin >> s;
+        vector<int> pos(s.size());
+        int j = pi.back();
+        for (int i = 0; i < s.size(); i++) {
+            while (j >= n and s[i] != s[j - n]) {
+                j = (j == n) ? pi[n - 1] : pos[j - n - 1];
+            }
+            if (j < n) {
+                j = aut[j][s[i] - 'a'];
+            } else {
+                j += (s[i] == s[j - n]);
+            }
+            pos[i] = j;
+            cout << pos[i] << sp;
+        }
+        cout << nl;
     }
-    Trie trie;
-    for (int l = 0; l < s.size(); ++l) {
-        trie.insert(s , l);
-    }
-    ll ans = trie.tr.size() - 1;
-    cout << ans << nl;
 }
 void file()
 {

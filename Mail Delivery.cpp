@@ -1,12 +1,8 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/271/D
-#pragma GCC optimize("O3")
-#pragma GCC optimize ("unroll-loops")
-#pragma GCC optimize ("Ofast")
+// LINK : https://cses.fi/alon/task/1691
 #include <bits/stdc++.h>
-#pragma GCC target("avx2")
 using namespace std;
 #define ll long long
 #define ld long double
@@ -17,8 +13,8 @@ using namespace std;
 #define MSB(n) (63 - __builtin_clzll(n))
 #define LSB(n) (__builtin_ctzll(n))
 #define mem(arrr, xx) memset(arrr,xx,sizeof arrr)
-#define fi first
-#define se second
+#define fr first
+#define sc second
 #define pb push_back
 #define all(a) a.begin(),a.end()
 #define allr(a) a.rbegin(),a.rend()
@@ -30,61 +26,100 @@ using namespace std;
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
-ll infLL = 0x3f3f3f3f3f3f3f3f;
+const int N = 200000 + 5;
+const int M = 400000 + 5;
+int head[N], to[M * 2], nxt[M * 2], deg[N], ne, n;
 
-vector<bool>bad(26);
-string s , t;
-int k;
+int vis[M * 2];
+int vid = 1;
+int ans[M * 2], sz;
 
-struct Node {
-    unordered_map<char, int> nxt;
-    int isEnd = 0, sz = 0;//subTree size
-    int &operator[](char x) {
-        return nxt[x];
+void init()
+{
+    memset(head, -1, (n+1) * sizeof(head[0]));
+    memset(deg, 0, (n+1) * sizeof(deg[0]));
+    ne = 0;
+}
+
+void addEdge(int u, int v)
+{
+    to[ne] = v;
+    nxt[ne] = head[u];
+    head[u] = ne++;
+    deg[u]++;
+}
+
+void addBiEdge(int u, int v)
+{
+    addEdge(u, v);
+    addEdge(v, u);
+}
+
+void euler(int u)
+{
+    for (int v, &e = head[u]; ~e;)
+    {
+        int ee = e;
+        e = nxt[e]; // Move head pointer to the next edge
+        if (vis[ee] == vid)
+            continue;
+        vis[ee] = vis[ee ^ 1] = vid;
+        v = to[ee];
+        euler(v);
+        ans[sz++] = ee;
     }
-};
+}
 
-struct Trie {
-    vector<Node> tr;
-
-    int newNode() {
-        tr.emplace_back();
-        return tr.size() - 1;
-    }
-
-    Trie() { tr.clear(), newNode(); }
-
-    void insert(const string &s , int l) {
-        int u = 0;
-        int cnt = 0;
-        for(int i = l ; i < s.size() ; i++){
-            char c = s[i];
-            cnt += bad[c - 'a'];
-            if(cnt > k) return;
-            if(not tr[u][c])
-                tr[u][c] = newNode();
-            tr[u].sz++;
-            u = tr[u][c];
+// Returns true if Euler path/circuit exists.
+// Sets 'st' = valid start node.
+// 'm' is the total number of UNDIRECTED edges.
+bool buildEulerUndirected(int st, int m)
+{
+    int odd = 0;
+    for (int i = 1; i <= n; i++)
+    {
+        if (deg[i] & 1)
+        {
+            odd++;
+//            st = i;
         }
-        tr[u].sz++;
-        tr[u].isEnd++;
+        if (deg[i] > 0 && st == -1)
+        {
+//            st = i;
+        }
     }
 
-};
+    if (odd != 0)
+        return false;
 
+
+
+    sz = 0;
+    ++vid; // O(1) visited array reset
+    euler(st);
+    if (sz != m)
+        return false;
+    reverse(ans, ans + sz);
+
+    return true;
+}
 
 void TC() {
-    cin >> s >> t >> k;
-    for (int i = 0; i < 26; ++i) {
-        if(t[i] == '0') bad[i] = true;
+    int m;
+    cin >> n >> m;
+    init();
+    for(int i = 0; i < m; i++) {
+        int u, v;
+        cin >> u >> v;
+        addBiEdge(u, v);
     }
-    Trie trie;
-    for (int l = 0; l < s.size(); ++l) {
-        trie.insert(s , l);
+    bool ok = buildEulerUndirected(1 , m);
+    if(not ok) return void(imp);
+    cout << 1 << sp;
+    for(int i = 0; i < sz; i++) {
+        cout << to[ans[i]] << sp;
     }
-    ll ans = trie.tr.size() - 1;
-    cout << ans << nl;
+    cout << nl;
 }
 void file()
 {

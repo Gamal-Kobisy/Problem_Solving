@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/edu/course/2/lesson/5/1/practice/contest/279634/problem/C
+// LINK : https://codeforces.com/edu/course/2/lesson/5/4/practice/contest/280801/problem/C
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -26,25 +26,21 @@ using namespace std;
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
+const int N = 1e6 + 5, M = 5e5, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-
 struct SEG {
-    ll sum = 0;
+    int sum = 0;
+    int cnt = 0;
+    bool l_black = false;
+    bool r_black = false;
 
     SEG() {}
-    SEG(ll x){
-        sum = x;
-    }
 };
 
 struct LAZY {
-    ll ass = -1;
+    int type = 0;
 
     LAZY() {}
-    LAZY(ll val){
-        ass = val;
-    }
 };
 
 struct segTree {
@@ -71,77 +67,60 @@ struct segTree {
     SEG merge(SEG lf , SEG rt){
         SEG ret;
         ret.sum = lf.sum + rt.sum;
+
+        ret.cnt = lf.cnt + rt.cnt;
+        if (lf.r_black && rt.l_black) {
+            ret.cnt--;
+        }
+
+        ret.l_black = lf.l_black;
+        ret.r_black = rt.r_black;
         return ret;
     }
 
     void propagate(int x, int lx, int rx) {
-        if (lazy[x].ass == -1) return;
+        if (lazy[x].type == 0) return;
 
-        seg[x].sum = lazy[x].ass * (rx - lx + 1);
+        if (lazy[x].type == 1) {
+            seg[x].sum = (rx - lx + 1);
+            seg[x].cnt = 1;
+            seg[x].l_black = true;
+            seg[x].r_black = true;
+        } else if (lazy[x].type == 2) {
+            seg[x].sum = 0;
+            seg[x].cnt = 0;
+            seg[x].l_black = false;
+            seg[x].r_black = false;
+        }
 
         if (lx != rx) {
-            lazy[LF].ass = lazy[x].ass;
-            lazy[RT].ass = lazy[x].ass;
+            lazy[LF].type = lazy[x].type;
+            lazy[RT].type = lazy[x].type;
         }
+
         lazy[x] = LAZY();
     }
 
-    void build(vector<int> &v , int x , int lx , int rx){
-
-        if(lx == rx){
-            if(lx < n)
-                seg[x] = SEG(v[lx]);
-            return;
-        }
-
-        build(v , LF , lx , md);
-        build(v , RT , md + 1 , rx);
-
-        seg[x] = merge(seg[LF] , seg[RT]);
-    }
-
-    void build(vector<int> &v){
-        build(v , 0 , 0 , sz - 1);
-    }
-
-    void update(int l, int r, ll val, int x, int lx, int rx){
+    void update(int l, int r, int type, int x, int lx, int rx){
         propagate(x, lx, rx);
 
         if(rx < l || lx > r)
             return;
 
         if(l <= lx && rx <= r){
-            lazy[x].ass = val;
+            lazy[x].type = type;
             propagate(x, lx, rx);
             return;
         }
-        update(l , r , val , LF , lx , md);
-        update(l , r , val , RT , md + 1 , rx);
+
+        update(l , r , type , LF , lx , md);
+        update(l , r , type , RT , md + 1 , rx);
 
         seg[x] = merge(seg[LF] , seg[RT]);
     }
 
-    void update(int l , int r , ll val){
-        update(l , r , val , 0 , 0 , sz - 1);
-    }
-
-    SEG query(int l , int r , int x , int lx , int rx){
-        propagate(x, lx, rx);
-
-        if(rx < l || lx > r)
-            return SEG();
-
-        if(l <= lx && rx <= r)
-            return seg[x];
-
-        return merge(
-                query(l , r , LF , lx , md),
-                query(l , r , RT , md + 1 , rx)
-        );
-    }
-
-    SEG query(int l , int r){
-        return query(l , r , 0 , 0 , sz - 1);
+    void update(int l , int r , int type){
+        update(l , r , type , 0 , 0 , sz - 1);
     }
 
 #undef LF
@@ -150,26 +129,24 @@ struct segTree {
 };
 
 void TC() {
-    int n , m;
-    cin >> n >> m;
-//    vector<int>a(n);
-//    for (int i = 0; i < n; ++i) {
-//        cin >> a[i];
-//    }
-    segTree seg(n);
-//    seg.build(a);
-    while(m--){
-        int ty , l , r , val, idx;
-        cin >> ty;
-        if(ty&1){
-            cin >> l >> r >> val;
-            seg.update(l , --r , val);
-        }else{
-            cin >> idx;
-            cout << seg.query(idx , idx).sum << nl;
-        }
+    int n;
+    cin >> n;
+
+    segTree seg(N);
+    while(n--){
+        char c;
+        int x, l;
+        cin >> c >> x >> l;
+
+        int type = (c == 'B') ? 1 : 2;
+
+        seg.update(x + M, x + l - 1 + M, type);
+
+        cout << seg.seg[0].cnt << sp << seg.seg[0].sum << nl;
     }
+
 }
+
 void file()
 {
 #ifndef ONLINE_JUDGE
@@ -182,14 +159,9 @@ void file()
 int main() {
     file();
     ENG_GAMAL
-// test-independent code ——————————————————————
-// ————————————————————————————————————————————
     ll tc = 1;
-//     cin >> tc;
-    while (tc--)
-    {
+    while (tc--) {
         TC();
     }
-
     return 0;
 }

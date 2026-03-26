@@ -1,12 +1,8 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK :
-#pragma GCC optimize("O3")
-#pragma GCC optimize ("unroll-loops")
-#pragma GCC optimize ("Ofast")
+// LINK : https://vjudge.net/problem/URAL-1671
 #include <bits/stdc++.h>
-#pragma GCC target("avx2")
 using namespace std;
 #define ll long long
 #define ld long double
@@ -17,8 +13,8 @@ using namespace std;
 #define MSB(n) (63 - __builtin_clzll(n))
 #define LSB(n) (__builtin_ctzll(n))
 #define mem(arrr, xx) memset(arrr,xx,sizeof arrr)
-#define fi first
-#define se second
+#define fr first
+#define sc second
 #define pb push_back
 #define all(a) a.begin(),a.end()
 #define allr(a) a.rbegin(),a.rend()
@@ -59,15 +55,52 @@ struct DSU{
 };
 
 void TC() {
-    int n , q;
-    cin >> n >> q;
-    DSU dsu(n);
-    while(q--){
-        int t , u , v;
-        cin >> t >> u >> v;
-        if(t&1) cout << dsu.same(u , v) << nl;
-        else dsu.merge(u , v);
+    int n, m;
+    cin >> n >> m;
+
+    vector<pair<int, int>> edges(m + 1);
+    for (int i = 1; i <= m; i++) {
+        cin >> edges[i].first >> edges[i].second;
     }
+
+    int q;
+    cin >> q;
+    vector<int> queries(q);
+    vector<bool> removed(m + 1, false);
+
+    for (int i = 0; i < q; i++) {
+        cin >> queries[i];
+        removed[queries[i]] = true;
+    }
+
+    DSU dsu(n + 1);
+    int comps = n;
+
+    for (int i = 1; i <= m; i++) {
+        if (!removed[i]) {
+            if (dsu.merge(edges[i].first, edges[i].second)) {
+                comps--;
+            }
+        }
+    }
+
+    vector<int> ans(q);
+
+    for (int i = q - 1; i >= 0; i--) {
+        ans[i] = comps;
+
+        int u = edges[queries[i]].first;
+        int v = edges[queries[i]].second;
+
+        if (dsu.merge(u, v)) {
+            comps--;
+        }
+    }
+
+    for (int i = 0; i < q; i++) {
+        cout << ans[i] << (i == q - 1 ? "" : " ");
+    }
+    cout << nl;
 }
 void file()
 {
