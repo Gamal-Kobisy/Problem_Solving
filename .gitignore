@@ -1,13 +1,13 @@
-# Build folders
-.vscode/
-cmake-build-*/
-build/
+# Ignore everything by default
+*
+*/
 
-# Compiled files
-*.exe
-*.out
-*.o
-*.obj
+# But track .cpp and .txt files
+!*.cpp
+!*.txt
 
-# Logs
-*.log
+# Track .gitignore itself
+!.gitignore
+
+# Track README if it exists
+!README.md
