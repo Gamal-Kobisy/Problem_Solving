@@ -6,8 +6,10 @@ set(CMAKE_CXX_STANDARD 23)
 include_directories(.)
 
 add_executable(Problem_Solving
-        "Division + LCP (hard version).cpp"
+        #        "Tree Distance.cpp"
+        #        "Concat Power of 2.cpp"
 
+        #        "A Trivial String Problem.cpp"
         #        "GCD Counting.cpp"
         #        "Sum of Squares with Segment Tree.cpp"
         #                Gambling.cpp
