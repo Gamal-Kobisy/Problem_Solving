@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK :
+// LINK : https://codeforces.com/problemset/problem/1903/D1
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -30,37 +30,50 @@ const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
 void TC() {
-    int n;
-    cin >> n;
-    vector<ll> arr(n);
-    for(int i=0; i<n; ++i) cin >> arr[i];
-    vector<ll> zeroBlocks;
-    ll cur = 0;
-    for(int i=0; i<n; ++i) {
-        if(arr[i] == 0) cur++;
-        if(cur > 0 &&(i == n - 1 || arr[i] != 0)) {
-            zeroBlocks.push_back(cur);
-            cur = 0;
+    int n , q;
+    cin >> n >> q;
+    vector<ll>a(n);
+    for (int i = 0; i < n; ++i) {
+        cin >> a[i];
+    }
+    for (int i = 0; i < q; i++) {
+        ll k;
+        cin >> k;
+        vector<ll> temp_a = a;
+        ll ans = 0;
+
+        for (int bit = 60; bit >= 0; bit--) {
+            ll bitVal = (1LL << bit);
+            ll mask = bitVal - 1;
+
+            ll cost = 0;
+            bool can = true;
+
+            for (int j = 0; j < n; j++) {
+                if ((temp_a[j] & bitVal) == 0) {
+                    ll need = bitVal - (temp_a[j] & mask);
+                    if (k - cost < need) {
+                        can = false;
+                        break;
+                    }
+                    cost += need;
+                }
+            }
+
+            if (can and cost <= k) {
+                k -= cost;
+                ans += bitVal;
+                for (int j = 0; j < n; j++) {
+                    if ((temp_a[j] & bitVal) == 0) {
+                        ll need = bitVal - (temp_a[j] & mask);
+                        temp_a[j] += need;
+                    }
+                }
+            }
         }
-    }
-    ll ans = 1;
-    int curBlock = 0;
-    ll curr = 1;
-    for(int i=1; i<n; ++i) {
-        if(arr[i] == arr[i - 1]) curr++;
-        else if(arr[i] == 0) {
-            curr += zeroBlocks[curBlock];
-            curBlock++;
-            while(arr[i] == 0) i++;
-            --i;
-        } else if(arr[i - 1] == 0 && arr[i] != 0) {
-            curr += xzxeroBlocks[max(0, curBlock - 1)];
-        } else curr = 1;
-        ans = max(ans, curr);
-    }
-    cout << ans << "\n";
 
-
+        cout << ans << nl;
+    }
 }
 void file()
 {
@@ -76,8 +89,8 @@ int main() {
     ENG_GAMAL
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
-    ll tc;
-     cin >> tc;
+    ll tc = 1;
+//     cin >> tc;
     while (tc--)
     {
         TC();

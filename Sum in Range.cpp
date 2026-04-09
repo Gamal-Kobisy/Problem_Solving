@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK :
+// LINK : https://codeforces.com/group/Rilx5irOux/contest/638270/problem/H
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -28,39 +28,72 @@ using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
+struct MergeSortTree {
+private:
+#define md ((lx+rx)>>1)
+#define LF (x*2+1)
+#define RT (x*2+2)
+    vector<vector<pll>> seg;
+    int sz;
+
+    void build(vector<ll> &arr, int x, int lx, int rx) {
+        if (rx == lx) {
+            seg[x] = {{arr[lx], arr[lx]}};
+            return;
+        }
+        build(arr, LF, lx, md);
+        build(arr, RT, md + 1, rx);
+        seg[x].resize(seg[LF].size() + seg[RT].size());
+        merge(all(seg[LF]), all(seg[RT]), seg[x].begin());
+        for(int i = 1; i < seg[x].size(); i++) {
+            seg[x][i].sc = seg[x][i-1].sc + seg[x][i].fr;
+        }
+    }
+
+    ll query(int l, int r, int v, int x, int lx, int rx) {
+        if (r < lx or rx < l)return 0;
+        if (l <= lx and rx <= r) {
+            auto it = upper_bound(all(seg[x]), make_pair((ll)v, infLL));
+            if (it == seg[x].begin()) return 0;
+            return prev(it)->sc;
+        }
+        return query(l, r, v, LF, lx, md) +
+               query(l, r, v, RT, md + 1, rx);
+    }
+
+public:
+    void build(vector<ll> &arr) {
+        sz = arr.size();
+        seg.assign(sz * 4, {});
+        build(arr, 0, 0, sz - 1);
+    }
+
+    ll query(int l, int r, int v) {
+        return query(l, r, v, 0, 0, sz - 1);
+    }
+
+#undef md
+#undef LF
+#undef RT
+};
 
 void TC() {
     int n;
     cin >> n;
-    vector<ll> arr(n);
-    for(int i=0; i<n; ++i) cin >> arr[i];
-    vector<ll> zeroBlocks;
-    ll cur = 0;
-    for(int i=0; i<n; ++i) {
-        if(arr[i] == 0) cur++;
-        if(cur > 0 &&(i == n - 1 || arr[i] != 0)) {
-            zeroBlocks.push_back(cur);
-            cur = 0;
-        }
+    vector<ll>a(n);
+    for (int i = 0; i < n; ++i) {
+        cin >> a[i];
     }
-    ll ans = 1;
-    int curBlock = 0;
-    ll curr = 1;
-    for(int i=1; i<n; ++i) {
-        if(arr[i] == arr[i - 1]) curr++;
-        else if(arr[i] == 0) {
-            curr += zeroBlocks[curBlock];
-            curBlock++;
-            while(arr[i] == 0) i++;
-            --i;
-        } else if(arr[i - 1] == 0 && arr[i] != 0) {
-            curr += xzxeroBlocks[max(0, curBlock - 1)];
-        } else curr = 1;
-        ans = max(ans, curr);
+    MergeSortTree seg;
+    seg.build(a);
+    int q;
+    cin >> q;
+    while(q--){
+        int l , r , k;
+        cin >> l >> r >> k;
+        ll ans = seg.query(--l , --r , k);
+        cout << ans << nl;
     }
-    cout << ans << "\n";
-
-
 }
 void file()
 {
@@ -76,8 +109,8 @@ int main() {
     ENG_GAMAL
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
-    ll tc;
-     cin >> tc;
+    ll tc = 1;
+//     cin >> tc;
     while (tc--)
     {
         TC();

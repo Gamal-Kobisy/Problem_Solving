@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK :
+// LINK : https://codeforces.com/contest/2218/problem/G
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -30,37 +30,40 @@ const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
 void TC() {
-    int n;
-    cin >> n;
-    vector<ll> arr(n);
-    for(int i=0; i<n; ++i) cin >> arr[i];
-    vector<ll> zeroBlocks;
-    ll cur = 0;
-    for(int i=0; i<n; ++i) {
-        if(arr[i] == 0) cur++;
-        if(cur > 0 &&(i == n - 1 || arr[i] != 0)) {
-            zeroBlocks.push_back(cur);
-            cur = 0;
-        }
+    int n, m;
+    cin >> n >> m;
+
+    vector<int> b(n);
+    vector<int> cnt(m, 0);
+    for (int i = 0; i < n; ++i) {
+        cin >> b[i];
+        cnt[b[i]]++;
+    }
+
+    vector<int> pre(m, 0);
+    pre[0] = cnt[0];
+    for (int i = 1; i < m; ++i) {
+        pre[i] = pre[i - 1] + cnt[i];
     }
     ll ans = 1;
-    int curBlock = 0;
-    ll curr = 1;
-    for(int i=1; i<n; ++i) {
-        if(arr[i] == arr[i - 1]) curr++;
-        else if(arr[i] == 0) {
-            curr += zeroBlocks[curBlock];
-            curBlock++;
-            while(arr[i] == 0) i++;
-            --i;
-        } else if(arr[i - 1] == 0 && arr[i] != 0) {
-            curr += xzxeroBlocks[max(0, curBlock - 1)];
-        } else curr = 1;
-        ans = max(ans, curr);
+    int MOD = 676767677;
+    for (int i = 0; i < n; ++i) {
+        if (b[i] == 0) continue;
+        int mn = inf;
+        if (i > 0) mn = min(mn, b[i - 1]);
+        if (i < n - 1) mn = min(mn, b[i + 1]);
+
+        if (mn >= b[i]) {
+            ans = 0;
+            break;
+        } else if (mn == b[i] - 1) {
+            ans = (ans * pre[b[i] - 1]) % MOD;
+        } else {
+            ans = (ans * cnt[b[i] - 1]) % MOD;
+        }
     }
-    cout << ans << "\n";
 
-
+    cout << ans << nl;
 }
 void file()
 {
@@ -76,7 +79,7 @@ int main() {
     ENG_GAMAL
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
-    ll tc;
+    ll tc = 1;
      cin >> tc;
     while (tc--)
     {

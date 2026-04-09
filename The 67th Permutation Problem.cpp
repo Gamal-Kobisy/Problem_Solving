@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK :
+// LINK : https://codeforces.com/contest/2218/problem/C
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -32,35 +32,18 @@ ll infLL = 0x3f3f3f3f3f3f3f3f;
 void TC() {
     int n;
     cin >> n;
-    vector<ll> arr(n);
-    for(int i=0; i<n; ++i) cin >> arr[i];
-    vector<ll> zeroBlocks;
-    ll cur = 0;
-    for(int i=0; i<n; ++i) {
-        if(arr[i] == 0) cur++;
-        if(cur > 0 &&(i == n - 1 || arr[i] != 0)) {
-            zeroBlocks.push_back(cur);
-            cur = 0;
-        }
+    vector<int>a(3 * n);
+    int num = 1;
+    for (int i = 0; i < n; ++i) {
+        a[i * 3] = num++;
     }
-    ll ans = 1;
-    int curBlock = 0;
-    ll curr = 1;
-    for(int i=1; i<n; ++i) {
-        if(arr[i] == arr[i - 1]) curr++;
-        else if(arr[i] == 0) {
-            curr += zeroBlocks[curBlock];
-            curBlock++;
-            while(arr[i] == 0) i++;
-            --i;
-        } else if(arr[i - 1] == 0 && arr[i] != 0) {
-            curr += xzxeroBlocks[max(0, curBlock - 1)];
-        } else curr = 1;
-        ans = max(ans, curr);
+    for (int i = 0; i < 3 * n; ++i) {
+        if(not a[i]) a[i] = num++;
     }
-    cout << ans << "\n";
-
-
+    for (int i = 0; i < 3 * n; ++i) {
+        cout << a[i] << sp;
+    }
+    cout << nl;
 }
 void file()
 {
@@ -76,7 +59,7 @@ int main() {
     ENG_GAMAL
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
-    ll tc;
+    ll tc = 1;
      cin >> tc;
     while (tc--)
     {

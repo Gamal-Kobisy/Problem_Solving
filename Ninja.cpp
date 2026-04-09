@@ -29,37 +29,15 @@ using namespace std;
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
-void TC() {
-    int n;
-    cin >> n;
-    vector<ll> arr(n);
-    for(int i=0; i<n; ++i) cin >> arr[i];
-    vector<ll> zeroBlocks;
-    ll cur = 0;
-    for(int i=0; i<n; ++i) {
-        if(arr[i] == 0) cur++;
-        if(cur > 0 &&(i == n - 1 || arr[i] != 0)) {
-            zeroBlocks.push_back(cur);
-            cur = 0;
-        }
-    }
-    ll ans = 1;
-    int curBlock = 0;
-    ll curr = 1;
-    for(int i=1; i<n; ++i) {
-        if(arr[i] == arr[i - 1]) curr++;
-        else if(arr[i] == 0) {
-            curr += zeroBlocks[curBlock];
-            curBlock++;
-            while(arr[i] == 0) i++;
-            --i;
-        } else if(arr[i - 1] == 0 && arr[i] != 0) {
-            curr += xzxeroBlocks[max(0, curBlock - 1)];
-        } else curr = 1;
-        ans = max(ans, curr);
-    }
-    cout << ans << "\n";
+string di[] = {"D", "L", "R", "U", "DR", "DL", "UR", "UL"};
+int dx[] = {1, 0, 0, -1, 1, -1, 1, -1};
+int dy[] = {0, -1, 1, 0, 1, -1, -1, 1};
+int knightx[] = {2, 2, -2, -2, 1, 1, -1, -1};
+int knighty[] = {1, -1, 1, -1, 2, -2, 2, -2};
 
+vector
+
+void TC() {
 
 }
 void file()
@@ -76,8 +54,8 @@ int main() {
     ENG_GAMAL
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
-    ll tc;
-     cin >> tc;
+    ll tc = 1;
+//     cin >> tc;
     while (tc--)
     {
         TC();

@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK :
+// LINK : https://codeforces.com/contest/2210/problem/C1
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -29,37 +29,47 @@ using namespace std;
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
+ll gcd(ll a, ll b) {
+    while (b != 0) {
+        ll temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+
+ll lcm(ll a, ll b) {
+    return a / gcd(a, b) * b;
+}
+
+ll lcm_vector(const vector<ll>& vec) {
+    ll result = vec[0];
+    for (size_t i = 1; i < vec.size(); ++i) {
+        result = lcm(result, vec[i]);
+    }
+    return result;
+}
+
 void TC() {
     int n;
     cin >> n;
-    vector<ll> arr(n);
-    for(int i=0; i<n; ++i) cin >> arr[i];
-    vector<ll> zeroBlocks;
-    ll cur = 0;
-    for(int i=0; i<n; ++i) {
-        if(arr[i] == 0) cur++;
-        if(cur > 0 &&(i == n - 1 || arr[i] != 0)) {
-            zeroBlocks.push_back(cur);
-            cur = 0;
-        }
+    vector<int>a(n) , b(n);
+    for (int i = 0; i < n; ++i) {
+        cin >> a[i];
     }
-    ll ans = 1;
-    int curBlock = 0;
-    ll curr = 1;
-    for(int i=1; i<n; ++i) {
-        if(arr[i] == arr[i - 1]) curr++;
-        else if(arr[i] == 0) {
-            curr += zeroBlocks[curBlock];
-            curBlock++;
-            while(arr[i] == 0) i++;
-            --i;
-        } else if(arr[i - 1] == 0 && arr[i] != 0) {
-            curr += xzxeroBlocks[max(0, curBlock - 1)];
-        } else curr = 1;
-        ans = max(ans, curr);
+    for (int i = 0; i < n; ++i) {
+        cin >> b[i];
     }
-    cout << ans << "\n";
-
+    int ans = 0;
+    if(gcd(a[0] , a[1]) < b[0]) ans++ , a[0] = gcd(a[0] , a[1]);
+    for(int i = 1 ; i < n - 1 ; i++){
+        int g1 = gcd(a[i] , a[i - 1]);
+        int g2 = gcd(a[i] , a[i + 1]);
+        int target = lcm(g1 , g2);
+        if(target < b[i]) ans++ , a[i] = target;
+    }
+    if(gcd(a[n - 1] , a[n - 2]) < b[n - 1]) ans++ , a[n - 1] = gcd(a[n - 2] , a[n - 1]);
+    cout << ans << nl;
 
 }
 void file()
@@ -76,7 +86,7 @@ int main() {
     ENG_GAMAL
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
-    ll tc;
+    ll tc = 1;
      cin >> tc;
     while (tc--)
     {

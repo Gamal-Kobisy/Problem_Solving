@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD 23)
 include_directories(.)
 
 add_executable(Problem_Solving
+        "Sum in Range.cpp"
         #        "Tree Distance.cpp"
         #        "Concat Power of 2.cpp"
 

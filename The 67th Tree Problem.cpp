@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK :
+// LINK : https://codeforces.com/contest/2218/problem/F
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -30,37 +30,58 @@ const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
 void TC() {
-    int n;
-    cin >> n;
-    vector<ll> arr(n);
-    for(int i=0; i<n; ++i) cin >> arr[i];
-    vector<ll> zeroBlocks;
-    ll cur = 0;
-    for(int i=0; i<n; ++i) {
-        if(arr[i] == 0) cur++;
-        if(cur > 0 &&(i == n - 1 || arr[i] != 0)) {
-            zeroBlocks.push_back(cur);
-            cur = 0;
+    int x , y;
+    cin >> x >> y;
+    int n = x + y;
+    if(x == 0 and y % 2 == 0) return void(no);
+    vector<int>odd(x + y) , even;
+    vector<int>adj[x + y + 1];
+    iota(all(odd) , 1);
+    reverse(all(odd));
+    if(n&1) swap(odd.front() , odd.back());
+    while(x + y){
+        if(x){
+            if(odd.size() < 2 ) return void(no);
+            int u = odd.back();
+            odd.pop_back();
+            int v = odd.back();
+            odd.pop_back();
+            adj[u].pb(v);
+            even.pb(u);
+            x--;
+        }else{
+            int cnt = odd.size();
+            while(even.size() + cnt < y){
+                if(odd.size() < 3) break;
+                int a = odd.back();
+                odd.pop_back();
+                int b = odd.back();
+                odd.pop_back();
+                int c = odd.back();
+                odd.pop_back();
+                adj[b].pb(a);
+                adj[b].pb(c);
+                odd.pb(b);
+                cnt++;
+            }
+            if(even.size() + cnt != y) return void(no);
+            else break;
         }
     }
-    ll ans = 1;
-    int curBlock = 0;
-    ll curr = 1;
-    for(int i=1; i<n; ++i) {
-        if(arr[i] == arr[i - 1]) curr++;
-        else if(arr[i] == 0) {
-            curr += zeroBlocks[curBlock];
-            curBlock++;
-            while(arr[i] == 0) i++;
-            --i;
-        } else if(arr[i - 1] == 0 && arr[i] != 0) {
-            curr += xzxeroBlocks[max(0, curBlock - 1)];
-        } else curr = 1;
-        ans = max(ans, curr);
+    for (int i = 0; i < even.size(); ++i) {
+        if(even[i] == 1) continue;
+        adj[1].pb(even[i]);
     }
-    cout << ans << "\n";
-
-
+    for (int i = 0; i < odd.size(); ++i) {
+        if(odd[i] == 1) continue;
+        adj[1].pb(odd[i]);
+    }
+    yes;
+    for (int i = 0; i <= n; ++i) {
+        for (int j = 0; j < adj[i].size(); ++j) {
+            cout << i << sp << adj[i][j] << nl;
+        }
+    }
 }
 void file()
 {
@@ -76,7 +97,7 @@ int main() {
     ENG_GAMAL
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
-    ll tc;
+    ll tc = 1;
      cin >> tc;
     while (tc--)
     {
