@@ -6,8 +6,7 @@ set(CMAKE_CXX_STANDARD 23)
 include_directories(.)
 
 add_executable(Problem_Solving
-        "Flip the Bit (Easy Version).cpp"
-        "Flip the Bit (Hard Version).cpp"
+        "The 67th Iteration of Counting is Fun.cpp"
         #        "Tree Distance.cpp"
         #        "Concat Power of 2.cpp"
 
