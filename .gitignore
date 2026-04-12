@@ -6,6 +6,9 @@
 !*.cpp
 !*.txt
 
+# Track the python organization script
+!organize.py
+
 # Track .gitignore itself
 !.gitignore
 
