@@ -17,7 +17,7 @@ def organize_files(directory):
     }
     
     not_famous_folder = "Not Famous Online Judges"
-    no_link_folder = "Uncategorized" # For files without any links
+    no_link_folder = "Unsourced" # For files without any links
 
     # Loop through all files in the directory
     for filename in os.listdir(directory):
