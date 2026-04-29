@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/1437/C
+// LINK : https://codeforces.com/problemset/problem/2179/E
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -28,28 +28,39 @@ using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-int n, a[201], memo[201][401];
-int solve(int idx, int last){
-    if(idx == n) return 0;
-    if(last > 2 * n) return inf;
-    int &res = memo[idx][last];
-    if(~res) return res;
-    res = inf;
-    for (int i = last + 1; i <= 2 * n; ++i) {
-        res = min(res,
-                  solve(idx + 1, i) + abs(a[idx] - i));
-    }
 
-    return res;
-}
 void TC() {
-    cin >> n;
+    ll n, x, y;
+    string s;
+    cin >> n >> x >> y >> s;
+    vector<ll> a(n);
+    ll sum = 0;
     for (int i = 0; i < n; ++i) {
         cin >> a[i];
+        sum += a[i];
     }
-    sort(a , a + n);
-    memset(memo, -1, sizeof memo);
-    cout << solve(0 , 0) << nl;
+    if (sum > x + y) return void(no);
+    ll x_need = 0, y_need = 0;
+    bool has_zero = false, has_one = false;
+    for (int i = 0; i < n; ++i) {
+        if (s[i] == '0') {
+            x_need += a[i] / 2 + 1;
+            has_zero = true;
+        } else {
+            y_need += a[i] / 2 + 1;
+            has_one = true;
+        }
+    }
+    if (x_need > x || y_need > y) return void(no);
+    if (!has_one) {
+        if (x >= y + n) yes;
+        else no;
+    } else if (!has_zero) {
+        if (y >= x + n) yes;
+        else no;
+    } else {
+        yes;
+    }
 }
 void file()
 {

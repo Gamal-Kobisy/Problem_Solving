@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://cses.fi/problemset/task/2101
+// LINK : https://codeforces.com/problemset/problem/13/E
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -28,74 +28,69 @@ using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
+const int SQ = 500;
+vector<int>C, W, a;
 
-struct DSU{
-    vector<int>par , sz;
-
-    DSU(int n) : par(n) , sz(n , 1) {iota(all(par) , 0);}
-
-    int find(int x){
-        if(x == par[x]) return x;
-        else return par[x] = find(par[x]);
+void build(){
+    int n = a.size();
+    for (int i = n - 1; i >= 0; --i) {
+        int nxt = i + a[i];
+        if(i / SQ != nxt / SQ or nxt >= n){
+            C[i] = 1;
+            W[i] = i;
+        }else{
+            C[i] = C[nxt] + 1;
+            W[i] = W[nxt];
+        }
     }
+}
 
-    bool same(int x , int y){
-        return find(x) == find(y);
+void update(int idx , int val){
+    a[idx] = val;
+    int blkIdx = idx / SQ;
+    int n = a.size();
+    for (int i = idx; i >= blkIdx * SQ; --i) {
+        int nxt = i + a[i];
+        if(i / SQ != nxt / SQ or nxt >= n){
+            C[i] = 1;
+            W[i] = i;
+        }else{
+            C[i] = C[nxt] + 1;
+            W[i] = W[nxt];
+        }
     }
+}
 
-    bool merge(int x , int y){
-        x = find(x);
-        y = find(y);
-        if(same(x , y)) return false;
-        if(sz[x] > sz[y]) swap(x , y);
-        sz[y] += sz[x];
-        par[x] = y;
-        return true;
+void query(int idx){
+    int cnt = 0, who = idx, last = idx;
+    while (who < a.size()) {
+        cnt += C[who];
+        last = W[who];
+        who = W[who] + a[W[who]];
     }
-};
+    cout << last + 1 << sp << cnt << nl;
+}
 
 void TC() {
-    int n, m, q;
-    cin >> n >> m >> q;
-    vector<array<int , 2>>edges(m + 1);
-    for (int i = 1; i <= m; ++i) {
-        cin >> edges[i][0] >> edges[i][1];
+    int n , q;
+    cin >> n >> q;
+    a.assign(n , 0);
+    W.assign(n , 0);
+    C.assign(n , 0);
+    for (int i = 0; i < n; ++i) {
+        cin >> a[i];
     }
-//    for(auto &[a , b] : edges){
-//        cin >> a >> b;
-//    }
-    vector<int>L(q), R(q), ans(q , -1);
-    vector<array<int , 2>>queries(q);
-    vector<vector<int>>buckets(m + 1);
-    for (int i = 0; i < q; ++i) {
-        int a , b;
-        cin >> a >> b;
-        queries[i] = {a , b};
-        L[i] = 0 , R[i] = m;
-    }
-    int steps = LOG;
-    while(steps--){
-        for (int i = 0; i < q; ++i) {
-            if(L[i] <= R[i]) buckets[(L[i] + R[i]) / 2].pb(i);
-        }
-        DSU dsu(n + 1);
-        for(int mid = 0 ; mid <= m ; mid++){
-            auto [a , b] = edges[mid];
-            dsu.merge(a , b);
-            for(int query : buckets[mid]){
-                auto [x , y] = queries[query];
-                if(dsu.same(x , y)){
-                    ans[query] = mid;
-                    R[query] = mid - 1;
-                }else{
-                    L[query] = mid + 1;
-                }
-            }
-            buckets[mid].clear();
+    build();
+    while(q--){
+        int ty , idx , val;
+        cin >> ty >> idx;
+        if(ty&1){
+            query(--idx);
+        }else{
+            cin >> val;
+            update(--idx , val);
         }
     }
-    for(int i : ans) cout << i << nl;
-
 }
 void file()
 {

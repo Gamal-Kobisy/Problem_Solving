@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://cses.fi/problemset/task/2101
+// LINK : https://codeforces.com/contest/617/problem/E
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -28,64 +28,66 @@ using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-
-
-struct DSU{
-    vector<int> par , sz , ans;
-    vector<vector<pii>> queries;
-
-    DSU(int n, int q) : par(n) , sz(n , 1), queries(n), ans(q, -1) {
-        iota(all(par) , 0);
-    }
-
-    int find(int x){
-        if(x == par[x]) return x;
-        else return par[x] = find(par[x]);
-    }
-
-    void add_query(int u, int v, int idx) {
-        if(u == v) return void(ans[idx] = 0);
-        queries[u].pb({v, idx});
-        queries[v].pb({u, idx});
-    }
-
-    void merge(int x , int y , int w){
-        x = find(x);
-        y = find(y);
-        if(x == y) return;
-        if(sz[x] > sz[y]) swap(x , y);
-
-        for(auto& q : queries[x]){
-            if(find(q.fr) == y){
-                ans[q.sc] = w;
-            }else{
-                queries[y].pb(q);
-            }
-        }
-        queries[x].clear();
-
-        sz[y] += sz[x];
-        par[x] = y;
-    }
+struct Query {
+    int lq, rq, id;
 };
 
+int n, q, k;
+vector<int> pre;
+ll freq[(1<<20) + 5];
+ll ans = 0;
+
+void add(int val) {
+    ans += freq[val ^ k];
+    freq[val]++;
+}
+
+void rem(int val) {
+    freq[val]--;
+    ans -= freq[val ^ k];
+}
+
+vector<ll> MO(vector<Query>& queries) {
+    const int SQ = ceil(sqrt(N)) + 1;
+    sort(all(queries), [&](Query a , Query b){
+        return make_pair(a.lq / SQ , a.rq) < make_pair(b.lq / SQ , b.rq);
+    });
+    vector<ll>res(queries.size());
+    int l = queries[0].lq, r = queries[0].lq;
+    add(pre[l]);
+    for (const auto& [lq, rq, id] : queries) {
+        while (l > lq) add(pre[--l]);
+        while (r < rq) add(pre[++r]);
+        while (l < lq) rem(pre[l++]);
+        while (r > rq) rem(pre[r--]);
+        res[id] = ans;
+    }
+    return res;
+}
+
 void TC() {
-    int n, m, q;
-    cin >> n >> m >> q;
-    DSU dsu(n + 1 , q);
-    vector<pii>edges(m);
-    for(auto &[a , b] : edges) cin >> a >> b;
-    for (int i = 0; i < q; ++i) {
-        int u , v;
-        cin >> u >> v;
-        dsu.add_query(u , v , i);
+    cin >> n >> q >> k;
+    pre.assign(n + 1, 0);
+
+    for (int i = 1; i <= n; ++i) {
+        int x;
+        cin >> x;
+        pre[i] = pre[i - 1] ^ x;
     }
-    for (int i = 0; i < m; ++i) {
-        auto [u, v] = edges[i];
-        dsu.merge(u , v , i + 1);
-    }
+    vector<Query> queries(q);
     for (int i = 0; i < q; ++i) {
-        cout << dsu.ans[i] << nl;
+        auto &[lq, rq, id] = queries[i];
+        cin >> lq >> rq;
+        --lq;
+        id = i;
+    }
+
+    mem(freq, 0);
+    ans = 0;
+
+    vector<ll> res = MO(queries);
+    for (int i = 0; i < q; ++i) {
+        cout << res[i] << nl;
     }
 }
 void file()

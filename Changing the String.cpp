@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK :
+// LINK : https://codeforces.com/contest/2111/problem/E
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -29,79 +29,65 @@ using namespace std;
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
-struct MergeSortTree {
-private:
-#define md ((lx+rx)>>1)
-#define LF (x*2+1)
-#define RT (x*2+2)
-  vector<vector<int>> seg;
-  int sz;
-
-  void build(vector<int> &arr, int x, int lx, int rx) {
-    if (rx == lx) {
-      seg[x] = {arr[lx]};
-      return;
-    }
-    build(arr, LF, lx, md);
-    build(arr, RT, md + 1, rx);
-    seg[x].resize(seg[LF].size() + seg[RT].size());
-    merge(all(seg[LF]), all(seg[RT]), seg[x].begin());
-  }
-
-  int query(int l, int r, int v, int x, int lx, int rx) {
-    if (r < lx or rx < l)return 0;
-    if (l <= lx and rx <= r) {
-      return upper_bound(all(seg[x]), v) - seg[x].begin(); //// TODO
-    }
-    return query(l, r, v, LF, lx, md) +
-           query(l, r, v, RT, md + 1, rx);
-  }
-
-public:
-  void build(vector<int> arr) {
-    sz = arr.size();
-    seg.assign(sz * 4, {});
-    build(arr, 0, 0, sz - 1);
-  }
-
-  int query(int l, int r, int v) {
-    return query(l, r, v, 0, 0, sz - 1);
-  }
-
-#undef md
-#undef LF
-#undef RT
-};
-
 void TC() {
-    int n , q;
-    cin >> n >> q;
-    vector<int>a(n);
-    for (int i = 0; i < n; ++i) {
-        cin >> a[i];
+    int n, q;
+    string s;
+    cin >> n >> q >> s;
+
+    map<pair<char, char>, set<int>> cnt;
+    for (int i = 0; i < q; ++i) {
+        char a, b;
+        cin >> a >> b;
+        if (a != b) cnt[{a, b}].insert(i);
     }
-    MergeSortTree seg;
-    seg.build(a);
-    sort(all(a));
-    a.erase(unique(all(a)), a.end());
-    int sz = a.size();
-    while(q--){
-        int l , r , k;
-        cin >> l >> r >> k;
-        int lo = 0 , hi = sz - 1 , ans = -1;
-        while(lo <= hi){
-            int md = (lo + hi) >> 1;
-            int cnt = seg.query(l , r - 1 , a[md]);
-            if(cnt >= k + 1){
-                ans = a[md];
-                hi = md - 1;
-            }else{
-                lo = md + 1;
+
+    for (int i = 0; i < n; ++i) {
+        if (s[i] == 'a') continue;
+
+        if (s[i] == 'b') {
+            auto &ba = cnt[{'b', 'a'}];
+            if (!ba.empty()) {
+                ba.erase(ba.begin());
+                s[i] = 'a';
+            } else {
+                auto &bc = cnt[{'b', 'c'}];
+                auto &ca = cnt[{'c', 'a'}];
+                if (!bc.empty()) {
+                    auto it1 = bc.begin();
+                    auto it2 = ca.lower_bound(*it1);
+                    if (it2 != ca.end()) {
+                        bc.erase(it1);
+                        ca.erase(it2);
+                        s[i] = 'a';
+                    }
+                }
             }
         }
-        assert(~ans);
-        cout << ans << nl;
+        else if (s[i] == 'c') {
+            auto &ca = cnt[{'c', 'a'}];
+            if (!ca.empty()) {
+                ca.erase(ca.begin());
+                s[i] = 'a';
+            } else {
+                auto &cb = cnt[{'c', 'b'}];
+                auto &ba = cnt[{'b', 'a'}];
+                if (!cb.empty()) {
+                    auto it1 = cb.begin();
+                    auto it2 = ba.lower_bound(*it1);
+                    if (it2 != ba.end()) {
+                        cb.erase(it1);
+                        ba.erase(it2);
+                        s[i] = 'a';
+                    } else {
+                        cb.erase(it1);
+                        s[i] = 'b';
+                    }
+                }
+            }
+        }
     }
+
+    cout << s << nl;
 }
 void file()
 {
@@ -118,7 +104,7 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll tc = 1;
-//     cin >> tc;
+    cin >> tc;
     while (tc--)
     {
         TC();

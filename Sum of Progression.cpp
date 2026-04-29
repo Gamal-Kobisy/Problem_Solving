@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/gym/102644/problem/D
+// LINK : https://codeforces.com/problemset/problem/1921/F
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -28,47 +28,61 @@ using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
+const int SQ = 317;
+vector<ll> a;
+vector<vector<ll>> pre_sum;
+vector<vector<ll>> pre_mult;
 
-const int mod = 1e9 + 7;
-typedef vector<ll> row;
-typedef vector<row> mat;
-
-mat operator*(const mat &a, const mat &b) {
-    int r1 = a.size(), r2 = b.size(), c2 = b[0].size();
-    mat ret(r1, row(c2));
-    for (int i = 0; i < r1; i++)
-        for (int j = 0; j < c2; j++)
-            for (int k = 0; k < r2; k++)
-                ret[i][j] += a[i][k] * b[k][j], ret[i][j] %= mod;
-    return ret;
+void build() {
+    int n = a.size() - 1;
+    for (int d = 1; d < SQ; ++d) {
+        for (int i = 1; i <= n; ++i) {
+            pre_sum[d][i] = a[i];
+            pre_mult[d][i] = a[i] * (i / d);
+            if (i > d) {
+                pre_sum[d][i] += pre_sum[d][i - d];
+                pre_mult[d][i] += pre_mult[d][i - d];
+            }
+        }
+    }
 }
 
-mat operator^(const mat &a, ll k) {
-    mat ret(a.size(), row(a.size()));
-    for (int i = 0; i < a.size(); i++)ret[i][i] = 1;
-    for (mat tmp = a; k; tmp = tmp * tmp, k /= 2)if (k & 1)ret = ret * tmp;
-    return ret;
+ll query(int s, int d, int k) {
+    if (d >= SQ) {
+        ll ans = 0;
+        for (int i = 1; i <= k; ++i) {
+            ans += a[s + (i - 1) * d] * i;
+        }
+        return ans;
+    } else {
+        int e = s + (k - 1) * d;
+        ll sum_val = pre_sum[d][e];
+        ll mult_val = pre_mult[d][e];
+        if (s > d) {
+            sum_val -= pre_sum[d][s - d];
+            mult_val -= pre_mult[d][s - d];
+        }
+        ll ans = mult_val - sum_val * (s / d - 1);
+        return ans;
+    }
 }
 
 void TC() {
-    ll n  , m , k;
-    cin >> n >> m >> k;
-    mat s = {row(n , 1)};
-    mat t(n , row(n));
-    for (int i = 0; i < m; ++i) {
-        int a , b;
-        cin >> a >> b;
-        t[--a][--b] = 1;
+    int n , q;
+    cin >> n >> q;
+    a.assign(n + 1, 0);
+    pre_sum.assign(SQ, vector<ll>(n + 1, 0));
+    pre_mult.assign(SQ, vector<ll>(n + 1, 0));
+    for (int i = 1; i <= n; ++i) {
+        cin >> a[i];
     }
-    t = t ^ k;
-    s = s * t;
-    ll ans = 0;
-    for(int i = 0 ; i < n ; i++){
-        ans += s[0][i];
-        ans %= mod;
+    build();
+    while(q--){
+        int s , d , k;
+        cin >> s >> d >> k;
+        cout << query(s , d , k) << sp;
     }
-    cout <<  ans << nl;
-
+    cout << nl;
 }
 void file()
 {
@@ -85,7 +99,7 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll tc = 1;
-//     cin >> tc;
+     cin >> tc;
     while (tc--)
     {
         TC();

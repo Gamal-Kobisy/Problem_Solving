@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/gym/102644/problem/C
+// LINK : https://codeforces.com/problemset/problem/506/D
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -28,36 +28,72 @@ using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-
-const int mod = 1e9 + 7;
-typedef vector<ll> row;
-typedef vector<row> mat;
-
-mat operator*(const mat &a, const mat &b) {
-    int r1 = a.size(), r2 = b.size(), c2 = b[0].size();
-    mat ret(r1, row(c2));
-    for (int i = 0; i < r1; i++)
-        for (int j = 0; j < c2; j++)
-            for (int k = 0; k < r2; k++)
-                ret[i][j] += a[i][k] * b[k][j], ret[i][j] %= mod;
-    return ret;
-}
-
-mat operator^(const mat &a, ll k) {
-    mat ret(a.size(), row(a.size()));
-    for (int i = 0; i < a.size(); i++)ret[i][i] = 1;
-    for (mat tmp = a; k; tmp = tmp * tmp, k /= 2)if (k & 1)ret = ret * tmp;
-    return ret;
+int curID , curColor;
+vector<int>adj[N];
+vector<pii> info[N];
+vector<pii>edges_of_color[N];
+vector<bool>vis(N);
+map<pii , int>cache;
+void dfs(int u){
+    vis[u] = true;
+    info[u].pb({curColor , curID});
+    for(int v : adj[u]){
+        if(not vis[v]) dfs(v);
+    }
 }
 
 void TC() {
-    ll n;
-    cin >> n;
-    mat s = {{0, 1}};
-    mat t = {{0 , 1} , {1 , 1}};
-    t = t ^ n;
-    s = s * t;
-    cout << s[0][0] << nl;
+    int n , m , q;
+    cin >> n >> m;
+    for (int i = 0; i < m; ++i) {
+        int a , b , c;
+        cin >> a >> b >> c;
+        edges_of_color[c].pb({a , b});
+    }
+    int ID = 0;
+    for (int c = 0; c < N; ++c) {
+        auto edges = edges_of_color[c];
+        curColor = c;
+        vector<int> used;
+        for(auto [a , b] : edges){
+            adj[a].pb(b);
+            adj[b].pb(a);
+            used.pb(a);
+            used.pb(b);
+        }
+        sort(all(used));
+        used.erase(unique(all(used)) , used.end());
+        for(int node : used){
+            if(not vis[node]){
+                curID = ID++;
+                dfs(node);
+            }
+        }
+        for(int node : used){
+            adj[node].clear();
+            vis[node] = false;
+        }
+    }
+    for (int i = 1; i <= n; ++i) {
+        sort(all(info[i]));
+    }
+    cin >> q;
+    while(q--){
+        int u , v;
+        cin >> u >> v;
+        if(info[u].size() > info[v].size()) swap(u , v);
+        if(cache.count({u , v})){
+            cout << cache[{u , v}] << nl;
+            continue;
+        }
+        int cnt = 0;
+        for(auto p : info[u]){
+            auto it = lower_bound(all(info[v]) , p);
+            if(it != info[v].end() and *it == p) cnt++;
+        }
+        cache[{u , v}] = cnt;
+        cout << cnt << nl;
+    }
 }
 void file()
 {

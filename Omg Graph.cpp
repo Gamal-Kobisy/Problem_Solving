@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://atcoder.jp/contests/abc453/tasks/abc453_b
+// LINK : https://codeforces.com/contest/2117/problem/G
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -29,21 +29,50 @@ using namespace std;
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
-void TC() {
-    int n , x;
-    cin >> n >> x;
-    vector<int>a(n + 1);
-    for (int i = 0; i < n + 1; ++i) {
-        cin >> a[i];
+struct DSU{
+    vector<int>par , sz , mn;
+
+    DSU(int n) : par(n) , sz(n , 1) , mn(n , inf) {iota(all(par) , 0);}
+
+    int find(int x){
+        if(x == par[x]) return x;
+        else return par[x] = find(par[x]);
     }
-    cout << 0 << sp << a.front() << nl;
-    int last = a.front();
-    for (int i = 1; i < n + 1; ++i) {
-        if(abs(a[i] - last) >= x){
-            cout << i << sp << a[i] << nl;
-            last = a[i];
+
+    bool same(int x , int y){
+        return find(x) == find(y);
+    }
+
+    bool merge(int x , int y , int w){
+        x = find(x);
+        y = find(y);
+        if(same(x , y)) return false;
+        if(sz[x] > sz[y]) swap(x , y);
+        mn[y] = min({mn[x], mn[y] , w});
+        sz[y] += sz[x];
+        par[x] = y;
+        return true;
+    }
+};
+
+void TC() {
+    int n , m;
+    cin >> n >> m;
+    vector<array<int, 3>>edges(m);
+    for(auto &[w , a , b] : edges){
+        cin >> a >> b >> w;
+        --a, --b;
+    }
+    sort(all(edges));
+    DSU dsu(n);
+    ll ans = infLL;
+    for(auto [w , a , b] : edges){
+        dsu.merge(a , b , w);
+        if(dsu.same(0 , n - 1)){
+            ans = min(ans , (ll)dsu.mn[dsu.find(0)] + w);
         }
     }
+    cout << ans << nl;
 }
 void file()
 {
@@ -60,7 +89,7 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll tc = 1;
-//     cin >> tc;
+     cin >> tc;
     while (tc--)
     {
         TC();

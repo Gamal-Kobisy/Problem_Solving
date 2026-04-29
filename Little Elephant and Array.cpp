@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/1446/B
+// LINK : https://codeforces.com/problemset/problem/221/D
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -26,35 +26,65 @@ using namespace std;
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
+const int N = 1e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
+struct Query{
+    int lq , rq , id;
+};
+vector<int>a;
+int ans = 0;
+int freq[N];
+void add(int val){
+    if(val >= N) return;
+    if(freq[val] == val) ans--;
+    freq[val]++;
+    if(freq[val] == val) ans++;
+}
 
-int n , m ,memo[5005][5005];
-string s , t;
-int solve(int idx1 , int idx2){
-    if(idx1 < 0 or idx2 < 0) return 0;
-    int &res = memo[idx1][idx2];
-    if(~res) return res;
-    res = 0;
-    if(s[idx1] == t[idx2]){
-        res = max(res , solve(idx1 - 1 , idx2 - 1) + 2);
+void rem(int val){
+    if(val >= N) return;
+    if(freq[val] == val) ans--;
+    freq[val]--;
+    if(freq[val] == val) ans++;
+}
+
+vector<int> MO(vector<Query>&queries){
+    const int SQ = ceil(sqrt(N)) + 1;
+    sort(all(queries), [&](Query a , Query b){
+        return make_pair(a.lq / SQ , a.rq) < make_pair(b.lq / SQ , b.rq);
+    });
+    vector<int>res(queries.size());
+    int l = queries[0].lq , r = queries[0].lq;
+    add(a[l]);
+    for(const auto [lq , rq , id] : queries){
+        while (l > lq) add(a[--l]);
+        while (r < rq) add(a[++r]);
+        while (l < lq) rem(a[l++]);
+        while (r > rq) rem(a[r--]);
+        res[id] = ans;
     }
-    res = max(res , max(solve(idx1 - 1 , idx2)
-             ,solve(idx1 , idx2 - 1)) - 1);
     return res;
 }
 
+
 void TC() {
-    cin >> n >> m;
-    cin >> s >> t;
-    mem(memo , -1);
-    int ans = 0;
+    int n , q;
+    cin >> n >> q;
+    a.assign(n , 0);
     for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < m; ++j) {
-            ans = max(ans , solve(i , j));
-        }
+        cin >> a[i];
     }
-    cout << ans << nl;
+    vector<Query>Q(q);
+    for (int i = 0; i < q; ++i) {
+        auto &[lq , rq , id] = Q[i];
+        cin >> lq >> rq;
+        --lq , --rq , id = i;
+    }
+    mem(freq , 0);
+    vector<int> res = MO(Q);
+    for (int i = 0; i < q; ++i) {
+        cout << res[i] << nl;
+    }
 }
 void file()
 {

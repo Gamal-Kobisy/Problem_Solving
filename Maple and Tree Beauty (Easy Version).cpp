@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/contest/1338/problem/B
+// LINK : https://codeforces.com/problemset/problem/2138/C1
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -28,45 +28,56 @@ using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-vector<int>adj[N];
-int n;
-bool odd_depth = false , even_depth = false;
-void dfs(int u , int par = -1 , int depth = 0){
-    for(int v : adj[u]){
-        if(v == par) continue;
-        dfs(v , u , depth + 1);
-    }
-    if(adj[u].size() == 1){
-        (depth & 1) ? odd_depth = true : even_depth = true;
-    }
-}
 
 void TC() {
-    cin >> n;
-    for (int i = 0; i < n - 1; ++i) {
-        int a , b;
-        cin >> a >> b;
-        adj[a].pb(b);
-        adj[b].pb(a);
+    int n , k;
+    cin >> n >> k;
+    vector<int>adj[n + 1];
+    for(int i = 2 ; i <= n; i++){
+        int p;
+        cin >> p;
+        adj[p].pb(i);
+        adj[i].pb(p);
     }
-    for (int i = 1; i <= n; ++i) {
-        if(adj[i].size() == 1){
-            dfs(i);
-            break;
+    vector<int>NodesInDepth(n);
+    int minLeafDepth = n;
+    int maxDepth = 0;
+    function<void(int , int, int)> dfs = [&](int u , int par , int d){
+        maxDepth = max(maxDepth , d);
+        NodesInDepth[d]++;
+        for(int v : adj[u]){
+            if(v == par) continue;
+            dfs(v , u , d + 1);
         }
+        if(adj[u].size() == 1 and u != 1)
+            minLeafDepth = min(minLeafDepth , d);
+    };
+    dfs(1 , -1 , 0);
+    int sum = 0;
+    for(int i = 0; i <= minLeafDepth; i++) sum += NodesInDepth[i];
+    vector<vector<int>>memo(minLeafDepth + 1 , vector<int>(k + 1 , -1));
+    function<int(int,int)> solve = [&](int depth , int remK){
+        if (remK < 0) return 0;
+        if (depth > minLeafDepth) {
+            int used_zeros = k - remK;
+            int used_ones = sum - used_zeros;
+            return (used_ones <= n - k) ? 1 : 0;
+        }
+
+        int &res = memo[depth][remK];
+        if(~res) return res;
+
+        res = solve(depth + 1 , remK);
+        if(NodesInDepth[depth] <= remK){
+            res = res | solve(depth + 1, remK - NodesInDepth[depth]);
+        }
+        return res;
+    };
+    if (solve(0 , k)) {
+        cout << minLeafDepth + 1 << nl;
+    } else {
+        cout << minLeafDepth << nl;
     }
-    int mn = (odd_depth and even_depth) ? 3 : 1;
-    int mx = n - 1;
-    for (int i = 1; i <= n; ++i) {
-        int cnt = 0;
-        for(int child : adj[i]){
-            cnt += adj[child].size() == 1;
-        }
-        if(cnt){
-            mx -= cnt - 1;
-        }
-    }
-    cout << mn << sp << mx << nl;
 }
 void file()
 {
@@ -83,7 +94,7 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll tc = 1;
-//     cin >> tc;
+     cin >> tc;
     while (tc--)
     {
         TC();

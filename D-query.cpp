@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://atcoder.jp/contests/agc002/tasks/agc002_d
+// LINK : https://www.spoj.com/problems/DQUERY/
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -26,80 +26,59 @@ using namespace std;
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
+const int N = 1e6 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-
-struct DSU{
-    vector<int>par , sz;
-
-    DSU(int n) : par(n) , sz(n , 1) {iota(all(par) , 0);}
-
-    int find(int x){
-        if(x == par[x]) return x;
-        else return par[x] = find(par[x]);
-    }
-
-    bool same(int x , int y){
-        return find(x) == find(y);
-    }
-
-    bool merge(int x , int y){
-        x = find(x);
-        y = find(y);
-        if(same(x , y)) return false;
-        if(sz[x] > sz[y]) swap(x , y);
-        sz[y] += sz[x];
-        par[x] = y;
-        return true;
-    }
+struct Query{
+    int lq , rq , id;
 };
+vector<int>a;
+int ans = 0;
+int freq[N];
+void add(int val){
+    if(freq[val] == 0) ans++;
+    freq[val]++;
+}
 
+void rem(int val){
+    if(freq[val] == 1) ans--;
+    freq[val]--;
+}
+
+vector<int> MO(vector<Query>&queries){
+    const int SQ = ceil(sqrt(N)) + 1;
+    sort(all(queries), [&](Query a , Query b){
+        return make_pair(a.lq / SQ , a.rq) < make_pair(b.lq / SQ , b.rq);
+    });
+    vector<int>res(queries.size());
+    int l = queries[0].lq , r = queries[0].lq;
+    add(a[l]);
+    for(const auto [lq , rq , id] : queries){
+        while (l > lq) add(a[--l]);
+        while (r < rq) add(a[++r]);
+        while (l < lq) rem(a[l++]);
+        while (r > rq) rem(a[r--]);
+        res[id] = ans;
+    }
+    return res;
+}
 void TC() {
-    int n , m;
-    cin >> n >> m;
-    vector<array<int , 2>>edges(m);
-    for(auto &[a , b] : edges){
-        cin >> a >> b;
+    int n , q;
+    cin >> n;
+    a.assign(n , 0);
+    for (int i = 0; i < n; ++i) {
+        cin >> a[i];
     }
-    int q;
     cin >> q;
-    vector<int>L(q) , R(q) , ans(q);
-    vector<array<int , 3>>queries(q);
-    vector<vector<int>>buckets(m + 1);
+    vector<Query>queries(q);
     for (int i = 0; i < q; ++i) {
-        int x , y , sz;
-        cin >> x >> y >> sz;
-        queries[i] = {x , y , sz};
-        L[i] = 0, R[i] = m;
+        auto &[lq , rq , id] = queries[i];
+        cin >> lq >> rq;
+        --lq , --rq , id = i;
     }
-    int steps = LOG;
-    while(steps--){
-        for (int i = 0; i < q; ++i) {
-            if(L[i] <= R[i]) buckets[(L[i] + R[i]) / 2].pb(i);
-        }
-        DSU dsu(n + 1);
-        for (int mid = 0; mid < m; ++mid) {
-            auto [a , b] = edges[mid];
-            dsu.merge(a , b);
-            for(auto query : buckets[mid]){
-                auto [x , y , sz] = queries[query];
-                bool ok;
-                if(dsu.same(x , y)){
-                    ok = dsu.sz[dsu.find(x)] >= sz;
-                }else{
-                    ok = dsu.sz[dsu.find(x)] + dsu.sz[dsu.find(y)] >= sz;
-                }
-                if(ok){
-                    ans[query] = mid;
-                    R[query] = mid - 1;
-                }else{
-                    L[query] = mid + 1;
-                }
-            }
-            buckets[mid].clear();
-        }
+    vector<int> res = MO(queries);
+    for (int i = 0; i < q; ++i) {
+        cout << res[i] << nl;
     }
-    for(int i : ans) cout << i + 1 << nl;
 }
 void file()
 {

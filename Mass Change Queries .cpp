@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://cses.fi/problemset/task/1139
+// LINK : https://codeforces.com/problemset/problem/911/G
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -28,36 +28,80 @@ using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-int n , color[N] , ans[N];
-vector<int>adj[N];
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
+const int SQ = 500;
+vector<vector<int>>B(SQ , vector<int>(101));
+vector<int>a;
 
-set<int> dfs(int u , int par = -1){
-    set<int>cur;
-    cur.insert(color[u]);
-    for(int v : adj[u]){
-        if(v == par) continue;
-        auto child = dfs(v , u);
-        if(child.size() > cur.size()) swap(child , cur);
-        for(int i : child) cur.insert(i);
+void build(){
+    for (int i = 0; i < SQ; ++i) {
+        iota(all(B[i]) , 0);
     }
-    ans[u] = cur.size();
-    return cur;
 }
+
+inline void update(int l , int r , int x , int y){
+    if (x == y) return;
+    int bl = l / SQ;
+    int br = r / SQ;
+    if (bl == br) {
+        for (int i = bl * SQ; i < min((int)a.size(), (bl + 1) * SQ); ++i) {
+            a[i] = B[bl][a[i]];
+        }
+        iota(all(B[bl]) , 0);
+        for (int i = l; i <= r; ++i) {
+            if (a[i] == x) a[i] = y;
+        }
+    } else {
+        for (int i = bl * SQ; i < (bl + 1) * SQ; ++i) {
+            a[i] = B[bl][a[i]];
+        }
+        iota(all(B[bl]) , 0);
+        for (int i = l; i < (bl + 1) * SQ; ++i) {
+            if (a[i] == x) a[i] = y;
+        }
+
+        for (int b = bl + 1; b < br; ++b) {
+            for (int v = 1; v <= 100; ++v) {
+                if (B[b][v] == x) {
+                    B[b][v] = y;
+                }
+            }
+        }
+
+        for (int i = br * SQ; i < min((int)a.size(), (br + 1) * SQ); ++i) {
+            a[i] = B[br][a[i]];
+        }
+        iota(all(B[br]) , 0);
+        for (int i = br * SQ; i <= r; ++i) {
+            if (a[i] == x) a[i] = y;
+        }
+    }
+}
+
 void TC() {
+    int n;
     cin >> n;
+
+    a.resize(n);
     for (int i = 0; i < n; ++i) {
-        cin >> color[i + 1];
+        cin >> a[i];
     }
-    for (int i = 0; i < n - 1; ++i) {
-        int a , b;
-        cin >> a >> b;
-        adj[a].pb(b);
-        adj[b].pb(a);
+
+    build();
+
+    int q;
+    cin >> q;
+    while (q--) {
+        int l, r, x, y;
+        cin >> l >> r >> x >> y;
+        l--; r--;
+        update(l, r, x, y);
     }
-    dfs(1);
-    for (int i = 1; i <= n; ++i) {
-        cout << ans[i] << sp;
+    for (int i = 0; i < n; ++i) {
+        cout << B[i / SQ][a[i]] << sp;
     }
+    cout << nl;
 }
 void file()
 {

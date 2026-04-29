@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/gym/102644/problem/A
+// LINK : https://atcoder.jp/contests/abc293/tasks/abc293_g?lang=en
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -28,37 +28,80 @@ using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-
-const int mod = 1e9 + 7;
-typedef vector<double> row;
-typedef vector<row> mat;
-
-mat operator*(const mat &a, const mat &b) {
-    int r1 = a.size(), r2 = b.size(), c2 = b[0].size();
-    mat ret(r1, row(c2));
-    for (int i = 0; i < r1; i++)
-        for (int j = 0; j < c2; j++)
-            for (int k = 0; k < r2; k++)
-                ret[i][j] += a[i][k] * b[k][j];
-    return ret;
+struct Query{
+    int lq , rq , id;
+};
+vector<int>a;
+ll fact(int n) {
+    ll res = 1;
+    for (int i = 2; i <= n; i++) {
+        res *= i;
+    }
+    return res;
 }
 
-mat operator^(const mat &a, ll k) {
-    mat ret(a.size(), row(a.size()));
-    for (int i = 0; i < a.size(); i++)ret[i][i] = 1;
-    for (mat tmp = a; k; tmp = tmp * tmp, k /= 2)if (k & 1)ret = ret * tmp;
-    return ret;
+ll nCr(int n, int r) {
+    if (r > n || r < 0) return 0;
+    return fact(n)/ (fact(r) * fact(n - r));
+}
+
+ll nPr(int n, int r) {
+    if (r > n || r < 0) return 0;
+    return fact(n) / fact(n - r);
+}
+
+ll starsBars(int n , int k){
+    return nCr(n + k - 1 , k - 1);
+}
+ll ans = 0;
+int freq[N];
+void add(ll val){
+    ans -= 1ll * freq[val] * (freq[val] - 1) * (freq[val] - 2) / 6;
+    freq[val] ++;
+    ans += 1ll * freq[val] * (freq[val] - 1) * (freq[val] - 2) / 6;
+}
+
+void rem(ll val){
+    ans -= 1ll * freq[val] * (freq[val] - 1) * (freq[val] - 2) / 6;
+    freq[val] --;
+    ans += 1ll * freq[val] * (freq[val] - 1) * (freq[val] - 2) / 6;
+}
+
+vector<ll> MO(vector<Query>&queries){
+    const int SQ = ceil(sqrt(N)) + 1;
+    sort(all(queries), [&](Query a , Query b){
+        return make_pair(a.lq / SQ , a.rq) < make_pair(b.lq / SQ , b.rq);
+    });
+    vector<ll>res(queries.size());
+    int l = queries[0].lq , r = queries[0].lq;
+    add(a[l]);
+    for(const auto [lq , rq , id] : queries){
+        while (l > lq) add(a[--l]);
+        while (r < rq) add(a[++r]);
+        while (l < lq) rem(a[l++]);
+        while (r > rq) rem(a[r--]);
+        res[id] = ans;
+    }
+    return res;
 }
 
 void TC() {
-    int n;
-    double p;
-    cin >> n >> p;
-    mat s = {{0, 1}};
-    mat t = {{1 - p , p} , {p , 1 - p}};;
-    t = t ^ n;
-    s = s * t;
-    cout << s[0][1] << nl;
+    int n , q;
+    cin >> n >> q;
+    a.assign(n , 0);
+    for (int i = 0; i < n; ++i) {
+        cin >> a[i];
+    }
+    vector<Query>queries(q);
+    for (int i = 0; i < q; ++i) {
+        auto &[lq , rq , id] = queries[i];
+        cin >> lq >> rq;
+        --lq , --rq , id = i;
+    }
+    vector<ll> res = MO(queries);
+    for (int i = 0; i < q; ++i) {
+        cout << res[i] << nl;
+    }
 }
 void file()
 {
