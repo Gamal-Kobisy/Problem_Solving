@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/1849/E
+// LINK : https://codeforces.com/gym/102788/problem/F
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -30,50 +30,29 @@ const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
 void TC() {
-    int n;
-    cin >> n;
-    vector<int>a(n);
+    int n , m;
+    cin >> n >> m;
+    vector<pll>a(n);
     for (int i = 0; i < n; ++i) {
-        cin >> a[i];
+        cin >> a[i].fr;
+        a[i].sc = i + 1;
     }
-    set<pii> cur;
-    cur.insert({-1, 0});
-    cur.insert({-1, 1});
-    stack<pii> minSt, maxSt;
-    minSt.push({-1, -1});
-    maxSt.push({n, -1});
-    ll len = 0, ans = 0;
-    for (int r = 0; r < n; ++r) {
-        int x = a[r];
-        while (minSt.top().fr > x) {
-            int pos = minSt.top().sc;
-            auto me  = cur.lower_bound({pos, 0});
-            auto prv = prev(me);
-            auto nxt = next(me);
-            len -= me->fr - prv->fr;
-            if (nxt != cur.end() && nxt->sc == 0)
-                len += nxt->fr - prv->fr;
-            cur.erase(me);
-            minSt.pop();
+    sort(all(a));
+    vector<pll>edges;
+    multiset<pll>childs = {{-1 , m}};
+    for (int i = 0; i < n; ++i) {
+        if(a[i].fr == 0) continue;
+        ll sum = 0;
+        for(auto [w , u] : childs){
+            if(sum - w <= a[i].fr){
+                edges.pb({u , a[i].sc});
+                sum -= w;
+            }
         }
-        len += r - cur.rbegin()->fr;
-        cur.insert({r, 0});
-        minSt.push({x, r});
-        while (maxSt.top().fr < x) {
-            int pos = maxSt.top().sc;
-            auto me  = cur.lower_bound({pos, 1});
-            auto prv = prev(me);
-            auto nxt = next(me);
-            if (nxt != cur.end() && nxt->sc == 0)
-                len += me->fr - prv->fr;
-            cur.erase(me);
-            maxSt.pop();
-        }
-        cur.insert({r, 1});
-        maxSt.push({x, r});
-        ans += len;
+        childs.insert({-a[i].fr , a[i].sc});
     }
-    cout << ans - n << nl;
+    cout << edges.size() << nl;
+    for(auto [u , v] : edges) cout << u << sp << v << nl;
 }
 void file()
 {

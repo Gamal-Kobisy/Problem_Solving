@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/1849/E
+// LINK : https://codeforces.com/problemset/problem/1407/D
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -36,44 +36,53 @@ void TC() {
     for (int i = 0; i < n; ++i) {
         cin >> a[i];
     }
-    set<pii> cur;
-    cur.insert({-1, 0});
-    cur.insert({-1, 1});
-    stack<pii> minSt, maxSt;
-    minSt.push({-1, -1});
-    maxSt.push({n, -1});
-    ll len = 0, ans = 0;
-    for (int r = 0; r < n; ++r) {
-        int x = a[r];
-        while (minSt.top().fr > x) {
-            int pos = minSt.top().sc;
-            auto me  = cur.lower_bound({pos, 0});
-            auto prv = prev(me);
-            auto nxt = next(me);
-            len -= me->fr - prv->fr;
-            if (nxt != cur.end() && nxt->sc == 0)
-                len += nxt->fr - prv->fr;
-            cur.erase(me);
-            minSt.pop();
-        }
-        len += r - cur.rbegin()->fr;
-        cur.insert({r, 0});
-        minSt.push({x, r});
-        while (maxSt.top().fr < x) {
-            int pos = maxSt.top().sc;
-            auto me  = cur.lower_bound({pos, 1});
-            auto prv = prev(me);
-            auto nxt = next(me);
-            if (nxt != cur.end() && nxt->sc == 0)
-                len += me->fr - prv->fr;
-            cur.erase(me);
-            maxSt.pop();
-        }
-        cur.insert({r, 1});
-        maxSt.push({x, r});
-        ans += len;
+    stack<int>st;
+    vector<int>prevG(n , -1) , prevS(n , -1);
+    st.push(-1);
+    for (int i = 0; i < n; ++i) {
+        while(~st.top() and a[st.top()] < a[i]) st.pop();
+        prevG[i] = st.top();
+        st.push(i);
     }
-    cout << ans - n << nl;
+    while(not st.empty()) st.pop();
+    st.push(-1);
+    for (int i = 0; i < n; ++i) {
+        while(~st.top() and a[st.top()] > a[i]) st.pop();
+        prevS[i] = st.top();
+        st.push(i);
+    }
+    vector<int>nextG(n , n) , nextS(n , n);
+    while(not st.empty()) st.pop();
+    st.push(n);
+    for (int i = n - 1; i >= 0; --i) {
+        while(st.top() != n and a[st.top()] < a[i]) st.pop();
+        nextG[i] = st.top();
+        st.push(i);
+    }
+    while(not st.empty()) st.pop();
+    st.push(n);
+    for (int i = n - 1; i >= 0; --i) {
+        while(st.top() != n and a[st.top()] > a[i]) st.pop();
+        nextS[i] = st.top();
+        st.push(i);
+    }
+    vector<int>memo(n , inf);
+    memo[0] = 0;
+    for (int i = 0; i < n; ++i) {
+        memo[i] = min(memo[i] , memo[i - 1] + 1);
+        if(~prevG[i])
+            memo[i] = min(memo[i], memo[prevG[i]] + 1);
+
+        if(~prevS[i])
+            memo[i] = min(memo[i], memo[prevS[i]] + 1);
+
+        if(nextG[i] != n)
+            memo[nextG[i]] = min(memo[nextG[i]] , memo[i] + 1);
+
+        if(nextS[i] != n)
+            memo[nextS[i]] = min(memo[nextS[i]] , memo[i] + 1);
+    }
+    cout << memo[n - 1] << nl;
 }
 void file()
 {

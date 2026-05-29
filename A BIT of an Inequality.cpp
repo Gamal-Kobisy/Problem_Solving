@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK : https://codeforces.com/problemset/problem/1849/E
+// LINK : https://codeforces.com/problemset/problem/1957/D
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -26,7 +26,7 @@ using namespace std;
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
+const int N = 2e5 + 5, M = 1e3, LOG = 30, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
 
 void TC() {
@@ -36,44 +36,40 @@ void TC() {
     for (int i = 0; i < n; ++i) {
         cin >> a[i];
     }
-    set<pii> cur;
-    cur.insert({-1, 0});
-    cur.insert({-1, 1});
-    stack<pii> minSt, maxSt;
-    minSt.push({-1, -1});
-    maxSt.push({n, -1});
-    ll len = 0, ans = 0;
-    for (int r = 0; r < n; ++r) {
-        int x = a[r];
-        while (minSt.top().fr > x) {
-            int pos = minSt.top().sc;
-            auto me  = cur.lower_bound({pos, 0});
-            auto prv = prev(me);
-            auto nxt = next(me);
-            len -= me->fr - prv->fr;
-            if (nxt != cur.end() && nxt->sc == 0)
-                len += nxt->fr - prv->fr;
-            cur.erase(me);
-            minSt.pop();
+    vector<int> pref(n + 1, 0);
+    for (int i = 0; i < n; ++i) pref[i + 1] = pref[i] ^ a[i];
+    vector<array<int , LOG>> preOn(n + 1), preOf(n + 1);
+    vector<array<int , LOG>> sufOn(n + 1), sufOf(n + 1);
+    for (int bit = 0; bit < LOG; ++bit) {
+        preOn[0][bit] = (pref[0] >> bit) & 1;
+        preOf[0][bit] = 1 - preOn[0][bit];
+        for (int i = 1; i <= n; ++i) {
+            preOn[i][bit] = preOn[i - 1][bit] + ((pref[i] >> bit) & 1);
+            preOf[i][bit] = preOf[i - 1][bit] + (1 - ((pref[i] >> bit) & 1));
         }
-        len += r - cur.rbegin()->fr;
-        cur.insert({r, 0});
-        minSt.push({x, r});
-        while (maxSt.top().fr < x) {
-            int pos = maxSt.top().sc;
-            auto me  = cur.lower_bound({pos, 1});
-            auto prv = prev(me);
-            auto nxt = next(me);
-            if (nxt != cur.end() && nxt->sc == 0)
-                len += me->fr - prv->fr;
-            cur.erase(me);
-            maxSt.pop();
-        }
-        cur.insert({r, 1});
-        maxSt.push({x, r});
-        ans += len;
     }
-    cout << ans - n << nl;
+    for (int bit = 0; bit < LOG; ++bit) {
+        sufOn[n][bit] = (pref[n] >> bit) & 1;
+        sufOf[n][bit] = 1 - sufOn[n][bit];
+        for (int i = n - 1; i >= 0; --i) {
+            sufOn[i][bit] = sufOn[i + 1][bit] + ((pref[i] >> bit) & 1);
+            sufOf[i][bit] = sufOf[i + 1][bit] + (1 - ((pref[i] >> bit) & 1));
+        }
+    }
+
+    ll ans = 0;
+    for (int i = 0; i < n; ++i) {
+        int bit = MSB(a[i]);
+        int pL = (pref[i] >> bit) & 1;
+        int pR = (pref[i + 1] >> bit) & 1;
+        ll leftOn = pL ? preOf[i][bit] : preOn[i][bit];
+        ll leftOf = (i + 1) - leftOn;
+        ll rightOn = pR ? sufOf[i + 1][bit] : sufOn[i + 1][bit];
+        ll rightOf = (n - i) - rightOn;
+        ans += 1LL * leftOn * rightOf + 1LL * leftOf * rightOn;
+    }
+
+    cout << ans << nl;
 }
 void file()
 {
@@ -90,7 +86,7 @@ int main() {
 // test-independent code ——————————————————————
 // ————————————————————————————————————————————
     ll tc = 1;
-//     cin >> tc;
+     cin >> tc;
     while (tc--)
     {
         TC();
