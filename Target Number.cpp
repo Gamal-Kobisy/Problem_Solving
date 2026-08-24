@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK :
+// LINK : https://codeforces.com/group/Rilx5irOux/contest/710922/problem/A
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -28,27 +28,33 @@ using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-vector<int>adj[N] , val(N);
-vector<array<int , 21>>subTrre(N);
+ll x , k , c , target , primes[11];
+map<ll , ll>memo;
 
+ll solve(ll n)
+{
+    if (n == 1) return 0;
+    if (memo.count(n)) return memo[n];
+    ll ans = infLL;
+    if ((n - 1) <= infLL / c) {
+        ans = (n - 1) * c;
+    }
+    for (int i = 0 ; i < k ; i++)
+    {
+        ll rem = n % primes[i];
+        ll next_val = n / primes[i];
+        if (next_val >= 1) {
+            ans = min(ans, rem * c + solve(next_val));
+        }
+    }
+
+    return memo[n] = ans;
+}
 
 void TC() {
-    cin >> n;
-    for (int i = 1 ; i <= n ; ++ i)
-    {
-        adj[i].clear();
-        for (int bit = 0 ; bit < LOG ; ++ bit)
-            subTrre[i][bit] = 0;
-    }
-    for (int i = 1 ; i <= n ; ++ i) cin >> val[i];
-    for (int i = 1 ; i <= n ; ++ i)
-    {
-        int u , v;
-        cin >> u >> v;
-        adj[u].pb(v);
-        adj[v].pb(u);
-    }
-    ll ans = 0;
+    cin >> x >> k >> c;
+    for (int i = 0 ; i < k ; i++) cin >> primes[i];
+    cout << solve(x) << endl;
 }
 void file()
 {
@@ -62,10 +68,10 @@ void file()
 int main() {
     file();
     ENG_GAMAL
-// test-independent code ——————————————————————
-// ————————————————————————————————————————————
+    // test-independent code ——————————————————————
+    // ————————————————————————————————————————————
     ll tc = 1;
-     cin >> tc;
+    cin >> tc;
     while (tc--)
     {
         TC();

@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK :
+// LINK : https://codeforces.com/contest/2248/problem/A
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -28,27 +28,37 @@ using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-vector<int>adj[N] , val(N);
-vector<array<int , 21>>subTrre(N);
-
 
 void TC() {
-    cin >> n;
-    for (int i = 1 ; i <= n ; ++ i)
+    string s;
+    cin >> s;
+    vector<bool>keep(s.size() , true);
+    for (int i = 0; i < s.size(); i++)
     {
-        adj[i].clear();
-        for (int bit = 0 ; bit < LOG ; ++ bit)
-            subTrre[i][bit] = 0;
+        if (s[i] == '1')
+        {
+            keep[i] = false;
+            break;
+        }
     }
-    for (int i = 1 ; i <= n ; ++ i) cin >> val[i];
-    for (int i = 1 ; i <= n ; ++ i)
+    for (int i = 0; i < s.size(); i++)
     {
-        int u , v;
-        cin >> u >> v;
-        adj[u].pb(v);
-        adj[v].pb(u);
+        if (s[i] == '0')
+        {
+            keep[i] = false;
+            break;
+        }
     }
-    ll ans = 0;
+    // for (int i = s.size() - 1 ; i >= 0; i--)
+    // {
+    //     if (s[i] == '0')
+    //     {
+    //         keep[i] = false;
+    //         break;
+    //     }
+    // }
+    for (int i = 0; i < s.size(); i++) if (keep[i]) cout << s[i];
+    cout << nl;
 }
 void file()
 {
@@ -62,10 +72,10 @@ void file()
 int main() {
     file();
     ENG_GAMAL
-// test-independent code ——————————————————————
-// ————————————————————————————————————————————
+    // test-independent code ——————————————————————
+    // ————————————————————————————————————————————
     ll tc = 1;
-     cin >> tc;
+    cin >> tc;
     while (tc--)
     {
         TC();

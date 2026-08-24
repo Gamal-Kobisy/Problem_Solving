@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK :
+// LINK : https://codeforces.com/group/Rilx5irOux/contest/526482/problem/D
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -26,34 +26,39 @@ using namespace std;
 #define ENG_GAMAL ios_base::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);
 using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
+const int N = 1e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-vector<int>adj[N] , val(N);
-vector<array<int , 21>>subTrre(N);
+vector<int> f(N, 2);
+void precompute() {
+    for (int i = 2; i * i < N; ++i) {
+        for (int j = i * i; j < N; j += i * i) {
+            f[j] = 1; // Any multiple of i^2 is NOT square-free
+        }
+    }
+}
 
+int getGrundy(int x) {
+    if (x == 1) return 0;
+    int sq = sqrt(x);
+    if (1ll * sq * sq != x) return 1;
+    return f[sq];
+}
 
 void TC() {
+    int n;
     cin >> n;
-    for (int i = 1 ; i <= n ; ++ i)
-    {
-        adj[i].clear();
-        for (int bit = 0 ; bit < LOG ; ++ bit)
-            subTrre[i][bit] = 0;
+    int Xor = 0;
+    for (int i = 0; i < n; ++i) {
+        int x;
+        cin >> x;
+        Xor ^= getGrundy(x);
     }
-    for (int i = 1 ; i <= n ; ++ i) cin >> val[i];
-    for (int i = 1 ; i <= n ; ++ i)
-    {
-        int u , v;
-        cin >> u >> v;
-        adj[u].pb(v);
-        adj[v].pb(u);
-    }
-    ll ans = 0;
+    cout << (Xor ? "Bolbol" : "Balabeelo") << nl;
 }
 void file()
 {
+    freopen("math.in", "r", stdin);
 #ifndef ONLINE_JUDGE
-    freopen("Input.txt", "r", stdin);
     freopen("Output.txt", "w", stdout);
     freopen("Error.txt", "w", stderr);
 #endif
@@ -62,12 +67,14 @@ void file()
 int main() {
     file();
     ENG_GAMAL
-// test-independent code ——————————————————————
-// ————————————————————————————————————————————
+    // test-independent code ——————————————————————
+    precompute();
+    // ————————————————————————————————————————————
     ll tc = 1;
-     cin >> tc;
+    cin >> tc;
     while (tc--)
     {
+        // for (int i = 0 ; i < 2000 ; i++) cout << grundy(i) << nl;;
         TC();
     }
 

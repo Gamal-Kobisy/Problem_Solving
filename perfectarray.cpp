@@ -28,27 +28,36 @@ using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-vector<int>adj[N] , val(N);
-vector<array<int , 21>>subTrre(N);
-
 
 void TC() {
-    cin >> n;
-    for (int i = 1 ; i <= n ; ++ i)
+    int n , m , k;
+    cin >> n >> m >> k;
+    vector<int> ans(k);
+    int Xor = 0 ;
+    for (int i = 0; i < k - 1; i++)
     {
-        adj[i].clear();
-        for (int bit = 0 ; bit < LOG ; ++ bit)
-            subTrre[i][bit] = 0;
-    }
-    for (int i = 1 ; i <= n ; ++ i) cin >> val[i];
-    for (int i = 1 ; i <= n ; ++ i)
+        ans[i] = i + 1;
+        Xor ^= ans[i];
+    }if (Xor <= k - 1)
     {
-        int u , v;
-        cin >> u >> v;
-        adj[u].pb(v);
-        adj[v].pb(u);
+        ans[k - 2] += (1 << 20);
+        ans[k - 3] += (1 << 21);
+        Xor = 0;
+        for (int i = 0; i < k - 1; i++) {
+            Xor ^= ans[i];
+        }
     }
-    ll ans = 0;
+    ans[k - 1] = Xor;
+    for (int i = 0 ; i < m ; i++)
+    {
+        int l , r;
+        cin >> l >> r;
+    }
+    for (int i = 0 ; i < n ; i++)
+    {
+        cout << ans[i % k] << sp;
+    }
+    cout << endl;
 }
 void file()
 {
@@ -62,10 +71,10 @@ void file()
 int main() {
     file();
     ENG_GAMAL
-// test-independent code ——————————————————————
-// ————————————————————————————————————————————
+    // test-independent code ——————————————————————
+    // ————————————————————————————————————————————
     ll tc = 1;
-     cin >> tc;
+    cin >> tc;
     while (tc--)
     {
         TC();

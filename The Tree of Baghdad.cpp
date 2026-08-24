@@ -1,7 +1,7 @@
 // "ولا تقولن لشيء إني فاعل ذلك غدا"
 // "إلا أن يشاء الله واذكر ربك إذا نسيت وقل عسى أن يهديني ربي لأقرب من هذا رشدا"
 
-// LINK :
+// LINK : https://codeforces.com/group/Rilx5irOux/contest/627871/problem/B
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -28,27 +28,37 @@ using namespace std;
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 const int N = 2e5 + 5, M = 1e3, LOG = 20, inf = 0x3f3f3f3f;
 ll infLL = 0x3f3f3f3f3f3f3f3f;
-vector<int>adj[N] , val(N);
-vector<array<int , 21>>subTrre(N);
+int n;
+vector<int>adj[N] , val(N) , subTreeXor(N);
 
+int dfs(int u , int par)
+{
+    subTreeXor[u] ^= val[u];
+    int G = 0;
+    for (int v : adj[u])
+    {
+        if (v == par) continue;
+        G ^= dfs(v, u);
+        subTreeXor[u] ^= subTreeXor[v];
+    }
+    if (subTreeXor[u] == 0)
+    {
+        G += 1;
+    }
+    return G;
+}
 
 void TC() {
     cin >> n;
-    for (int i = 1 ; i <= n ; ++ i)
-    {
-        adj[i].clear();
-        for (int bit = 0 ; bit < LOG ; ++ bit)
-            subTrre[i][bit] = 0;
-    }
     for (int i = 1 ; i <= n ; ++ i) cin >> val[i];
-    for (int i = 1 ; i <= n ; ++ i)
+    for (int i = 1 ; i < n ; ++ i)
     {
         int u , v;
         cin >> u >> v;
         adj[u].pb(v);
         adj[v].pb(u);
     }
-    ll ans = 0;
+    cout << (dfs(1,0) ? "Moamen" : "Yassin") << endl;
 }
 void file()
 {
@@ -62,10 +72,10 @@ void file()
 int main() {
     file();
     ENG_GAMAL
-// test-independent code ——————————————————————
-// ————————————————————————————————————————————
+    // test-independent code ——————————————————————
+    // ————————————————————————————————————————————
     ll tc = 1;
-     cin >> tc;
+    //     cin >> tc;
     while (tc--)
     {
         TC();
